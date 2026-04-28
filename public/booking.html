@@ -2,90 +2,77 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <!-- Viewport removed - desktop only -->
-
-  <title>Book Your Experience - Mamagan Beach Resort</title>
+  <title>Reserve Your Escape - Mamagan Beach Resort</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/tailwind-config.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="bg-gray-50 font-sans text-gray-800">
-  <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-md shadow-sm z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-16">
-        <a href="/" class="flex items-center gap-2">
-          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12"><span class="font-bold text-2xl text-ocean-800">Mamagan Fun & Adventure Beach Resort</span>
+<body class="bg-lux-cream font-sans text-lux-navy">
+  <!-- Navbar -->
+  <nav class="fixed top-0 w-full bg-white/80 backdrop-blur-xl shadow-sm z-50 border-b border-lux-gold/10">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex justify-between items-center h-20">
+        <a href="/" class="flex items-center gap-3">
+          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-14">
+          <span class="luxury-heading font-bold text-2xl text-lux-navy tracking-tight">Mamagan <span class="text-lux-gold">Beach</span></span>
         </a>
-        <div class="hidden md:flex items-center gap-6">
-          <a href="/resorts.html" class="text-gray-600 hover:text-ocean-600 font-medium transition">Resorts</a>
-          <a href="/my-bookings.html" class="text-gray-600 hover:text-ocean-600 font-medium transition">My Bookings</a>
-          <div id="auth-nav" class="flex items-center gap-3"></div>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="/resorts.html" class="text-lux-navy/70 hover:text-lux-gold font-medium transition-colors uppercase tracking-widest text-xs">Resorts</a>
+          <a href="/my-bookings.html" class="text-lux-navy/70 hover:text-lux-gold font-medium transition-colors uppercase tracking-widest text-xs">Bookings</a>
         </div>
-        <!-- Mobile menu button removed - desktop only -->
-
       </div>
     </div>
-    <!-- Mobile menu removed - desktop only -->
-
   </nav>
 
-  <main class="pt-24 pb-20">
-    <div class="max-w-5xl mx-auto px-4">
-      <a href="/resorts.html" class="inline-flex items-center gap-2 text-gray-500 hover:text-ocean-600 mb-6 transition"><i class="fas fa-arrow-left"></i> Back to Facilities</a>
+  <main class="pt-32 pb-32">
+    <div class="max-w-6xl mx-auto px-6">
+      <a href="/resorts.html" class="inline-flex items-center gap-2 text-lux-navy/40 hover:text-lux-gold mb-10 transition-colors uppercase tracking-widest text-[10px] font-bold">
+        <i class="fas fa-arrow-left"></i> Back to Collection
+      </a>
       
-      <div class="grid lg:grid-cols-3 gap-8">
+      <div class="grid lg:grid-cols-3 gap-10">
         <!-- Booking Form -->
-        <div class="lg:col-span-2 space-y-6">
-          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-            <h1 class="text-2xl font-bold text-gray-900 mb-6">Book Your Experience</h1>
+        <div class="lg:col-span-2 space-y-10">
+          <div class="glass-card p-10 md:p-12 rounded-[2rem] premium-shadow">
+            <h1 class="luxury-heading text-4xl font-bold text-lux-navy mb-10">Reserve Your Escape</h1>
             
-            <div id="facility-info" class="flex gap-4 mb-8 p-4 bg-ocean-50 rounded-xl">
-              <div class="w-20 h-20 rounded-xl bg-cover bg-center flex-shrink-0" id="facility-img"></div>
-              <div>
-                <h2 class="font-semibold text-gray-900" id="facility-name">Loading...</h2>
-                <p class="text-sm text-gray-500" id="facility-type"></p>
-                <p class="text-ocean-600 font-bold mt-1" id="facility-price"></p>
+            <div id="facility-info" class="flex gap-6 mb-10 p-6 bg-white/50 rounded-2xl border border-lux-navy/5">
+              <div class="w-24 h-24 rounded-2xl bg-cover bg-center flex-shrink-0" id="facility-img"></div>
+              <div class="flex flex-col justify-center">
+                <h2 class="luxury-heading font-bold text-xl text-lux-navy" id="facility-name">Loading...</h2>
+                <p class="text-[10px] font-black uppercase tracking-widest text-lux-gold" id="facility-type"></p>
+                <p class="text-xl font-bold text-lux-navy mt-1" id="facility-price"></p>
               </div>
             </div>
 
-            <form id="booking-form" class="space-y-6">
+            <form id="booking-form" class="space-y-8">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Select Date</label>
-                <input type="text" id="date-picker" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-ocean-400 focus:ring-2 focus:ring-ocean-100 outline-none" placeholder="Pick a date">
+                <label class="block text-[10px] font-black uppercase tracking-widest text-lux-navy/40 mb-3">Select Date</label>
+                <input type="text" id="date-picker" class="w-full px-6 py-4 rounded-2xl bg-white border border-lux-navy/10 focus:border-lux-gold outline-none transition-all" placeholder="Pick a date">
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Select Time Slot</label>
-                <div id="time-slots" class="grid grid-cols-3 gap-3">
-                  <div class="text-gray-400 text-sm py-4 text-center">Select a date first</div>
+                <label class="block text-[10px] font-black uppercase tracking-widest text-lux-navy/40 mb-3">Select Time Slot</label>
+                <div id="time-slots" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div class="text-lux-navy/20 text-xs py-6 text-center border-2 border-dashed border-lux-navy/10 rounded-2xl">Select a date first</div>
                 </div>
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
-                <div class="flex items-center gap-3">
-                  <button type="button" onclick="changeQty(-1)" class="w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center"><i class="fas fa-minus text-sm"></i></button>
-                  <input type="number" id="quantity" value="1" min="1" class="w-16 text-center py-2 rounded-lg border border-gray-200 font-semibold" readonly>
-                  <button type="button" onclick="changeQty(1)" class="w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center"><i class="fas fa-plus text-sm"></i></button>
+                <label class="block text-[10px] font-black uppercase tracking-widest text-lux-navy/40 mb-3">Quantity</label>
+                <div class="flex items-center gap-4">
+                  <button type="button" onclick="changeQty(-1)" class="w-12 h-12 rounded-full border border-lux-navy/10 hover:border-lux-gold hover:text-lux-gold transition-all"><i class="fas fa-minus text-xs"></i></button>
+                  <input type="number" id="quantity" value="1" min="1" class="w-20 text-center py-3 rounded-2xl border border-lux-navy/10 font-black text-lux-navy" readonly>
+                  <button type="button" onclick="changeQty(1)" class="w-12 h-12 rounded-full border border-lux-navy/10 hover:border-lux-gold hover:text-lux-gold transition-all"><i class="fas fa-plus text-xs"></i></button>
                 </div>
-                <p id="qty-hint" class="text-xs text-gray-400 mt-1"></p>
+                <p id="qty-hint" class="text-[10px] font-bold uppercase tracking-widest text-lux-navy/30 mt-3"></p>
               </div>
 
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Promo Code (optional)</label>
-                <div class="flex gap-2">
-                  <input type="text" id="promo-code" class="flex-1 px-4 py-3 rounded-xl border border-gray-200 focus:border-ocean-400 focus:ring-2 focus:ring-ocean-100 outline-none uppercase" placeholder="e.g. BEACH20">
-                  <button type="button" onclick="applyPromo()" class="px-5 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition">Apply</button>
-                </div>
-                <p id="promo-message" class="text-sm mt-1 hidden"></p>
-              </div>
-
-              <button type="submit" id="book-btn" class="w-full py-4 bg-ocean-500 text-white font-semibold rounded-xl hover:bg-ocean-600 transition flex items-center justify-center gap-2">
-                <span>Proceed to Payment</span>
+              <button type="submit" id="book-btn" class="w-full py-6 bg-lux-navy text-white font-black uppercase tracking-widest rounded-full hover:bg-lux-gold hover:shadow-2xl transition-all flex items-center justify-center gap-4">
+                <span>Confirm Reservation</span>
                 <i id="book-spinner" class="fas fa-circle-notch fa-spin hidden"></i>
               </button>
             </form>
@@ -94,20 +81,18 @@
 
         <!-- Summary Sidebar -->
         <div class="lg:col-span-1">
-          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-24">
-            <h3 class="font-semibold text-gray-900 mb-4">Booking Summary</h3>
-            <div class="space-y-3 text-sm">
-              <div class="flex justify-between"><span class="text-gray-500">Facility</span><span class="font-medium" id="summary-facility">-</span></div>
-              <div class="flex justify-between"><span class="text-gray-500">Date</span><span class="font-medium" id="summary-date">-</span></div>
-              <div class="flex justify-between"><span class="text-gray-500">Time</span><span class="font-medium" id="summary-time">-</span></div>
-              <div class="flex justify-between"><span class="text-gray-500">Quantity</span><span class="font-medium" id="summary-qty">1</span></div>
-              <div class="flex justify-between"><span class="text-gray-500">Price per unit</span><span class="font-medium" id="summary-unit-price">-</span></div>
-              <div id="summary-discount-row" class="flex justify-between text-green-600 hidden"><span>Discount</span><span class="font-medium" id="summary-discount">-</span></div>
+          <div class="glass-card p-8 rounded-[2rem] sticky top-32 premium-shadow">
+            <h3 class="luxury-heading font-bold text-2xl text-lux-navy mb-8">Summary</h3>
+            <div class="space-y-6 text-sm font-light text-lux-navy/70">
+              <div class="flex justify-between border-b border-lux-navy/5 pb-4"><span class="font-bold uppercase tracking-widest text-[10px] text-lux-navy/30">Facility</span><span class="font-medium" id="summary-facility">-</span></div>
+              <div class="flex justify-between border-b border-lux-navy/5 pb-4"><span class="font-bold uppercase tracking-widest text-[10px] text-lux-navy/30">Date</span><span class="font-medium" id="summary-date">-</span></div>
+              <div class="flex justify-between border-b border-lux-navy/5 pb-4"><span class="font-bold uppercase tracking-widest text-[10px] text-lux-navy/30">Time</span><span class="font-medium" id="summary-time">-</span></div>
+              <div class="flex justify-between border-b border-lux-navy/5 pb-4"><span class="font-bold uppercase tracking-widest text-[10px] text-lux-navy/30">Quantity</span><span class="font-medium" id="summary-qty">1</span></div>
             </div>
-            <div class="border-t border-gray-100 mt-4 pt-4">
+            <div class="mt-8 pt-8 border-t border-lux-navy/10">
               <div class="flex justify-between items-center">
-                <span class="font-semibold text-gray-900">Total</span>
-                <span class="text-2xl font-bold text-ocean-600" id="summary-total">PHP 0</span>
+                <span class="font-black uppercase tracking-widest text-[10px] text-lux-navy/30">Total</span>
+                <span class="text-3xl font-black text-lux-navy" id="summary-total">PHP 0</span>
               </div>
             </div>
           </div>
@@ -120,9 +105,6 @@
   <script src="/js/auth.js?v=2"></script>
   <script src="/js/toast.js?v=2"></script>
   <script>
-    // Mobile menu functionality removed - desktop only
-
-
     if (!requireAuth()) throw new Error('Auth required');
 
     const params = new URLSearchParams(window.location.search);
@@ -131,7 +113,6 @@
     let selectedDate = null;
     let selectedSlot = null;
     let currentPrice = 0;
-    let discountAmount = 0;
     let maxQty = 99;
 
     async function loadFacility() {
@@ -142,10 +123,9 @@
       maxQty = facility.total_units || 99;
       document.getElementById('facility-name').textContent = facility.name;
       document.getElementById('facility-type').textContent = facility.type.replace('_', ' ').toUpperCase();
-      document.getElementById('facility-price').textContent = `PHP ${Number(facility.base_price).toLocaleString()} / slot`;
+      document.getElementById('facility-price').textContent = `PHP ${Number(facility.base_price).toLocaleString()}`;
       document.getElementById('facility-img').style.backgroundImage = `url('${facility.images?.[0] || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=200'}')`;
       document.getElementById('summary-facility').textContent = facility.name;
-      document.getElementById('summary-unit-price').textContent = `PHP ${Number(facility.base_price).toLocaleString()}`;
       currentPrice = parseFloat(facility.base_price);
       updateTotal();
     }
@@ -167,19 +147,19 @@
       const res = await api.get(`/facilities/${facilityId}/availability?date=${date}`);
       const container = document.getElementById('time-slots');
       if (!res.success || !res.data.length) {
-        container.innerHTML = '<div class="col-span-3 text-gray-400 text-sm py-4">No slots available for this date.</div>';
+        container.innerHTML = '<div class="col-span-full text-lux-navy/30 text-xs py-6 text-center border border-dashed border-lux-navy/10 rounded-2xl">No slots available.</div>';
         return;
       }
       container.innerHTML = res.data.map(slot => `
         <button type="button" 
           onclick="selectSlot('${slot.time_slot}', ${slot.available}, ${slot.is_blocked})"
-          class="slot-btn px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium transition ${slot.is_blocked || slot.available < 1 ? 'opacity-40 cursor-not-allowed' : 'hover:border-ocean-300'}"
+          class="slot-btn px-6 py-4 rounded-2xl border border-lux-navy/10 text-sm font-bold transition-all ${slot.is_blocked || slot.available < 1 ? 'opacity-30 cursor-not-allowed' : 'hover:border-lux-gold hover:bg-white'}"
           ${slot.is_blocked || slot.available < 1 ? 'disabled' : ''}
           data-slot="${slot.time_slot}"
         >
-          <div>${slot.time_slot}</div>
-          <div class="text-xs mt-1 ${slot.is_blocked ? 'text-red-500' : (slot.available < 3 ? 'text-orange-500' : 'text-green-600')}">
-            ${slot.is_blocked ? 'Blocked' : (slot.available + ' left')}
+          <div class="mb-1">${slot.time_slot}</div>
+          <div class="text-[10px] font-black uppercase ${slot.is_blocked ? 'text-coral-500' : (slot.available < 3 ? 'text-sand-600' : 'text-lux-gold')}">
+            ${slot.is_blocked ? 'Blocked' : (slot.available + ' available')}
           </div>
         </button>
       `).join('');
@@ -189,16 +169,11 @@
       if (blocked || available < 1) return;
       selectedSlot = slot;
       maxQty = available;
-      document.querySelectorAll('.slot-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelector(`[data-slot="${slot}"]`).classList.add('active');
+      document.querySelectorAll('.slot-btn').forEach(btn => btn.classList.remove('bg-lux-navy', 'text-white'));
+      document.querySelector(`[data-slot="${slot}"]`).classList.add('bg-lux-navy', 'text-white');
       document.getElementById('summary-time').textContent = slot;
-      document.getElementById('qty-hint').textContent = `Max ${maxQty} units for this slot`;
-      const qtyInput = document.getElementById('quantity');
-      if (parseInt(qtyInput.value) > maxQty) {
-        qtyInput.value = maxQty;
-        document.getElementById('summary-qty').textContent = maxQty;
-        updateTotal();
-      }
+      document.getElementById('qty-hint').textContent = `Max ${maxQty} units available`;
+      updateTotal();
     }
 
     function changeQty(delta) {
@@ -216,36 +191,8 @@
 
     function updateTotal() {
       const qty = parseInt(document.getElementById('quantity').value);
-      let total = currentPrice * qty - discountAmount;
-      if (total < 0) total = 0;
+      const total = currentPrice * qty;
       document.getElementById('summary-total').textContent = `PHP ${total.toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-    }
-
-    function applyPromo() {
-      const code = document.getElementById('promo-code').value.trim().toUpperCase();
-      const msg = document.getElementById('promo-message');
-      if (!code) { msg.classList.add('hidden'); return; }
-      const promos = { 'BEACH20': 0.20, 'ISLAND15': 0.15, 'JETFUN': 300 };
-      if (promos[code] !== undefined) {
-        const qty = parseInt(document.getElementById('quantity').value);
-        if (code === 'JETFUN') {
-          discountAmount = 300;
-        } else {
-          discountAmount = currentPrice * qty * promos[code];
-        }
-        document.getElementById('summary-discount-row').classList.remove('hidden');
-        document.getElementById('summary-discount').textContent = `-PHP ${discountAmount.toLocaleString('en-PH', {minimumFractionDigits: 2})}`;
-        msg.textContent = 'Promo applied!';
-        msg.className = 'text-sm mt-1 text-green-600';
-        updateTotal();
-      } else {
-        discountAmount = 0;
-        document.getElementById('summary-discount-row').classList.add('hidden');
-        msg.textContent = 'Invalid promo code';
-        msg.className = 'text-sm mt-1 text-red-500';
-        updateTotal();
-      }
-      msg.classList.remove('hidden');
     }
 
     document.getElementById('booking-form').addEventListener('submit', async (e) => {
@@ -264,7 +211,6 @@
         booking_date: selectedDate,
         time_slot: selectedSlot,
         quantity: parseInt(document.getElementById('quantity').value),
-        promo_code: document.getElementById('promo-code').value.trim() || null,
       });
 
       btn.disabled = false;

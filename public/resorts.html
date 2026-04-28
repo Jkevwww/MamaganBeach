@@ -2,82 +2,80 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <!-- Viewport removed - desktop only -->
-
-  <title>Browse Facilities - Mamagan Beach Resort</title>
+  <title>The Collection - Mamagan Beach Resort</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/tailwind-config.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-<body class="bg-gray-50 font-sans text-gray-800">
-  <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-md shadow-sm z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-16">
-        <a href="/" class="flex items-center gap-2">
-          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12"><span class="font-bold text-2xl text-ocean-800">Mamagan Fun & Adventure Beach Resort</span>
+<body class="bg-lux-cream font-sans text-lux-navy">
+  <!-- Navbar -->
+  <nav class="fixed top-0 w-full bg-white/80 backdrop-blur-xl shadow-sm z-50 border-b border-lux-gold/10">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex justify-between items-center h-20">
+        <a href="/" class="flex items-center gap-3">
+          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-14 hover:scale-105 transition-transform">
+          <span class="luxury-heading font-bold text-2xl text-lux-navy tracking-tight">Mamagan <span class="text-lux-gold">Beach</span></span>
         </a>
-        <div class="hidden md:flex items-center gap-6">
-          <a href="/resorts.html" class="text-ocean-600 font-medium">Resorts</a>
-          <div id="auth-nav" class="flex items-center gap-3">
-            <!-- Auth links will be injected here by js/main.js -->
+        <div class="hidden md:flex items-center gap-8">
+          <a href="/resorts.html" class="text-lux-gold font-bold transition-colors uppercase tracking-widest text-xs">Resorts</a>
+          <div id="auth-nav" class="flex items-center gap-4">
+            <!-- Auth links will be injected here -->
           </div>
         </div>
-        <!-- Mobile menu button removed - desktop only -->
-
       </div>
     </div>
-    <!-- Mobile menu removed - desktop only -->
-
   </nav>
 
-  <main class="pt-24 pb-20">
-    <div class="max-w-7xl mx-auto px-4">
-      <div class="text-center mb-12">
-        <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3">Our Beach Facilities</h1>
-        <p class="text-gray-500 max-w-xl mx-auto">Choose from premium cabanas, thrilling water sports, and unforgettable island tours.</p>
+  <main class="pt-32 pb-32">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-20 fade-in">
+        <span class="text-lux-gold font-bold uppercase tracking-[0.3em] text-[10px] mb-4 block">The Collection</span>
+        <h1 class="luxury-heading text-4xl md:text-6xl font-bold text-lux-navy mb-6">World-Class Facilities</h1>
+        <div class="w-24 h-1 bg-lux-gold mx-auto mb-8"></div>
+        <p class="text-lux-navy/60 max-w-2xl mx-auto text-lg font-light">Select from our meticulously maintained range of cabanas, watercraft, and exclusive island excursions.</p>
       </div>
 
       <!-- Search & Filters -->
-      <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-10">
-        <div class="relative w-full md:max-w-md">
-          <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-          <input type="text" id="facility-search" oninput="searchFacilities(this.value)" class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 focus:border-ocean-400 focus:ring-2 focus:ring-ocean-100 outline-none" placeholder="Search facilities by name...">
+      <div class="glass-card p-8 rounded-[2rem] premium-shadow mb-16 flex flex-col lg:flex-row items-center justify-between gap-8 fade-in" style="animation-delay: 0.2s;">
+        <div class="relative w-full lg:max-w-md group">
+          <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-lux-navy/30 group-focus-within:text-lux-gold transition-colors"></i>
+          <input type="text" id="facility-search" oninput="searchFacilities(this.value)" 
+            class="w-full pl-14 pr-6 py-4 rounded-2xl bg-white/50 border border-lux-navy/5 focus:border-lux-gold focus:bg-white outline-none transition-all placeholder:text-lux-navy/20" 
+            placeholder="Search our collection...">
         </div>
 
-        <!-- Filter Tabs -->
-        <div class="flex flex-wrap justify-center gap-2">
-          <button onclick="filterFacilities('all')" class="filter-btn active px-5 py-2 rounded-full text-sm font-medium bg-ocean-500 text-white transition">All</button>
-          <button onclick="filterFacilities('cabana')" class="filter-btn px-5 py-2 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:border-ocean-300 transition">Cabanas</button>
-          <button onclick="filterFacilities('day_bed')" class="filter-btn px-5 py-2 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:border-ocean-300 transition">Day Beds</button>
-          <button onclick="filterFacilities('jet_ski')" class="filter-btn px-5 py-2 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:border-ocean-300 transition">Jet Skis</button>
-          <button onclick="filterFacilities('island_tour')" class="filter-btn px-5 py-2 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 hover:border-ocean-300 transition">Island Tours</button>
+        <div class="flex flex-wrap justify-center gap-3">
+          <button onclick="filterFacilities('all')" class="filter-btn active px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest bg-lux-navy text-white transition-all shadow-lg hover:shadow-lux-navy/20">All</button>
+          <button onclick="filterFacilities('cabana')" class="filter-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest bg-white text-lux-navy border border-lux-navy/5 hover:border-lux-gold transition-all">Cabanas</button>
+          <button onclick="filterFacilities('day_bed')" class="filter-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest bg-white text-lux-navy border border-lux-navy/5 hover:border-lux-gold transition-all">Day Beds</button>
+          <button onclick="filterFacilities('jet_ski')" class="filter-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest bg-white text-lux-navy border border-lux-navy/5 hover:border-lux-gold transition-all">Jet Skis</button>
+          <button onclick="filterFacilities('island_tour')" class="filter-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest bg-white text-lux-navy border border-lux-navy/5 hover:border-lux-gold transition-all">Tours</button>
         </div>
       </div>
 
-      <div id="facilities-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div id="facilities-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
         <!-- Skeleton -->
-        <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
-          <div class="h-56 shimmer"></div>
-          <div class="p-6">
-            <div class="h-5 w-3/4 shimmer rounded mb-3"></div>
+        <div class="bg-white/50 rounded-[2rem] overflow-hidden border border-lux-navy/5">
+          <div class="h-72 shimmer"></div>
+          <div class="p-8">
+            <div class="h-6 w-3/4 shimmer rounded mb-4"></div>
             <div class="h-4 w-full shimmer rounded mb-2"></div>
             <div class="h-4 w-2/3 shimmer rounded"></div>
           </div>
         </div>
-        <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
-          <div class="h-56 shimmer"></div>
-          <div class="p-6">
-            <div class="h-5 w-3/4 shimmer rounded mb-3"></div>
+        <div class="bg-white/50 rounded-[2rem] overflow-hidden border border-lux-navy/5">
+          <div class="h-72 shimmer"></div>
+          <div class="p-8">
+            <div class="h-6 w-3/4 shimmer rounded mb-4"></div>
             <div class="h-4 w-full shimmer rounded mb-2"></div>
             <div class="h-4 w-2/3 shimmer rounded"></div>
           </div>
         </div>
-        <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
-          <div class="h-56 shimmer"></div>
-          <div class="p-6">
-            <div class="h-5 w-3/4 shimmer rounded mb-3"></div>
+        <div class="bg-white/50 rounded-[2rem] overflow-hidden border border-lux-navy/5">
+          <div class="h-72 shimmer"></div>
+          <div class="p-8">
+            <div class="h-6 w-3/4 shimmer rounded mb-4"></div>
             <div class="h-4 w-full shimmer rounded mb-2"></div>
             <div class="h-4 w-2/3 shimmer rounded"></div>
           </div>
@@ -86,8 +84,10 @@
     </div>
   </main>
 
-  <footer class="bg-gray-900 text-gray-400 py-10">
-    <div class="max-w-7xl mx-auto px-4 text-center text-sm"> Mamagan Beach Resort. All rights reserved.</div>
+  <footer class="bg-lux-dark text-white/50 py-16 border-t border-white/5">
+    <div class="max-w-7xl mx-auto px-6 text-center text-[10px] uppercase tracking-[0.3em] font-bold">
+      &copy; 2024 Mamagan Beach Resort Collection. All rights reserved.
+    </div>
   </footer>
 
   <script src="/js/api.js?v=2"></script>
@@ -95,9 +95,6 @@
   <script src="/js/toast.js?v=2"></script>
   <script src="/js/main.js?v=2"></script>
   <script>
-    // Mobile menu functionality removed - desktop only
-
-
     let allFacilities = [];
     let currentResort = null;
     let currentFilter = 'all';
@@ -106,7 +103,7 @@
       try {
         const resorts = await api.get('/resorts');
         if (!resorts.success || !resorts.data.length) {
-          showToast('Could not load facilities.', 'error');
+          showToast('Unable to load collection.', 'error');
           return;
         }
         currentResort = resorts.data[0];
@@ -115,7 +112,7 @@
         applyFilters();
       } catch (e) {
         console.error(e);
-        showToast('Failed to load facilities.', 'error');
+        showToast('System error. Please try again.', 'error');
       }
     }
 
@@ -123,36 +120,37 @@
       const container = document.getElementById('facilities-grid');
       if (!list.length) {
         container.innerHTML = `
-          <div class="col-span-full text-center py-12">
-            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <i class="fas fa-search text-gray-400 text-2xl"></i>
+          <div class="col-span-full text-center py-24 fade-in">
+            <div class="w-24 h-24 bg-lux-navy/5 rounded-full flex items-center justify-center mx-auto mb-8 border border-lux-navy/5">
+              <i class="fas fa-search text-lux-navy/20 text-3xl"></i>
             </div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-1">No facilities found</h3>
-            <p class="text-gray-500">Try adjusting your search or filters.</p>
+            <h3 class="luxury-heading text-2xl font-bold text-lux-navy mb-2">No matching facilities</h3>
+            <p class="text-lux-navy/40 italic">Try a different search or filter category.</p>
           </div>
         `;
         return;
       }
-      container.innerHTML = list.map(f => `
-        <div class="bg-white rounded-2xl overflow-hidden shadow-sm card-hover border border-gray-100 fade-in">
-          <div class="h-56 bg-cover bg-center relative" style="background-image: url('${f.images?.[0] || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600'}')">
-            <div class="absolute top-4 left-4">
-              <span class="px-3 py-1 bg-white/90 backdrop-blur text-ocean-700 text-xs font-semibold rounded-full capitalize">${f.type.replace('_',' ')}</span>
+      container.innerHTML = list.map((f, idx) => `
+        <div class="bg-white rounded-[2rem] overflow-hidden premium-shadow card-hover fade-in group" style="animation-delay: ${idx * 0.1}s">
+          <div class="h-72 bg-cover bg-center relative transition-transform duration-700 group-hover:scale-110" style="background-image: url('${f.images?.[0] || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600'}')">
+            <div class="absolute top-6 left-6">
+              <span class="px-4 py-1.5 bg-white/90 backdrop-blur text-lux-navy text-[10px] font-black uppercase tracking-widest rounded-full shadow-xl">${f.type.replace('_',' ')}</span>
             </div>
           </div>
-          <div class="p-6">
-            <h3 class="font-semibold text-lg text-gray-900 mb-2">${f.name}</h3>
-            <p class="text-gray-500 text-sm mb-4 line-clamp-2">${f.description || ''}</p>
-            <div class="flex items-center gap-4 text-sm text-gray-500 mb-4">
-              <span><i class="fas fa-user-group mr-1 text-ocean-400"></i>Up to ${f.capacity}</span>
-              <span><i class="fas fa-layer-group mr-1 text-ocean-400"></i>${f.total_units} units</span>
+          <div class="p-8 relative bg-white">
+            <h3 class="luxury-heading font-bold text-2xl text-lux-navy mb-3 group-hover:text-lux-gold transition-colors">${f.name}</h3>
+            <p class="text-lux-navy/50 text-sm mb-6 line-clamp-2 italic font-light leading-relaxed">"${f.description || 'Experience the essence of coastal luxury.'}"</p>
+            <div class="flex items-center gap-6 text-[10px] font-bold uppercase tracking-widest text-lux-navy/30 mb-8 pb-8 border-b border-lux-navy/5">
+              <span class="flex items-center gap-2"><i class="fas fa-user-group text-lux-gold"></i>Up to ${f.capacity}</span>
+              <span class="flex items-center gap-2"><i class="fas fa-layer-group text-lux-gold"></i>${f.total_units} units</span>
             </div>
-            <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+            <div class="flex justify-between items-end">
               <div>
-                <span class="text-2xl font-bold text-ocean-600">PHP ${Number(f.base_price).toLocaleString()}</span>
-                <span class="text-gray-400 text-sm">/slot</span>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-lux-navy/30 block mb-1">Starting at</span>
+                <span class="text-3xl font-black text-lux-navy">PHP ${Number(f.base_price).toLocaleString()}</span>
+                <span class="text-lux-navy/20 text-[10px] font-bold">/SLOT</span>
               </div>
-              <a href="/booking.html?facility=${f.id}" class="px-5 py-2.5 bg-ocean-500 text-white font-medium rounded-xl hover:bg-ocean-600 transition">Book Now</a>
+              <a href="/booking.html?facility=${f.id}" class="px-8 py-4 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold hover:shadow-xl transition-all">Book Now</a>
             </div>
           </div>
         </div>
@@ -162,11 +160,11 @@
     function filterFacilities(type) {
       currentFilter = type;
       document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('bg-ocean-500', 'text-white');
-        btn.classList.add('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+        btn.classList.remove('bg-lux-navy', 'text-white', 'shadow-lg');
+        btn.classList.add('bg-white', 'text-lux-navy', 'border', 'border-lux-navy/5');
       });
-      event.target.classList.remove('bg-white', 'text-gray-600', 'border', 'border-gray-200');
-      event.target.classList.add('bg-ocean-500', 'text-white');
+      event.target.classList.remove('bg-white', 'text-lux-navy', 'border', 'border-lux-navy/5');
+      event.target.classList.add('bg-lux-navy', 'text-white', 'shadow-lg');
       applyFilters();
     }
 

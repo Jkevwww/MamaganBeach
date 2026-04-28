@@ -2,7 +2,8 @@ tailwind.config = {
   theme: {
     extend: {
       fontFamily: { 
-        sans: ['Poppins', 'Inter', 'sans-serif'],
+        sans: ['Inter', 'Poppins', 'sans-serif'],
+        serif: ['Playfair Display', 'serif'],
         poppins: ['Poppins', 'sans-serif'],
         inter: ['Inter', 'sans-serif']
       },
@@ -33,6 +34,13 @@ tailwind.config = {
           500: '#f43f5e', 
           600: '#e11d48' 
         },
+        lux: {
+          navy: '#0c1b33',
+          gold: '#c5a059',
+          cream: '#fcfaf7',
+          teal: '#d4e4e9',
+          dark: '#050c18'
+        }
       }
     }
   }

@@ -2,181 +2,186 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <!-- Viewport removed - desktop only -->
-
-  <title>Mamagan Fun & Adventure Beach Resort</title>
+  <title>Mamagan Fun & Adventure Beach Resort | Premium Escape</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/tailwind-config.js"></script>
   <link rel="stylesheet" href="/css/style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-<body class="bg-gray-50 font-sans text-gray-800">
+<body class="bg-lux-cream font-sans text-lux-navy">
   <!-- Navbar -->
-  <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-md shadow-sm z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-16">
-        <a href="/" class="flex items-center gap-2">
-          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12"><span class="font-bold text-2xl text-ocean-800">Mamagan Fun & Adventure Beach Resort</span>
+  <nav class="fixed top-0 w-full bg-white/80 backdrop-blur-xl shadow-sm z-50 border-b border-lux-gold/10">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex justify-between items-center h-20">
+        <a href="/" class="flex items-center gap-3">
+          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-14 hover:scale-105 transition-transform">
+          <span class="luxury-heading font-bold text-2xl text-lux-navy tracking-tight">Mamagan Fun & Adventure<span class="text-lux-gold"> Beach Resort</span></span>
         </a>
-        <div class="hidden md:flex items-center gap-6">
-          <a href="/resorts.html" class="text-gray-600 hover:text-ocean-600 font-medium transition">Resorts</a>
-          <div id="auth-nav" class="flex items-center gap-3">
-            <!-- Auth links will be injected here by js/main.js -->
+        <div class="hidden md:flex items-center gap-8">
+          <a href="/resorts.html" class="text-lux-navy/70 hover:text-lux-gold font-medium transition-colors uppercase tracking-widest text-xs">Resorts</a>
+          <div id="auth-nav" class="flex items-center gap-4">
+            <!-- Auth links will be injected here -->
           </div>
         </div>
-        <!-- Mobile menu button removed - desktop only -->
-
       </div>
     </div>
-    <!-- Mobile menu removed - desktop only -->
-
   </nav>
 
   <!-- Hero Section -->
-  <section class="hero-bg min-h-[85vh] flex items-center justify-center text-white pt-16">
-    <div class="max-w-4xl mx-auto px-4 text-center fade-in">
-      <span class="inline-block px-4 py-1 bg-white/20 backdrop-blur rounded-full text-sm font-medium mb-6">Welcome to Paradise</span>
-      <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">Adventure Awaits at<br><span class="text-sand-300">Mamagan Beach</span></h1>
-      <p class="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto">Book cabanas, jet skis, island tours & more. Real-time availability, instant confirmation, and secure payments.</p>
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/resorts.html" class="px-8 py-4 bg-ocean-500 text-white font-semibold rounded-xl hover:bg-ocean-600 transition shadow-lg shadow-ocean-500/30">
-          <i class="fas fa-search mr-2"></i>Browse Facilities
+  <section class="hero-bg min-h-screen flex items-center justify-center text-white relative overflow-hidden">
+    <div class="absolute inset-0 bg-lux-navy/20"></div>
+    <div class="max-w-5xl mx-auto px-6 text-center relative z-10 fade-in">
+      <span class="inline-block px-6 py-2 bg-lux-gold/20 backdrop-blur-md rounded-full text-xs font-bold uppercase tracking-[0.3em] text-lux-gold border border-lux-gold/30 mb-8">Exclusive Coastal Experience</span>
+      <h1 class="luxury-heading text-5xl md:text-7xl lg:text-8xl font-black mb-8 leading-[1.1]">Luxury Awaits at<br><span class="italic font-light text-lux-gold">Mamagan Beach</span></h1>
+      <p class="text-xl md:text-2xl text-white/80 mb-12 max-w-2xl mx-auto font-light leading-relaxed">Indulge in pristine waters, premium cabanas, and bespoke island adventures curated for the discerning traveler.</p>
+      <div class="flex flex-col sm:flex-row gap-6 justify-center">
+        <a href="/resorts.html" class="px-10 py-5 premium-gradient-gold text-white font-bold rounded-full hover:shadow-[0_0_30px_rgba(197,160,89,0.4)] transition-all duration-300 uppercase tracking-widest text-sm">
+          Explore Facilities
         </a>
-        <a href="/register.html" class="px-8 py-4 bg-white/20 backdrop-blur text-white font-semibold rounded-xl hover:bg-white/30 transition border border-white/30">
-          <i class="fas fa-user-plus mr-2"></i>Create Account
+        <a href="/register.html" class="px-10 py-5 bg-white/10 backdrop-blur-md text-white font-bold rounded-full hover:bg-white/20 transition-all border border-white/30 uppercase tracking-widest text-sm">
+          Join the Club
         </a>
       </div>
+    </div>
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-50">
+        <i class="fas fa-chevron-down text-2xl"></i>
     </div>
   </section>
 
   <!-- Features -->
-  <section class="py-20">
-    <div class="max-w-7xl mx-auto px-4">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Why Book With Us?</h2>
-        <p class="text-gray-500 max-w-xl mx-auto">Experience hassle-free beach adventures with our modern booking platform.</p>
+  <section class="py-32 bg-lux-cream">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-20">
+        <h2 class="luxury-heading text-4xl md:text-5xl font-bold text-lux-navy mb-6">The Mamagan Distinction</h2>
+        <div class="w-24 h-1 bg-lux-gold mx-auto mb-6"></div>
+        <p class="text-lux-navy/60 max-w-xl mx-auto text-lg">Every detail is meticulously crafted to ensure your stay is nothing short of extraordinary.</p>
       </div>
-      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-        <div class="bg-white rounded-2xl p-8 shadow-sm text-center card-hover border border-gray-100">
-          <div class="w-16 h-16 bg-ocean-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
-            <i class="fas fa-calendar-check text-ocean-600 text-2xl"></i>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div class="glass-card p-10 rounded-3xl premium-shadow text-center card-hover">
+          <div class="w-20 h-20 bg-lux-navy/5 rounded-full flex items-center justify-center mx-auto mb-8 border border-lux-navy/10">
+            <i class="fas fa-calendar-check text-lux-gold text-3xl"></i>
           </div>
-          <h3 class="font-semibold text-lg mb-2">Real-Time Availability</h3>
-          <p class="text-gray-500 text-sm">See live slot availability and book instantly without overbooking worries.</p>
+          <h3 class="luxury-heading font-bold text-xl mb-4">Live Availability</h3>
+          <p class="text-lux-navy/60 text-sm leading-relaxed">Real-time booking engine ensuring exclusive access to our premier slots.</p>
         </div>
-        <div class="bg-white rounded-2xl p-8 shadow-sm text-center card-hover border border-gray-100">
-          <div class="w-16 h-16 bg-sand-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
-            <i class="fas fa-qrcode text-sand-600 text-2xl"></i>
+        <div class="glass-card p-10 rounded-3xl premium-shadow text-center card-hover">
+          <div class="w-20 h-20 bg-lux-navy/5 rounded-full flex items-center justify-center mx-auto mb-8 border border-lux-navy/10">
+            <i class="fas fa-qrcode text-lux-gold text-3xl"></i>
           </div>
-          <h3 class="font-semibold text-lg mb-2">Digital QR Tickets</h3>
-          <p class="text-gray-500 text-sm">Receive your ticket via email & SMS with a scannable QR code for quick check-in.</p>
+          <h3 class="luxury-heading font-bold text-xl mb-4">VIP Digital Pass</h3>
+          <p class="text-lux-navy/60 text-sm leading-relaxed">Seamless entry with our secure digital QR ticketing system.</p>
         </div>
-        <div class="bg-white rounded-2xl p-8 shadow-sm text-center card-hover border border-gray-100">
-          <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
-            <i class="fas fa-shield-halved text-green-600 text-2xl"></i>
+        <div class="glass-card p-10 rounded-3xl premium-shadow text-center card-hover">
+          <div class="w-20 h-20 bg-lux-navy/5 rounded-full flex items-center justify-center mx-auto mb-8 border border-lux-navy/10">
+            <i class="fas fa-shield-halved text-lux-gold text-3xl"></i>
           </div>
-          <h3 class="font-semibold text-lg mb-2">Secure Payments</h3>
-          <p class="text-gray-500 text-sm">Pay with GCash, Maya, GrabPay, or credit card through PayMongo.</p>
+          <h3 class="luxury-heading font-bold text-xl mb-4">Elite Security</h3>
+          <p class="text-lux-navy/60 text-sm leading-relaxed">Encrypted transactions through world-class payment gateways.</p>
         </div>
-        <div class="bg-white rounded-2xl p-8 shadow-sm text-center card-hover border border-gray-100">
-          <div class="w-16 h-16 bg-coral-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
-            <i class="fas fa-percent text-coral-600 text-2xl"></i>
+        <div class="glass-card p-10 rounded-3xl premium-shadow text-center card-hover">
+          <div class="w-20 h-20 bg-lux-navy/5 rounded-full flex items-center justify-center mx-auto mb-8 border border-lux-navy/10">
+            <i class="fas fa-gem text-lux-gold text-3xl"></i>
           </div>
-          <h3 class="font-semibold text-lg mb-2">Exclusive Promos</h3>
-          <p class="text-gray-500 text-sm">Unlock special discounts and deals when you book directly on our platform.</p>
+          <h3 class="luxury-heading font-bold text-xl mb-4">Exclusive Perks</h3>
+          <p class="text-lux-navy/60 text-sm leading-relaxed">Unlock premium amenities and member-only beach privileges.</p>
         </div>
     </div>
   </section>
 
   <!-- Featured Facilities Preview -->
-  <section class="py-20 bg-ocean-50">
-    <div class="max-w-7xl mx-auto px-4">
-      <div class="flex justify-between items-end mb-12">
+  <section class="py-32 bg-lux-navy relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-lux-gold/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
         <div>
-          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Our Facilities</h2>
-          <p class="text-gray-500">Premium beach experiences crafted for you</p>
+          <span class="text-lux-gold font-bold uppercase tracking-widest text-xs mb-4 block">Curated Selections</span>
+          <h2 class="luxury-heading text-4xl md:text-5xl font-bold text-white">Our Premier Facilities</h2>
         </div>
-        <a href="/resorts.html" class="hidden md:inline-flex items-center gap-2 text-ocean-600 font-medium hover:text-ocean-700">View All <i class="fas fa-arrow-right"></i></a>
+        <a href="/resorts.html" class="inline-flex items-center gap-3 text-lux-gold font-bold hover:text-white transition-colors group">
+          View All Collection <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
+        </a>
       </div>
-      <div id="facilities-preview" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div id="facilities-preview" class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
         <!-- Skeleton loading -->
-        <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
-          <div class="h-48 shimmer"></div>
-          <div class="p-6">
-            <div class="h-5 w-3/4 shimmer rounded mb-3"></div>
-            <div class="h-4 w-full shimmer rounded mb-2"></div>
-            <div class="h-4 w-2/3 shimmer rounded"></div>
+        <div class="bg-white/5 rounded-3xl overflow-hidden border border-white/10">
+          <div class="h-64 shimmer opacity-10"></div>
+          <div class="p-8">
+            <div class="h-6 w-3/4 shimmer opacity-10 rounded mb-4"></div>
+            <div class="h-4 w-full shimmer opacity-10 rounded mb-2"></div>
+            <div class="h-4 w-2/3 shimmer opacity-10 rounded"></div>
           </div>
         </div>
-        <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
-          <div class="h-48 shimmer"></div>
-          <div class="p-6">
-            <div class="h-5 w-3/4 shimmer rounded mb-3"></div>
-            <div class="h-4 w-full shimmer rounded mb-2"></div>
-            <div class="h-4 w-2/3 shimmer rounded"></div>
+        <div class="bg-white/5 rounded-3xl overflow-hidden border border-white/10">
+          <div class="h-64 shimmer opacity-10"></div>
+          <div class="p-8">
+            <div class="h-6 w-3/4 shimmer opacity-10 rounded mb-4"></div>
+            <div class="h-4 w-full shimmer opacity-10 rounded mb-2"></div>
+            <div class="h-4 w-2/3 shimmer opacity-10 rounded"></div>
           </div>
         </div>
-        <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
-          <div class="h-48 shimmer"></div>
-          <div class="p-6">
-            <div class="h-5 w-3/4 shimmer rounded mb-3"></div>
-            <div class="h-4 w-full shimmer rounded mb-2"></div>
-            <div class="h-4 w-2/3 shimmer rounded"></div>
+        <div class="bg-white/5 rounded-3xl overflow-hidden border border-white/10">
+          <div class="h-64 shimmer opacity-10"></div>
+          <div class="p-8">
+            <div class="h-6 w-3/4 shimmer opacity-10 rounded mb-4"></div>
+            <div class="h-4 w-full shimmer opacity-10 rounded mb-2"></div>
+            <div class="h-4 w-2/3 shimmer opacity-10 rounded"></div>
           </div>
         </div>
     </div>
   </section>
 
   <!-- CTA Section -->
-  <section class="py-20">
-    <div class="max-w-5xl mx-auto px-4">
-      <div class="relative bg-gradient-to-r from-ocean-600 to-ocean-800 rounded-3xl p-10 md:p-16 text-center text-white overflow-hidden">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-        <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+  <section class="py-32">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="relative bg-lux-navy rounded-[3rem] p-16 md:p-24 text-center text-white overflow-hidden premium-shadow">
+        <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/luxury.png')]"></div>
+        <div class="absolute -top-24 -right-24 w-64 h-64 bg-lux-gold/20 rounded-full blur-3xl"></div>
         <div class="relative z-10">
-          <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready for Your Beach Adventure?</h2>
-          <p class="text-white/80 mb-8 max-w-lg mx-auto">Join thousands of happy tourists who book their perfect beach day with Mamagan.</p>
-          <a href="/register.html" class="inline-block px-8 py-4 bg-white text-ocean-700 font-bold rounded-xl hover:bg-gray-100 transition shadow-lg">Book Now</a>
+          <h2 class="luxury-heading text-4xl md:text-6xl font-bold mb-8">Ready for Paradise?</h2>
+          <p class="text-white/60 mb-12 max-w-xl mx-auto text-xl font-light">Join our exclusive community of travelers and experience the peak of coastal luxury.</p>
+          <a href="/register.html" class="inline-block px-12 py-6 bg-lux-gold text-lux-navy font-black rounded-full hover:bg-white hover:scale-105 transition-all duration-300 uppercase tracking-widest text-sm shadow-2xl">Secure Your Escape</a>
         </div>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="bg-gray-900 text-gray-400 py-16">
-    <div class="max-w-7xl mx-auto px-4">
-      <div class="grid md:grid-cols-4 gap-10 mb-10">
-        <div>
-          <div class="flex items-center gap-2 mb-4">
-            <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-7">
+  <footer class="bg-lux-dark text-white/50 py-24 border-t border-white/5">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-4 gap-16 mb-20">
+        <div class="col-span-2 md:col-span-1">
+          <div class="flex items-center gap-3 mb-8">
+            <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-10">
+            <span class="luxury-heading font-bold text-xl text-white tracking-tight">Mamagan <span class="text-lux-gold">Beach</span></span>
           </div>
-          <p class="text-sm">Your premier destination for beach fun and adventure in the Philippines.</p>
+          <p class="text-sm leading-relaxed italic">"Where luxury meets the horizon."</p>
         </div>
         <div>
-          <h4 class="text-white font-semibold mb-4">Quick Links</h4>
-          <ul class="space-y-2 text-sm">
-            <li><a href="/resorts.html" class="hover:text-ocean-400 transition">Browse Resorts</a></li>
-            <li><a href="/my-bookings.html" class="hover:text-ocean-400 transition">My Bookings</a></li>
-            <li><a href="/login.html" class="hover:text-ocean-400 transition">Sign In</a></li>
+          <h4 class="text-white font-bold mb-8 uppercase tracking-widest text-xs">Navigation</h4>
+          <ul class="space-y-4 text-sm">
+            <li><a href="/resorts.html" class="hover:text-lux-gold transition-colors">Resorts</a></li>
+            <li><a href="/my-bookings.html" class="hover:text-lux-gold transition-colors">My Bookings</a></li>
+            <li><a href="/login.html" class="hover:text-lux-gold transition-colors">Sign In</a></li>
           </ul>
         </div>
         <div>
-          <h4 class="text-white font-semibold mb-4">Support</h4>
-          <ul class="space-y-2 text-sm">
-            <li><a href="javascript:void(0)" onclick="showComingSoon()" class="hover:text-ocean-400 transition">Help Center</a></li>
-            <li><a href="javascript:void(0)" onclick="showComingSoon()" class="hover:text-ocean-400 transition">Cancellation Policy</a></li>
-            <li><a href="javascript:void(0)" onclick="showComingSoon()" class="hover:text-ocean-400 transition">Contact Us</a></li>
+          <h4 class="text-white font-bold mb-8 uppercase tracking-widest text-xs">Inquiries</h4>
+          <ul class="space-y-4 text-sm">
+            <li><a href="#" class="hover:text-lux-gold transition-colors">Concierge</a></li>
+            <li><a href="#" class="hover:text-lux-gold transition-colors">Policy</a></li>
+            <li><a href="#" class="hover:text-lux-gold transition-colors">Contact</a></li>
           </ul>
         </div>
         <div>
-          <h4 class="text-white font-semibold mb-4">Connect</h4>
-          <div class="flex gap-4">
-            <a href="javascript:void(0)" onclick="showComingSoon()" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-ocean-600 transition"><i class="fab fa-facebook-f"></i></a>
-            <a href="javascript:void(0)" onclick="showComingSoon()" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-ocean-600 transition"><i class="fab fa-instagram"></i></a>
-            <a href="javascript:void(0)" onclick="showComingSoon()" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-ocean-600 transition"><i class="fab fa-tiktok"></i></a>
+          <h4 class="text-white font-bold mb-8 uppercase tracking-widest text-xs">Social</h4>
+          <div class="flex gap-6">
+            <a href="#" class="text-xl hover:text-lux-gold transition-colors"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="text-xl hover:text-lux-gold transition-colors"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="text-xl hover:text-lux-gold transition-colors"><i class="fab fa-tiktok"></i></a>
           </div>
       </div>
-      <div class="border-t border-gray-800 pt-6 text-center text-sm"> Mamagan Beach Resort. All rights reserved.</div>
+      <div class="pt-12 border-t border-white/5 text-center text-xs uppercase tracking-[0.2em] font-light">
+        &copy; 2024 Mamagan Beach Resort Collection. All rights reserved.
+      </div>
   </footer>
 
   <script src="/js/api.js?v=2"></script>
@@ -184,13 +189,6 @@
   <script src="/js/toast.js?v=2"></script>
   <script src="/js/main.js?v=2"></script>
   <script>
-    // Mobile menu functionality removed - desktop only
-
-
-    function showComingSoon() {
-      if (typeof showToast === 'function') showToast('Coming soon!', 'info');
-    }
-
     async function loadFacilitiesPreview() {
       try {
         const res = await api.get('/resorts');
@@ -200,17 +198,20 @@
         const facilities = facilitiesRes.data?.facilities?.slice(0,3) || [];
         const container = document.getElementById('facilities-preview');
         container.innerHTML = facilities.map(f => `
-          <div class="bg-white rounded-2xl overflow-hidden shadow-sm card-hover border border-gray-100 fade-in">
-            <div class="h-48 bg-cover bg-center" style="background-image: url('${f.images?.[0] || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600'}')"></div>
-            <div class="p-6">
-              <div class="flex justify-between items-start mb-2">
-                <h3 class="font-semibold text-lg text-gray-900">${f.name}</h3>
-                <span class="px-2 py-1 bg-ocean-50 text-ocean-700 text-xs font-medium rounded-lg capitalize">${f.type.replace('_',' ')}</span>
+          <div class="bg-white/5 rounded-[2rem] overflow-hidden border border-white/10 card-hover fade-in group">
+            <div class="h-64 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('${f.images?.[0] || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600'}')"></div>
+            <div class="p-8">
+              <div class="flex justify-between items-start mb-4">
+                <h3 class="luxury-heading font-bold text-2xl text-white group-hover:text-lux-gold transition-colors">${f.name}</h3>
+                <span class="px-3 py-1 bg-lux-gold/20 text-lux-gold text-[10px] font-black uppercase tracking-widest rounded-full border border-lux-gold/30">${f.type.replace('_',' ')}</span>
               </div>
-              <p class="text-gray-500 text-sm mb-4 line-clamp-2">${f.description || ''}</p>
+              <p class="text-white/40 text-sm mb-8 line-clamp-2 italic font-light">"${f.description || 'Experience the essence of coastal luxury.'}"</p>
               <div class="flex justify-between items-center">
-              <span class="text-ocean-600 font-bold text-lg">PHP ${Number(f.base_price).toLocaleString()}</span>
-                <a href="/booking.html?facility=${f.id}" class="px-4 py-2 bg-ocean-500 text-white text-sm font-medium rounded-lg hover:bg-ocean-600 transition">Book Now</a>
+                <div class="flex flex-col">
+                    <span class="text-[10px] uppercase tracking-widest text-white/30 font-bold">Starts from</span>
+                    <span class="text-lux-gold font-bold text-xl">PHP ${Number(f.base_price).toLocaleString()}</span>
+                </div>
+                <a href="/booking.html?facility=${f.id}" class="px-6 py-3 bg-white text-lux-navy text-xs font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-colors">Book Now</a>
               </div>
             </div>
           </div>
