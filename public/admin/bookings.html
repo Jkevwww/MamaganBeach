@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Viewport removed - desktop only -->
+
+  <title>Manage Bookings - Mamagan Beach Resort</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Poppins', 'sans-serif'] },
+          colors: {
+            ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 200: '#bae6fd', 300: '#7dd3fc', 400: '#38bdf8', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e' },
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+  <div class="flex h-screen overflow-hidden">
+    <aside class="w-64 bg-white border-r border-gray-200 flex-shrink-0 hidden md:flex flex-col">
+      <div class="p-6 border-b border-gray-100">
+        <a href="/" class="flex items-center gap-2">
+          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12"><span class="font-bold text-2xl text-ocean-800">Mamagan Fun & Adventure Beach Resort</span>
+        </a>
+        <p class="text-xs text-gray-400 mt-1">Admin Panel</p>
+      </div>
+      <nav id="admin-nav" class="flex-1 p-4 space-y-1"></nav>
+      <div class="p-4 border-t border-gray-100">
+        <button onclick="handleSignOut()" class="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition">
+          <i class="fas fa-sign-out-alt w-5 text-center"></i>
+          <span class="font-medium">Sign Out</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="flex-1 overflow-y-auto">
+      <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
+        <div class="flex items-center gap-3">
+          <!-- Mobile sidebar toggle removed - desktop only -->
+
+          <h1 class="text-xl font-bold text-gray-900">Manage Bookings</h1>
+        </div>
+        <div class="flex items-center gap-3">
+          <div id="auth-nav" class="flex items-center gap-3"></div>
+          <!-- Mobile logout button removed - desktop only -->
+
+        </div>
+      </header>
+
+      <main class="p-6">
+        <!-- Filters -->
+        <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm mb-6 flex flex-wrap gap-3 items-center">
+          <div class="flex gap-2">
+            <button onclick="filterBookings('all')" class="filter-btn px-4 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition bg-ocean-500 text-white border-ocean-500">All</button>
+            <button onclick="filterBookings('pending')" class="filter-btn px-4 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition">Pending</button>
+            <button onclick="filterBookings('confirmed')" class="filter-btn px-4 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition">Confirmed</button>
+            <button onclick="filterBookings('completed')" class="filter-btn px-4 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition">Completed</button>
+            <button onclick="filterBookings('cancelled')" class="filter-btn px-4 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition">Cancelled</button>
+          </div>
+          <div class="ml-auto">
+            <input type="text" id="booking-search" oninput="searchBookings(this.value)" class="px-4 py-2 rounded-lg border border-gray-200 focus:border-ocean-400 focus:ring-2 focus:ring-ocean-100 outline-none text-sm" placeholder="Search guest or facility...">
+          </div>
+        </div>
+
+        <!-- Bookings Table -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-gray-50 text-gray-500">
+                <tr>
+                  <th class="px-6 py-3 text-left font-medium">Booking ID</th>
+                  <th class="px-6 py-3 text-left font-medium">Guest</th>
+                  <th class="px-6 py-3 text-left font-medium">Facility</th>
+                  <th class="px-6 py-3 text-left font-medium">Date</th>
+                  <th class="px-6 py-3 text-left font-medium">Amount</th>
+                  <th class="px-6 py-3 text-left font-medium">Status</th>
+                  <th class="px-6 py-3 text-left font-medium">Payment</th>
+                  <th class="px-6 py-3 text-left font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="bookings-table" class="divide-y divide-gray-100">
+                <tr><td colspan="8" class="px-6 py-8 text-center text-gray-400">Loading bookings...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/js/api.js?v=2"></script>
+  <script src="/js/auth.js?v=2"></script>
+  <script src="/js/toast.js?v=2"></script>
+  <script src="/js/admin.js?v=2"></script>
+  <script>
+    if (!requireAdmin()) throw new Error('Admin required');
+    renderAdminNav('bookings');
+
+    let allBookings = [];
+    let currentFilter = 'all';
+
+    async function loadBookings() {
+      const res = await api.get('/admin/bookings');
+      const tbody = document.getElementById('bookings-table');
+      if (!res.success || !res.data.length) {
+        tbody.innerHTML = '<tr><td colspan="8" class="px-6 py-8 text-center text-gray-400">No bookings found.</td></tr>';
+        return;
+      }
+      allBookings = res.data;
+      renderBookings(allBookings);
+    }
+
+    function renderBookings(list) {
+      const tbody = document.getElementById('bookings-table');
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="8" class="px-6 py-8 text-center text-gray-400">No bookings match your filters.</td></tr>';
+        return;
+      }
+      const statusColors = { pending: 'bg-yellow-50 text-yellow-700', confirmed: 'bg-green-50 text-green-700', cancelled: 'bg-red-50 text-red-700', completed: 'bg-gray-50 text-gray-700' };
+      const payColors = { pending: 'text-yellow-600', paid: 'text-green-600', refunded: 'text-gray-500' };
+      tbody.innerHTML = list.map(b => `
+        <tr class="hover:bg-gray-50 transition">
+          <td class="px-6 py-4 font-mono text-xs text-gray-500">${b.id.substring(0,8)}</td>
+          <td class="px-6 py-4">
+            <div class="font-medium text-gray-900">${b.guest_name}</div>
+            <div class="text-xs text-gray-400">${b.guest_email || ''}</div>
+          </td>
+          <td class="px-6 py-4 text-gray-700">${b.facility_name}</td>
+          <td class="px-6 py-4 text-gray-500">${b.booking_date}<br><span class="text-xs">${b.time_slot}</span></td>
+          <td class="px-6 py-4 font-medium text-gray-900">PHP ${Number(b.total_amount).toLocaleString('en-PH',{minimumFractionDigits:2})}</td>
+          <td class="px-6 py-4"><span class="px-2 py-1 text-xs font-medium rounded-full ${statusColors[b.status]||'bg-gray-50'}">${b.status.toUpperCase()}</span></td>
+          <td class="px-6 py-4"><span class="text-xs font-medium ${payColors[b.payment_status]||''}">${(b.payment_status||'').toUpperCase()}</span></td>
+          <td class="px-6 py-4">
+            <div class="flex gap-2">
+              ${b.status === 'pending' ? `<button onclick="updateStatus('${b.id}', 'confirmed')" class="px-3 py-1 text-xs bg-green-50 text-green-700 rounded-lg hover:bg-green-100">Confirm</button>` : ''}
+              ${b.status !== 'cancelled' && b.status !== 'completed' ? `<button onclick="updateStatus('${b.id}', 'cancelled')" class="px-3 py-1 text-xs bg-red-50 text-red-700 rounded-lg hover:bg-red-100">Cancel</button>` : ''}
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function filterBookings(status) {
+      currentFilter = status;
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('bg-ocean-500', 'text-white', 'border-ocean-500');
+        btn.classList.add('border-gray-200');
+      });
+      event.target.classList.remove('border-gray-200');
+      event.target.classList.add('bg-ocean-500', 'text-white', 'border-ocean-500');
+      applyFilters();
+    }
+
+    function searchBookings(query) {
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const query = document.getElementById('booking-search').value.trim().toLowerCase();
+      let filtered = allBookings;
+      if (currentFilter !== 'all') {
+        filtered = filtered.filter(b => b.status === currentFilter);
+      }
+      if (query) {
+        filtered = filtered.filter(b =>
+          (b.guest_name && b.guest_name.toLowerCase().includes(query)) ||
+          (b.facility_name && b.facility_name.toLowerCase().includes(query)) ||
+          (b.guest_email && b.guest_email.toLowerCase().includes(query))
+        );
+      }
+      renderBookings(filtered);
+    }
+
+    async function updateStatus(id, status) {
+      const res = await api.patch(`/bookings/${id}/status`, { status });
+      if (res.success) {
+        showToast(`Booking ${status} successfully.`, 'success');
+        loadBookings();
+      } else {
+        showToast(res.message || 'Update failed', 'error');
+      }
+    }
+
+    loadBookings();
+  </script>
+</body>
+</html>

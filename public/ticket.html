@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Viewport removed - desktop only -->
+
+  <title>Your Ticket - Mamagan Beach Resort</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Poppins', 'sans-serif'] },
+          colors: {
+            ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 200: '#bae6fd', 300: '#7dd3fc', 400: '#38bdf8', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e' },
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .ticket-pattern { background-image: radial-gradient(circle at 10px 10px, transparent 10px, white 10px); background-size: 20px 20px; background-position: -10px -10px; }
+    .dashed-line { border-top: 2px dashed #e2e8f0; }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+  <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-md shadow-sm z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <a href="/" class="flex items-center gap-2">
+          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12"><span class="font-bold text-2xl text-ocean-800">Mamagan Fun & Adventure Beach Resort</span>
+        </a>
+        <div class="hidden md:flex items-center gap-6">
+          <a href="/resorts.html" class="text-gray-600 hover:text-ocean-600 font-medium transition">Resorts</a>
+          <a href="/my-bookings.html" class="text-gray-600 hover:text-ocean-600 font-medium transition">My Bookings</a>
+          <div id="auth-nav" class="flex items-center gap-3"></div>
+        </div>
+        <!-- Mobile menu button removed - desktop only -->
+
+      </div>
+    </div>
+    <!-- Mobile menu removed - desktop only -->
+
+  </nav>
+
+  <main class="pt-24 pb-20">
+    <div class="max-w-lg mx-auto px-4">
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+          <i class="fas fa-check text-green-600 text-2xl"></i>
+        </div>
+        <h1 class="text-2xl font-bold text-gray-900">Booking Confirmed!</h1>
+        <p class="text-gray-500">Your digital ticket is ready</p>
+      </div>
+
+      <div class="bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-100">
+        <!-- Ticket Header -->
+        <div class="bg-gradient-to-r from-ocean-600 to-ocean-800 p-6 text-white text-center relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+          <h2 class="text-xl font-bold relative z-10">Mamagan Beach Resort</h2>
+          <p class="text-white/80 text-sm relative z-10">Digital Admission Ticket</p>
+        </div>
+
+        <!-- Ticket Body -->
+        <div class="p-6">
+          <div class="text-center mb-6">
+            <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Facility</p>
+            <h3 class="text-lg font-bold text-gray-900" id="t-facility">-</h3>
+            <p class="text-sm text-gray-500" id="t-resort">-</p>
+          </div>
+
+          <div class="dashed-line my-4"></div>
+
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="text-center">
+              <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Date</p>
+              <p class="font-semibold text-gray-900" id="t-date">-</p>
+            </div>
+            <div class="text-center">
+              <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Time</p>
+              <p class="font-semibold text-gray-900" id="t-time">-</p>
+            </div>
+            <div class="text-center">
+              <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Quantity</p>
+              <p class="font-semibold text-gray-900" id="t-qty">-</p>
+            </div>
+            <div class="text-center">
+              <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Total</p>
+              <p class="font-semibold text-ocean-600" id="t-total">-</p>
+            </div>
+          </div>
+
+          <div class="dashed-line my-4"></div>
+
+          <!-- QR Code -->
+          <div class="text-center py-4">
+            <p class="text-xs text-gray-400 uppercase tracking-wider mb-3">Scan at Check-in</p>
+            <div id="qr-container" class="inline-block p-4 bg-white rounded-xl border-2 border-dashed border-gray-200">
+              <div class="w-48 h-48 bg-gray-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-qrcode text-6xl text-gray-300"></i>
+              </div>
+            </div>
+            <p class="text-xs text-gray-400 mt-3">Booking ID: <span class="font-mono" id="t-id">-</span></p>
+          </div>
+        </div>
+
+        <!-- Ticket Footer -->
+        <div class="bg-gray-50 px-6 py-4 text-center text-xs text-gray-400">
+          <p>Present this QR code at the resort entrance. Screenshot or download for offline access.</p>
+        </div>
+      </div>
+
+      <div class="flex gap-3 mt-6">
+        <button onclick="window.print()" class="flex-1 py-3 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition"><i class="fas fa-print mr-2"></i>Print</button>
+        <a href="/my-bookings.html" class="flex-1 py-3 bg-ocean-500 text-white text-center font-medium rounded-xl hover:bg-ocean-600 transition"><i class="fas fa-list mr-2"></i>My Bookings</a>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/api.js?v=2"></script>
+  <script src="/js/auth.js?v=2"></script>
+  <script src="/js/toast.js?v=2"></script>
+  <script>
+    // Mobile menu functionality removed - desktop only
+
+
+    if (!requireAuth()) throw new Error('Auth required');
+
+    const params = new URLSearchParams(window.location.search);
+    const bookingId = params.get('booking');
+
+    async function loadTicket() {
+      if (!bookingId) { window.location.href = '/my-bookings.html'; return; }
+      const res = await api.get(`/tickets/${bookingId}`);
+      if (!res.success) {
+        showToast('Ticket not found.', 'error');
+        window.location.href = '/my-bookings.html';
+        return;
+      }
+      const b = res.data;
+
+      document.getElementById('t-facility').textContent = b.facility_name;
+      document.getElementById('t-resort').textContent = b.resort_name + ' - ' + b.location;
+      document.getElementById('t-date').textContent = b.booking_date;
+      document.getElementById('t-time').textContent = b.time_slot;
+      document.getElementById('t-qty').textContent = b.quantity;
+      document.getElementById('t-total').textContent = `PHP ${Number(b.total_amount).toLocaleString('en-PH', {minimumFractionDigits: 2})}`;
+      document.getElementById('t-id').textContent = b.id.substring(0, 8).toUpperCase();
+
+      if (b.qr_code) {
+        document.getElementById('qr-container').innerHTML = `<img src="${b.qr_code}" alt="QR Code" class="w-48 h-48">`;
+      }
+    }
+
+    loadTicket();
+  </script>
+</body>
+</html>

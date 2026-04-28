@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Viewport removed - desktop only -->
+
+  <title>QR Check-in - Mamagan Beach Resort</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Poppins', 'sans-serif'] },
+          colors: {
+            ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 200: '#bae6fd', 300: '#7dd3fc', 400: '#38bdf8', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e' },
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+  <div class="flex h-screen overflow-hidden">
+    <aside class="w-64 bg-white border-r border-gray-200 flex-shrink-0 hidden md:flex flex-col">
+      <div class="p-6 border-b border-gray-100">
+        <a href="/" class="flex items-center gap-2">
+          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12"><span class="font-bold text-2xl text-ocean-800">Mamagan Fun & Adventure Beach Resort</span>
+        </a>
+        <p class="text-xs text-gray-400 mt-1">Admin Panel</p>
+      </div>
+      <nav id="admin-nav" class="flex-1 p-4 space-y-1"></nav>
+      <div class="p-4 border-t border-gray-100">
+        <button onclick="handleSignOut()" class="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition">
+          <i class="fas fa-sign-out-alt w-5 text-center"></i>
+          <span class="font-medium">Sign Out</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="flex-1 overflow-y-auto">
+      <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
+        <div class="flex items-center gap-3">
+          <!-- Mobile sidebar toggle removed - desktop only -->
+
+          <h1 class="text-xl font-bold text-gray-900">QR Check-in</h1>
+        </div>
+        <div class="flex items-center gap-3">
+          <div id="auth-nav" class="flex items-center gap-3"></div>
+          <!-- Mobile logout button removed - desktop only -->
+
+        </div>
+      </header>
+
+      <main class="p-6">
+        <div class="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          <!-- Scanner -->
+          <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+            <h3 class="font-semibold text-gray-900 mb-4"><i class="fas fa-camera mr-2 text-ocean-500"></i>Scan QR Code</h3>
+            <div id="qr-reader" class="rounded-xl overflow-hidden border border-gray-200"></div>
+            <div class="mt-4 flex gap-3">
+              <button onclick="startScan()" class="flex-1 py-2.5 bg-ocean-500 text-white font-medium rounded-xl hover:bg-ocean-600 transition"><i class="fas fa-play mr-1"></i>Start Camera</button>
+              <button onclick="stopScan()" class="flex-1 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition"><i class="fas fa-stop mr-1"></i>Stop</button>
+            </div>
+          </div>
+
+          <!-- Manual Entry -->
+          <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+            <h3 class="font-semibold text-gray-900 mb-4"><i class="fas fa-keyboard mr-2 text-ocean-500"></i>Manual Entry</h3>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Paste QR Payload or Booking ID</label>
+                <textarea id="manual-qr" rows="4" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-ocean-400 focus:ring-2 focus:ring-ocean-100 outline-none text-sm font-mono" placeholder='{"booking_id":"...","v":"..."}'></textarea>
+              </div>
+              <button onclick="verifyManual()" class="w-full py-3 bg-ocean-500 text-white font-semibold rounded-xl hover:bg-ocean-600 transition">Verify & Check In</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Result -->
+        <div id="checkin-result" class="max-w-2xl mx-auto mt-8 hidden">
+          <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm text-center">
+            <div id="result-icon" class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4"></div>
+            <h2 id="result-title" class="text-xl font-bold mb-2"></h2>
+            <p id="result-message" class="text-gray-500 mb-6"></p>
+            <div id="result-details" class="bg-gray-50 rounded-xl p-4 text-left text-sm space-y-2 hidden"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/js/api.js?v=2"></script>
+  <script src="/js/auth.js?v=2"></script>
+  <script src="/js/admin.js?v=2"></script>
+  <script>
+    if (!requireAdmin()) throw new Error('Admin required');
+    renderAdminNav('checkin');
+
+    let html5QrCode = null;
+
+    function startScan() {
+      if (html5QrCode) stopScan();
+      html5QrCode = new Html5Qrcode("qr-reader");
+      html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        (decodedText) => {
+          stopScan();
+          verifyQR(decodedText);
+        },
+        (err) => {}
+      ).catch(err => alert('Camera error: ' + err));
+    }
+
+    function stopScan() {
+      if (html5QrCode) {
+        html5QrCode.stop().then(() => {
+          html5QrCode.clear();
+          html5QrCode = null;
+        }).catch(() => {});
+      }
+    }
+
+    async function verifyQR(payload) {
+      const res = await api.post('/tickets/verify', { qr_payload: payload });
+      showResult(res);
+    }
+
+    async function verifyManual() {
+      const val = document.getElementById('manual-qr').value.trim();
+      if (!val) return;
+      let payload = val;
+      try {
+        // If user pasted raw JSON, validate it
+        JSON.parse(val);
+      } catch {
+        // If just booking ID, construct payload (won't pass verification but server handles gracefully)
+        payload = JSON.stringify({ booking_id: val, v: '' });
+      }
+      const res = await api.post('/tickets/verify', { qr_payload: payload });
+      showResult(res);
+    }
+
+    function showResult(res) {
+      const container = document.getElementById('checkin-result');
+      const icon = document.getElementById('result-icon');
+      const title = document.getElementById('result-title');
+      const msg = document.getElementById('result-message');
+      const details = document.getElementById('result-details');
+
+      container.classList.remove('hidden');
+      if (res.success) {
+        icon.className = 'w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4';
+        icon.innerHTML = '<i class="fas fa-check text-green-600 text-3xl"></i>';
+        title.textContent = 'Check-in Successful!';
+        title.className = 'text-xl font-bold mb-2 text-green-700';
+        msg.textContent = `Welcome, ${res.data.guest_name}!`;
+        details.classList.remove('hidden');
+        details.innerHTML = `
+          <div class="flex justify-between"><span class="text-gray-500">Facility</span><span class="font-medium">${res.data.facility_name}</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Date</span><span class="font-medium">${res.data.booking_date}</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Time</span><span class="font-medium">${res.data.time_slot}</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Quantity</span><span class="font-medium">${res.data.quantity}</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Checked In</span><span class="font-medium text-green-600">${new Date(res.data.checked_in_at).toLocaleTimeString()}</span></div>
+        `;
+      } else {
+        icon.className = 'w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4';
+        icon.innerHTML = '<i class="fas fa-times text-red-600 text-3xl"></i>';
+        title.textContent = 'Check-in Failed';
+        title.className = 'text-xl font-bold mb-2 text-red-700';
+        msg.textContent = res.message || 'Invalid or expired ticket.';
+        details.classList.add('hidden');
+      }
+    }
+  </script>
+</body>
+</html>

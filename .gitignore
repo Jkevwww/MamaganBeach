@@ -1,0 +1,33 @@
+# Environment variables
+.env
+
+# SSL certificates
+ca.pem
+*.pem
+*.key
+*.crt
+
+# Logs & output files
+*.log
+*.txt
+logs/
+output/
+debug-*
+test-*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Dependencies
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Uploads (user content)
+public/images/uploads/*
+!public/images/uploads/.gitkeep

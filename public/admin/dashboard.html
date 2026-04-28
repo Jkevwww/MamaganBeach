@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Viewport removed - desktop only -->
+
+  <title>Admin Dashboard - Mamagan Beach Resort</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Poppins', 'sans-serif'] },
+          colors: {
+            ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 200: '#bae6fd', 300: '#7dd3fc', 400: '#38bdf8', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e' },
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+  <div class="flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r border-gray-200 flex-shrink-0 hidden md:flex flex-col">
+      <div class="p-6 border-b border-gray-100">
+        <a href="/" class="flex items-center gap-2">
+          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12"><span class="font-bold text-2xl text-ocean-800">Mamagan Fun & Adventure Beach Resort</span>
+        </a>
+        <p class="text-xs text-gray-400 mt-1">Admin Panel</p>
+      </div>
+      <nav id="admin-nav" class="flex-1 p-4 space-y-1"></nav>
+      <div class="p-4 border-t border-gray-100">
+        <button onclick="handleSignOut()" class="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition">
+          <i class="fas fa-sign-out-alt w-5 text-center"></i>
+          <span class="font-medium">Sign Out</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-y-auto">
+      <!-- Top Bar -->
+      <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
+        <div class="flex items-center gap-3">
+          <!-- Mobile sidebar toggle removed - desktop only -->
+
+          <h1 class="text-xl font-bold text-gray-900">Dashboard</h1>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-sm text-gray-500" id="current-date"></span>
+          <div id="auth-nav" class="flex items-center gap-3"></div>
+          <!-- Mobile logout button removed - desktop only -->
+
+        </div>
+      </header>
+
+      <main class="p-6">
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
+          <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-gray-500 text-sm">Total Bookings</span>
+              <div class="w-10 h-10 bg-ocean-100 rounded-xl flex items-center justify-center"><i class="fas fa-calendar-check text-ocean-600"></i></div>
+            </div>
+            <p class="text-2xl font-bold text-gray-900" id="stat-bookings">-</p>
+          </div>
+          <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-gray-500 text-sm">Today</span>
+              <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center"><i class="fas fa-sun text-green-600"></i></div>
+            </div>
+            <p class="text-2xl font-bold text-gray-900" id="stat-today">-</p>
+          </div>
+          <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-gray-500 text-sm">Pending Pay</span>
+              <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center"><i class="fas fa-clock text-yellow-600"></i></div>
+            </div>
+            <p class="text-2xl font-bold text-gray-900" id="stat-pending">-</p>
+          </div>
+          <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-gray-500 text-sm">Revenue</span>
+              <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center"><i class="fas fa-peso-sign text-green-600"></i></div>
+            </div>
+            <p class="text-2xl font-bold text-gray-900" id="stat-revenue">-</p>
+          </div>
+          <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-gray-500 text-sm">Guests</span>
+              <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center"><i class="fas fa-users text-purple-600"></i></div>
+            </div>
+            <p class="text-2xl font-bold text-gray-900" id="stat-users">-</p>
+          </div>
+          <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-gray-500 text-sm">Facilities</span>
+              <div class="w-10 h-10 bg-coral-100 rounded-xl flex items-center justify-center"><i class="fas fa-water text-coral-600"></i></div>
+            </div>
+            <p class="text-2xl font-bold text-gray-900" id="stat-facilities">-</p>
+          </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="grid lg:grid-cols-2 gap-6 mb-8">
+          <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+            <h3 class="font-semibold text-gray-900 mb-4">Revenue Trend (Daily)</h3>
+            <canvas id="revenueChart" height="200"></canvas>
+          </div>
+          <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+            <h3 class="font-semibold text-gray-900 mb-4">Bookings by Facility Type</h3>
+            <canvas id="facilityChart" height="200"></canvas>
+          </div>
+        </div>
+
+        <!-- Recent Bookings -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+            <h3 class="font-semibold text-gray-900">Recent Bookings</h3>
+            <a href="/admin/bookings.html" class="text-ocean-600 text-sm font-medium hover:text-ocean-700">View All</a>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-gray-50 text-gray-500">
+                <tr>
+                  <th class="px-6 py-3 text-left font-medium">Guest</th>
+                  <th class="px-6 py-3 text-left font-medium">Facility</th>
+                  <th class="px-6 py-3 text-left font-medium">Date</th>
+                  <th class="px-6 py-3 text-left font-medium">Amount</th>
+                  <th class="px-6 py-3 text-left font-medium">Status</th>
+                </tr>
+              </thead>
+              <tbody id="recent-bookings" class="divide-y divide-gray-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/js/api.js?v=2"></script>
+  <script src="/js/auth.js?v=2"></script>
+  <script src="/js/toast.js?v=2"></script>
+  <script src="/js/admin.js?v=2"></script>
+  <script>
+    if (!requireAdmin()) throw new Error('Admin required');
+    renderAdminNav('dashboard');
+    document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-PH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+    let revenueChartInstance = null;
+    let facilityChartInstance = null;
+
+    async function loadDashboard() {
+      const res = await api.get('/admin/dashboard');
+      if (!res.success) { showToast('Failed to load dashboard', 'error'); return; }
+      const { stats, recent_bookings } = res.data;
+
+      document.getElementById('stat-bookings').textContent = stats.total_bookings.toLocaleString();
+      document.getElementById('stat-today').textContent = stats.today_bookings.toLocaleString();
+      document.getElementById('stat-pending').textContent = stats.pending_payments.toLocaleString();
+      document.getElementById('stat-revenue').textContent = 'PHP ' + stats.total_revenue.toLocaleString('en-PH', {minimumFractionDigits: 0});
+      document.getElementById('stat-users').textContent = stats.total_users.toLocaleString();
+      document.getElementById('stat-facilities').textContent = stats.total_facilities.toLocaleString();
+
+      // Recent bookings table
+      const tbody = document.getElementById('recent-bookings');
+      tbody.innerHTML = recent_bookings.map(b => {
+        const statusColors = { pending: 'bg-yellow-50 text-yellow-700', confirmed: 'bg-green-50 text-green-700', cancelled: 'bg-red-50 text-red-700', completed: 'bg-gray-50 text-gray-700' };
+        return `
+          <tr class="hover:bg-gray-50 transition">
+            <td class="px-6 py-4">
+              <div class="font-medium text-gray-900">${b.guest_name}</div>
+              <div class="text-xs text-gray-400">${b.id.substring(0,8)}</div>
+            </td>
+            <td class="px-6 py-4 text-gray-700">${b.facility_name}</td>
+            <td class="px-6 py-4 text-gray-500">${b.booking_date}<br><span class="text-xs">${b.time_slot}</span></td>
+            <td class="px-6 py-4 font-medium text-gray-900">PHP ${Number(b.total_amount).toLocaleString('en-PH',{minimumFractionDigits:2})}</td>
+            <td class="px-6 py-4"><span class="px-2 py-1 text-xs font-medium rounded-full ${statusColors[b.status]||'bg-gray-50'}">${b.status.toUpperCase()}</span></td>
+          </tr>
+        `;
+      }).join('');
+
+      loadCharts();
+    }
+
+    async function loadCharts() {
+      const revRes = await api.get('/admin/reports/revenue?period=daily');
+      if (revRes.success && revRes.data) {
+        const labels = revRes.data.map(d => d.period).reverse();
+        const data = revRes.data.map(d => parseFloat(d.revenue)).reverse();
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        if (revenueChartInstance) revenueChartInstance.destroy();
+        revenueChartInstance = new Chart(ctx, {
+          type: 'line',
+          data: { labels, datasets: [{ label: 'Revenue (PHP)', data, borderColor: '#0ea5e9', backgroundColor: 'rgba(14,165,233,0.1)', fill: true, tension: 0.4 }] },
+          options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+        });
+      }
+
+      const occRes = await api.get('/admin/reports/occupancy');
+      if (occRes.success && occRes.data) {
+        const labels = occRes.data.map(r => r.facility_name);
+        const data = occRes.data.map(r => parseFloat(r.occupancy_rate) || 0);
+        const ctx2 = document.getElementById('facilityChart').getContext('2d');
+        if (facilityChartInstance) facilityChartInstance.destroy();
+        facilityChartInstance = new Chart(ctx2, {
+          type: 'bar',
+          data: { labels, datasets: [{ label: 'Occupancy %', data, backgroundColor: '#0ea5e9', borderRadius: 6 }] },
+          options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100 } } }
+        });
+      }
+    }
+
+    loadDashboard();
+  </script>
+</body>
+</html>

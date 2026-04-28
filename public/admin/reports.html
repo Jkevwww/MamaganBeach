@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Viewport removed - desktop only -->
+
+  <title>Reports - Mamagan Beach Resort</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Poppins', 'sans-serif'] },
+          colors: {
+            ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 200: '#bae6fd', 300: '#7dd3fc', 400: '#38bdf8', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e' },
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+  <div class="flex h-screen overflow-hidden">
+    <aside class="w-64 bg-white border-r border-gray-200 flex-shrink-0 hidden md:flex flex-col">
+      <div class="p-6 border-b border-gray-100">
+        <a href="/" class="flex items-center gap-2">
+          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12"><span class="font-bold text-2xl text-ocean-800">Mamagan Fun & Adventure Beach Resort</span>
+        </a>
+        <p class="text-xs text-gray-400 mt-1">Admin Panel</p>
+      </div>
+      <nav id="admin-nav" class="flex-1 p-4 space-y-1"></nav>
+      <div class="p-4 border-t border-gray-100">
+        <button onclick="handleSignOut()" class="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition">
+          <i class="fas fa-sign-out-alt w-5 text-center"></i>
+          <span class="font-medium">Sign Out</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="flex-1 overflow-y-auto">
+      <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
+        <div class="flex items-center gap-3">
+          <!-- Mobile sidebar toggle removed - desktop only -->
+
+          <h1 class="text-xl font-bold text-gray-900">Revenue & Occupancy Reports</h1>
+        </div>
+        <div class="flex items-center gap-3">
+          <div id="auth-nav" class="flex items-center gap-3"></div>
+          <!-- Mobile logout button removed - desktop only -->
+
+        </div>
+      </header>
+
+      <main class="p-6">
+        <!-- Revenue Report -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-6">
+          <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+            <h3 class="font-semibold text-gray-900">Revenue Report</h3>
+            <div class="flex gap-2">
+              <button onclick="loadRevenue('daily')" class="rev-filter px-4 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition active-rev bg-ocean-500 text-white border-ocean-500">Daily</button>
+              <button onclick="loadRevenue('weekly')" class="rev-filter px-4 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition">Weekly</button>
+              <button onclick="loadRevenue('monthly')" class="rev-filter px-4 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition">Monthly</button>
+            </div>
+          <canvas id="revenueChart" height="100"></canvas>
+        </div>
+
+        <!-- Occupancy Report -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+            <h3 class="font-semibold text-gray-900">Occupancy Report</h3>
+            <div class="flex gap-2">
+              <input type="date" id="occ-from" onchange="loadOccupancy()" class="px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-ocean-400">
+              <input type="date" id="occ-to" onchange="loadOccupancy()" class="px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-ocean-400">
+            </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-gray-50 text-gray-500">
+                <tr>
+                  <th class="px-6 py-3 text-left font-medium">Facility</th>
+                  <th class="px-6 py-3 text-left font-medium">Type</th>
+                  <th class="px-6 py-3 text-left font-medium">Total Bookings</th>
+                  <th class="px-6 py-3 text-left font-medium">Units Booked</th>
+                  <th class="px-6 py-3 text-left font-medium">Total Units</th>
+                  <th class="px-6 py-3 text-left font-medium">Occupancy Rate</th>
+                </tr>
+              </thead>
+              <tbody id="occupancy-table" class="divide-y divide-gray-100">
+                <tr><td colspan="6" class="px-6 py-8 text-center text-gray-400">Select date range to view occupancy</td></tr>
+              </tbody>
+            </table>
+          </div>
+      </main>
+    </div>
+
+  <script src="/js/api.js?v=2"></script>
+  <script src="/js/auth.js?v=2"></script>
+  <script src="/js/admin.js?v=2"></script>
+  <script>
+    if (!requireAdmin()) throw new Error('Admin required');
+    renderAdminNav('reports');
+
+    let revenueChart = null;
+
+    async function loadRevenue(period) {
+      document.querySelectorAll('.rev-filter').forEach(btn => {
+        btn.classList.remove('bg-ocean-500', 'text-white', 'border-ocean-500');
+        btn.classList.add('border-gray-200');
+      });
+      event.target.classList.remove('border-gray-200');
+      event.target.classList.add('bg-ocean-500', 'text-white', 'border-ocean-500');
+
+      const res = await api.get(`/admin/reports/revenue?period=${period}`);
+      if (!res.success) return;
+
+      const labels = res.data.map(d => d.period).reverse();
+      const data = res.data.map(d => parseFloat(d.revenue)).reverse();
+      const counts = res.data.map(d => parseInt(d.bookings_count)).reverse();
+
+      const ctx = document.getElementById('revenueChart').getContext('2d');
+      if (revenueChart) revenueChart.destroy();
+
+      revenueChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [
+            { label: 'Revenue (PHP)', data, backgroundColor: '#0ea5e9', borderRadius: 6, yAxisID: 'y' },
+            { label: 'Bookings', data: counts, backgroundColor: '#f59e0b', borderRadius: 6, yAxisID: 'y1' }
+          ]
+        },
+        options: {
+          responsive: true,
+          interaction: { mode: 'index', intersect: false },
+          scales: {
+            y: { type: 'linear', display: true, position: 'left', beginAtZero: true },
+            y1: { type: 'linear', display: true, position: 'right', beginAtZero: true, grid: { drawOnChartArea: false } }
+          }
+        }
+      });
+    }
+
+    async function loadOccupancy() {
+      const from = document.getElementById('occ-from').value;
+      const to = document.getElementById('occ-to').value;
+      let url = '/admin/reports/occupancy?';
+      if (from) url += `date_from=${from}&`;
+      if (to) url += `date_to=${to}&`;
+
+      const res = await api.get(url);
+      const tbody = document.getElementById('occupancy-table');
+      if (!res.success || !res.data.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-400">No data available.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = res.data.map(row => {
+        const rate = parseFloat(row.occupancy_rate) || 0;
+        const rateColor = rate >= 80 ? 'bg-green-500' : rate >= 50 ? 'bg-yellow-500' : 'bg-red-500';
+        return `
+          <tr class="hover:bg-gray-50 transition">
+            <td class="px-6 py-4 font-medium text-gray-900">${row.facility_name}</td>
+            <td class="px-6 py-4 text-gray-500 capitalize">${row.type.replace('_',' ')}</td>
+            <td class="px-6 py-4">${row.total_bookings || 0}</td>
+            <td class="px-6 py-4">${row.total_units_booked || 0}</td>
+            <td class="px-6 py-4">${row.total_units}</td>
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <div class="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div class="h-full ${rateColor} rounded-full" style="width: ${Math.min(rate, 100)}%"></div>
+                <span class="text-sm font-medium">${rate.toFixed(1)}%</span>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Load daily revenue by default
+    document.querySelector('.rev-filter')?.click();
+  </script>
+</body>
+</html>
