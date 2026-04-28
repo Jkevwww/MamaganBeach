@@ -6,24 +6,10 @@
 
   <title>Your Ticket - Mamagan Beach Resort</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/tailwind-config.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Poppins', 'sans-serif'] },
-          colors: {
-            ocean: { 50: '#f0f9ff', 100: '#e0f2fe', 200: '#bae6fd', 300: '#7dd3fc', 400: '#38bdf8', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e' },
-          }
-        }
-      }
-    }
-  </script>
-  <style>
-    .ticket-pattern { background-image: radial-gradient(circle at 10px 10px, transparent 10px, white 10px); background-size: 20px 20px; background-position: -10px -10px; }
-    .dashed-line { border-top: 2px dashed #e2e8f0; }
-  </style>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="bg-gray-50 font-sans text-gray-800">
   <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-md shadow-sm z-50">

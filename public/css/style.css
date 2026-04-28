@@ -1,0 +1,92 @@
+/* Global Styles & Animations */
+
+/* Smooth transitions and focus states */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Focus visible for keyboard navigation */
+:focus-visible {
+  outline: 2px solid #0284c7;
+  outline-offset: 2px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.shake {
+  animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Common Components */
+.hero-bg {
+  background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url('/images/backgrounds/background.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.btn-loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* Booking specific */
+.slot-btn.active {
+  background: #0ea5e9;
+  color: white;
+  border-color: #0ea5e9;
+}
+
+.slot-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.flatpickr-day.selected {
+  background: #0ea5e9 !important;
+  border-color: #0ea5e9 !important;
+}
+
+/* Ticket specific */
+.ticket-pattern { 
+  background-image: radial-gradient(circle at 10px 10px, transparent 10px, white 10px); 
+  background-size: 20px 20px; 
+  background-position: -10px -10px; 
+}
+
+.dashed-line { 
+  border-top: 2px dashed #e2e8f0; 
+}
