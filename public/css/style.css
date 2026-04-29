@@ -141,7 +141,7 @@ body {
 
 /* Specific UI Elements */
 .hero-bg {
-  background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600');
+  background-image: url('../images/backgrounds/background.jpg');
   background-size: cover;
   background-position: center;
 }
