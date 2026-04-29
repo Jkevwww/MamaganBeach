@@ -124,8 +124,17 @@ router.get('/me', async (req, res) => {
   }
 });
 
-// Logout endpoint (JWT is client-side; just acknowledge)
+// Logout endpoint
 router.post('/logout', (req, res) => {
+  if (req.logout) {
+    req.logout((err) => {
+      if (err) console.error('Passport logout error:', err);
+    });
+  }
+  if (req.session) {
+    req.session.destroy();
+  }
+  res.clearCookie('connect.sid');
   res.json({ success: true, message: 'Signed out successfully.' });
 });
 
