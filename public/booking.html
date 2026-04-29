@@ -63,11 +63,11 @@
               </div>
 
               <div>
-                <label class="block text-[10px] font-black uppercase tracking-widest text-lux-navy/40 mb-3">Quantity</label>
+                <label for="quantity" class="block text-[10px] font-black uppercase tracking-widest text-lux-navy/40 mb-3">Quantity</label>
                 <div class="flex items-center gap-4">
-                  <button type="button" onclick="changeQty(-1)" class="w-12 h-12 rounded-full border border-lux-navy/10 hover:border-lux-gold hover:text-lux-gold transition-all"><i class="fas fa-minus text-xs"></i></button>
-                  <input type="number" id="quantity" value="1" min="1" class="w-20 text-center py-3 rounded-2xl border border-lux-navy/10 font-black text-lux-navy" readonly>
-                  <button type="button" onclick="changeQty(1)" class="w-12 h-12 rounded-full border border-lux-navy/10 hover:border-lux-gold hover:text-lux-gold transition-all"><i class="fas fa-plus text-xs"></i></button>
+                  <button type="button" onclick="changeQty(-1)" title="Decrease quantity" aria-label="Decrease quantity" class="w-12 h-12 rounded-full border border-lux-navy/10 hover:border-lux-gold hover:text-lux-gold transition-all"><i class="fas fa-minus text-xs"></i></button>
+                  <input type="number" id="quantity" value="1" min="1" aria-label="Quantity" placeholder="1" class="w-20 text-center py-3 rounded-2xl border border-lux-navy/10 font-black text-lux-navy" readonly>
+                  <button type="button" onclick="changeQty(1)" title="Increase quantity" aria-label="Increase quantity" class="w-12 h-12 rounded-full border border-lux-navy/10 hover:border-lux-gold hover:text-lux-gold transition-all"><i class="fas fa-plus text-xs"></i></button>
                 </div>
                 <p id="qty-hint" class="text-[10px] font-bold uppercase tracking-widest text-lux-navy/30 mt-3"></p>
               </div>
