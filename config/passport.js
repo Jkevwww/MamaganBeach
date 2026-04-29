@@ -1,7 +1,8 @@
 require('dotenv').config();
+
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const GitHubStrategy = require('passport-github2').Strategy;
+const FacebookStrategy = require('passport-facebook').Strategy;
 const { query } = require('./database');
 const { v4: uuidv4 } = require('uuid');
 
@@ -67,24 +68,24 @@ passport.use(
   )
 );
 
-// GitHub OAuth Strategy
+// Facebook OAuth Strategy
 passport.use(
-  new GitHubStrategy(
+  new FacebookStrategy(
     {
-      clientID: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: `${process.env.BACKEND_URL}/api/auth/github/callback`,
-      scope: ['user:email'],
+      clientID: process.env.FACEBOOK_APP_ID,
+      clientSecret: process.env.FACEBOOK_APP_SECRET,
+      callbackURL: `${process.env.BACKEND_URL}/api/auth/facebook/callback`,
+      profileFields: ['id', 'displayName', 'photos', 'email'],
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        const email = profile.emails?.[0]?.value || `${profile.id}@github.user`;
-        const fullName = profile.displayName || profile.username;
+        const email = profile.emails?.[0]?.value || `${profile.id}@facebook.user`;
+        const fullName = profile.displayName;
         const avatar = profile.photos?.[0]?.value;
         const providerId = profile.id;
 
         let result = await query('SELECT * FROM users WHERE auth_provider = ? AND provider_id = ?', [
-          'github',
+          'facebook',
           providerId,
         ]);
 
@@ -96,7 +97,7 @@ passport.use(
         if (result.rows.length > 0) {
           await query(
             'UPDATE users SET auth_provider = ?, provider_id = ?, avatar_url = ? WHERE id = ?',
-            ['github', providerId, avatar, result.rows[0].id]
+            ['facebook', providerId, avatar, result.rows[0].id]
           );
           result = await query('SELECT * FROM users WHERE id = ?', [result.rows[0].id]);
           return done(null, result.rows[0]);
@@ -106,7 +107,7 @@ passport.use(
         await query(
           `INSERT INTO users (id, email, full_name, avatar_url, auth_provider, provider_id)
            VALUES (?, ?, ?, ?, ?, ?)`,
-          [id, email, fullName, avatar, 'github', providerId]
+          [id, email, fullName, avatar, 'facebook', providerId]
         );
         result = await query('SELECT * FROM users WHERE id = ?', [id]);
         done(null, result.rows[0]);
