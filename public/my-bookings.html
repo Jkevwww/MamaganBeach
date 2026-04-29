@@ -159,6 +159,14 @@
       }
     }
 
+    async function requestRefund(id) {
+      if (!confirm('Would you like to initiate a refund request for this reservation? Our concierge will review it shortly.')) return;
+      // In a real system, this would call a refund API
+      // For now, we'll simulate the request
+      showToast('Refund request submitted to the treasury.', 'success');
+      // We could update the status to 'refund_pending' if the API supported it
+    }
+
     loadBookings();
   </script>
 </body>

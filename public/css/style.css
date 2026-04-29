@@ -1,26 +1,48 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@100..900&display=swap');
 
 /* Global Styles & Animations */
+:root {
+  --lux-navy: #0c1b33;
+  --lux-gold: #c5a059;
+  --lux-cream: #fcfaf7;
+  --lux-dark: #050c18;
+}
+
+body {
+  scroll-behavior: smooth;
+}
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--lux-cream);
 }
 ::-webkit-scrollbar-thumb {
-  background: #c5a059;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #0c1b33;
+  background: var(--lux-navy);
+  border-radius: 10px;
 }
 
-/* Smooth transitions and focus states */
-*, *::before, *::after {
-  box-sizing: border-box;
-  scroll-behavior: smooth;
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.fade-in {
+  animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.shimmer {
+  background: linear-gradient(to right, #eff1f3 4%, #e2e2e2 25%, #eff1f3 36%);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
 }
 
 /* Premium Utilities */
@@ -45,57 +67,67 @@
 }
 
 .premium-input {
-  @apply w-full px-6 py-4 rounded-2xl bg-white border border-lux-navy/10 focus:border-lux-gold focus:ring-4 focus:ring-lux-gold/5 outline-none transition-all duration-300 placeholder:text-lux-navy/20 text-lux-navy;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border-radius: 1rem;
+  background-color: white;
+  border: 1px solid rgba(12, 27, 51, 0.1);
+  outline: none;
+  transition: all 0.3s ease;
+  color: var(--lux-navy);
+}
+
+.premium-input:focus {
+  border-color: var(--lux-gold);
+  box-shadow: 0 0 0 4px rgba(197, 160, 89, 0.05);
 }
 
 .premium-button-gold {
-  @apply px-10 py-5 premium-gradient-gold text-white font-bold rounded-full hover:shadow-[0_0_30px_rgba(197,160,89,0.4)] transition-all duration-300 uppercase tracking-widest text-sm disabled:opacity-50 disabled:cursor-not-allowed;
+  padding: 1.25rem 2.5rem;
+  background: linear-gradient(135deg, #c5a059 0%, #b38b43 100%);
+  color: white;
+  font-weight: 700;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+}
+
+.premium-button-gold:hover {
+  box-shadow: 0 0 30px rgba(197, 160, 89, 0.4);
 }
 
 .premium-button-navy {
-  @apply px-10 py-5 bg-lux-navy text-white font-bold rounded-full hover:bg-lux-gold transition-all duration-300 uppercase tracking-widest text-sm disabled:opacity-50 disabled:cursor-not-allowed;
+  padding: 1.25rem 2.5rem;
+  background-color: var(--lux-navy);
+  color: white;
+  font-weight: 700;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+}
+
+.premium-button-navy:hover {
+  background-color: var(--lux-gold);
 }
 
 .luxury-badge {
-  @apply px-4 py-1.5 bg-lux-gold/10 text-lux-gold text-[10px] font-black uppercase tracking-widest rounded-full border border-lux-gold/20;
+  padding: 0.375rem 1rem;
+  background-color: rgba(197, 160, 89, 0.1);
+  color: var(--lux-gold);
+  font-size: 0.625rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-radius: 9999px;
+  border: 1px solid rgba(197, 160, 89, 0.2);
 }
 
 .page-transition {
   animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Focus visible for keyboard navigation */
-:focus-visible {
-  outline: 2px solid #c5a059;
-  outline-offset: 2px;
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.fade-in {
-  animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-.shimmer {
-  background: linear-gradient(90deg, #f8f8f8 25%, #f0f0f0 50%, #f8f8f8 75%);
-  background-size: 200% 100%;
-  animation: shimmer 2s infinite linear;
-}
-
-/* Common Components */
-.hero-bg {
-  background: linear-gradient(rgba(12, 27, 51, 0.4), rgba(12, 27, 51, 0.6)), url('/images/backgrounds/background.jpg');
-  background-size: cover;
-  background-position: center;
 }
 
 .card-hover {
@@ -107,35 +139,18 @@
   box-shadow: 0 30px 60px -12px rgba(12, 27, 51, 0.15);
 }
 
-.btn-loading {
-  pointer-events: none;
-  opacity: 0.7;
+/* Specific UI Elements */
+.hero-bg {
+  background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600');
+  background-size: cover;
+  background-position: center;
 }
 
-/* Booking specific */
-.slot-btn.active {
-  background: #0ea5e9;
-  color: white;
-  border-color: #0ea5e9;
+.animate-pulse-slow {
+  animation: pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-.slot-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.flatpickr-day.selected {
-  background: #0ea5e9 !important;
-  border-color: #0ea5e9 !important;
-}
-
-/* Ticket specific */
-.ticket-pattern { 
-  background-image: radial-gradient(circle at 10px 10px, transparent 10px, white 10px); 
-  background-size: 20px 20px; 
-  background-position: -10px -10px; 
-}
-
-.dashed-line { 
-  border-top: 2px dashed #e2e8f0; 
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1.05); }
+  50% { opacity: 0.8; transform: scale(1); }
 }
