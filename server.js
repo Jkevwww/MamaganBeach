@@ -60,11 +60,26 @@ app.use((req, res, next) => {
     return res.status(403).send(`
       <!DOCTYPE html>
       <html>
-      <head><title>Desktop Only</title></head>
-      <body style="font-family:sans-serif;text-align:center;padding:50px;">
-        <h1>🖥️ Desktop Only</h1>
-        <p>This application is not available on mobile devices (Android/iOS).</p>
-        <p>Please access this site from a desktop computer.</p>
+      <head>
+        <title>Exclusive Desktop Experience | Mamagan Beach Resort</title>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;600&display=swap" rel="stylesheet">
+        <style>
+          body { font-family: 'Inter', sans-serif; background-color: #fcfaf7; color: #0c1b33; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
+          .container { max-width: 400px; padding: 40px; }
+          h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 20px; }
+          p { line-height: 1.6; color: rgba(12, 27, 51, 0.6); margin-bottom: 30px; font-size: 0.9rem; }
+          .icon { font-size: 4rem; margin-bottom: 20px; color: #c5a059; }
+          .btn { display: inline-block; padding: 15px 30px; background-color: #0c1b33; color: #fff; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.2em; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="icon">🖥️</div>
+          <h1>Desktop Exclusive</h1>
+          <p>The Mamagan Beach Resort premium booking suite is optimized for high-resolution desktop displays to ensure the highest level of service and detail.</p>
+          <p>Please return using a workstation or laptop to continue your journey.</p>
+          <div style="font-size: 0.6rem; color: #c5a059; font-weight: 800; letter-spacing: 0.3em; text-transform: uppercase;">Where luxury meets the horizon</div>
+        </div>
       </body>
       </html>
     `);

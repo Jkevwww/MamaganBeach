@@ -2,129 +2,132 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <!-- Viewport removed - desktop only -->
-
-  <title>Admin Dashboard - Mamagan Beach Resort</title>
+  <title>Executive Control | Mamagan Beach Resort</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/tailwind-config.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="bg-gray-50 font-sans text-gray-800">
+<body class="bg-lux-cream font-sans text-lux-navy">
   <div class="flex h-screen overflow-hidden">
     <!-- Sidebar -->
-    <aside class="w-64 bg-white border-r border-gray-200 flex-shrink-0 hidden md:flex flex-col">
-      <div class="p-6 border-b border-gray-100">
-        <a href="/" class="flex items-center gap-2">
-          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12"><span class="font-bold text-2xl text-ocean-800">Mamagan Fun & Adventure Beach Resort</span>
+    <aside class="w-80 bg-white border-r border-lux-navy/5 flex-shrink-0 hidden md:flex flex-col relative z-20">
+      <div class="p-10 border-b border-lux-navy/5">
+        <a href="/" class="flex items-center gap-4 group">
+          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12 group-hover:scale-110 transition-transform">
+          <div class="flex flex-col">
+            <span class="luxury-heading font-bold text-xl leading-none">Mamagan</span>
+            <span class="text-[8px] font-black uppercase tracking-[0.4em] text-lux-gold mt-1">Beach Resort</span>
+          </div>
         </a>
-        <p class="text-xs text-gray-400 mt-1">Admin Panel</p>
       </div>
-      <nav id="admin-nav" class="flex-1 p-4 space-y-1"></nav>
-      <div class="p-4 border-t border-gray-100">
-        <button onclick="handleSignOut()" class="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition">
-          <i class="fas fa-sign-out-alt w-5 text-center"></i>
-          <span class="font-medium">Sign Out</span>
+      <nav id="admin-nav" class="flex-1 p-6 space-y-2"></nav>
+      <div class="p-8 border-t border-lux-navy/5">
+        <button onclick="handleSignOut()" class="w-full flex items-center gap-4 px-6 py-4 text-red-600 hover:bg-red-50 rounded-2xl transition-all group">
+          <i class="fas fa-sign-out-alt w-5 text-center group-hover:-translate-x-1 transition-transform"></i>
+          <span class="text-[10px] font-black uppercase tracking-widest">Terminate Session</span>
         </button>
       </div>
     </aside>
 
     <!-- Main Content -->
-    <div class="flex-1 overflow-y-auto">
+    <div class="flex-1 overflow-y-auto bg-lux-cream/50">
       <!-- Top Bar -->
-      <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
-        <div class="flex items-center gap-3">
-          <!-- Mobile sidebar toggle removed - desktop only -->
-
-          <h1 class="text-xl font-bold text-gray-900">Dashboard</h1>
+      <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-10">
+        <div>
+          <h1 class="luxury-heading text-2xl font-bold text-lux-navy">Executive Dashboard</h1>
+          <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]" id="current-date"></p>
         </div>
-        <div class="flex items-center gap-4">
-          <span class="text-sm text-gray-500" id="current-date"></span>
+        <div class="flex items-center gap-8">
           <div id="auth-nav" class="flex items-center gap-3"></div>
-          <!-- Mobile logout button removed - desktop only -->
-
         </div>
       </header>
 
-      <main class="p-6">
+      <main class="p-10 space-y-10 page-transition">
         <!-- Stats Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
-          <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-            <div class="flex items-center justify-between mb-3">
-              <span class="text-gray-500 text-sm">Total Bookings</span>
-              <div class="w-10 h-10 bg-ocean-100 rounded-xl flex items-center justify-center"><i class="fas fa-calendar-check text-ocean-600"></i></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+          <div class="bg-white rounded-[2rem] p-8 border border-lux-navy/5 premium-shadow group hover:bg-lux-navy transition-all duration-500">
+            <div class="flex items-center justify-between mb-6">
+              <span class="text-[8px] font-black uppercase tracking-widest text-lux-navy/40 group-hover:text-white/40">Volume</span>
+              <div class="w-10 h-10 bg-lux-gold/10 rounded-xl flex items-center justify-center group-hover:bg-lux-gold"><i class="fas fa-calendar-check text-lux-gold group-hover:text-lux-navy text-xs"></i></div>
             </div>
-            <p class="text-2xl font-bold text-gray-900" id="stat-bookings">-</p>
+            <p class="text-3xl font-black text-lux-navy group-hover:text-white" id="stat-bookings">-</p>
+            <p class="text-[8px] font-bold text-lux-navy/30 group-hover:text-white/30 uppercase tracking-widest mt-1">Total Reservations</p>
           </div>
-          <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-            <div class="flex items-center justify-between mb-3">
-              <span class="text-gray-500 text-sm">Today</span>
-              <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center"><i class="fas fa-sun text-green-600"></i></div>
+          <div class="bg-white rounded-[2rem] p-8 border border-lux-navy/5 premium-shadow group hover:bg-lux-navy transition-all duration-500">
+            <div class="flex items-center justify-between mb-6">
+              <span class="text-[8px] font-black uppercase tracking-widest text-lux-navy/40 group-hover:text-white/40">Daily</span>
+              <div class="w-10 h-10 bg-green-500/10 rounded-xl flex items-center justify-center group-hover:bg-green-500"><i class="fas fa-sun text-green-600 group-hover:text-white text-xs"></i></div>
             </div>
-            <p class="text-2xl font-bold text-gray-900" id="stat-today">-</p>
+            <p class="text-3xl font-black text-lux-navy group-hover:text-white" id="stat-today">-</p>
+            <p class="text-[8px] font-bold text-lux-navy/30 group-hover:text-white/30 uppercase tracking-widest mt-1">New Arrivals</p>
           </div>
-          <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-            <div class="flex items-center justify-between mb-3">
-              <span class="text-gray-500 text-sm">Pending Pay</span>
-              <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center"><i class="fas fa-clock text-yellow-600"></i></div>
+          <div class="bg-white rounded-[2rem] p-8 border border-lux-navy/5 premium-shadow group hover:bg-lux-navy transition-all duration-500">
+            <div class="flex items-center justify-between mb-6">
+              <span class="text-[8px] font-black uppercase tracking-widest text-lux-navy/40 group-hover:text-white/40">Receivables</span>
+              <div class="w-10 h-10 bg-lux-gold/10 rounded-xl flex items-center justify-center group-hover:bg-lux-gold"><i class="fas fa-clock text-lux-gold group-hover:text-lux-navy text-xs"></i></div>
             </div>
-            <p class="text-2xl font-bold text-gray-900" id="stat-pending">-</p>
+            <p class="text-3xl font-black text-lux-navy group-hover:text-white" id="stat-pending">-</p>
+            <p class="text-[8px] font-bold text-lux-navy/30 group-hover:text-white/30 uppercase tracking-widest mt-1">Pending Settlement</p>
           </div>
-          <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-            <div class="flex items-center justify-between mb-3">
-              <span class="text-gray-500 text-sm">Revenue</span>
-              <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center"><i class="fas fa-peso-sign text-green-600"></i></div>
+          <div class="bg-white rounded-[2rem] p-8 border border-lux-navy/5 premium-shadow group hover:bg-lux-navy transition-all duration-500 col-span-1 md:col-span-1 lg:col-span-1 xl:col-span-2">
+            <div class="flex items-center justify-between mb-6">
+              <span class="text-[8px] font-black uppercase tracking-widest text-lux-navy/40 group-hover:text-white/40">Gross Revenue</span>
+              <div class="w-10 h-10 bg-green-500/10 rounded-xl flex items-center justify-center group-hover:bg-green-500"><i class="fas fa-peso-sign text-green-600 group-hover:text-white text-xs"></i></div>
             </div>
-            <p class="text-2xl font-bold text-gray-900" id="stat-revenue">-</p>
+            <p class="text-3xl font-black text-lux-navy group-hover:text-white" id="stat-revenue">-</p>
+            <p class="text-[8px] font-bold text-lux-navy/30 group-hover:text-white/30 uppercase tracking-widest mt-1">Lifetime Inflow</p>
           </div>
-          <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-            <div class="flex items-center justify-between mb-3">
-              <span class="text-gray-500 text-sm">Guests</span>
-              <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center"><i class="fas fa-users text-purple-600"></i></div>
+          <div class="bg-white rounded-[2rem] p-8 border border-lux-navy/5 premium-shadow group hover:bg-lux-navy transition-all duration-500">
+            <div class="flex items-center justify-between mb-6">
+              <span class="text-[8px] font-black uppercase tracking-widest text-lux-navy/40 group-hover:text-white/40">Inventory</span>
+              <div class="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center group-hover:bg-purple-500"><i class="fas fa-water text-purple-600 group-hover:text-white text-xs"></i></div>
             </div>
-            <p class="text-2xl font-bold text-gray-900" id="stat-users">-</p>
-          </div>
-          <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-            <div class="flex items-center justify-between mb-3">
-              <span class="text-gray-500 text-sm">Facilities</span>
-              <div class="w-10 h-10 bg-coral-100 rounded-xl flex items-center justify-center"><i class="fas fa-water text-coral-600"></i></div>
-            </div>
-            <p class="text-2xl font-bold text-gray-900" id="stat-facilities">-</p>
+            <p class="text-3xl font-black text-lux-navy group-hover:text-white" id="stat-facilities">-</p>
+            <p class="text-[8px] font-bold text-lux-navy/30 group-hover:text-white/30 uppercase tracking-widest mt-1">Managed Assets</p>
           </div>
         </div>
 
         <!-- Charts Row -->
-        <div class="grid lg:grid-cols-2 gap-6 mb-8">
-          <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-            <h3 class="font-semibold text-gray-900 mb-4">Revenue Trend (Daily)</h3>
-            <canvas id="revenueChart" height="200"></canvas>
+        <div class="grid lg:grid-cols-2 gap-10">
+          <div class="bg-white rounded-[3rem] p-10 border border-lux-navy/5 premium-shadow">
+            <div class="flex items-center justify-between mb-8">
+              <h3 class="luxury-heading font-bold text-xl text-lux-navy">Financial Inflow Trend</h3>
+              <span class="text-[8px] font-black uppercase tracking-widest text-lux-navy/30">Last 7 Cycles</span>
+            </div>
+            <canvas id="revenueChart" height="220"></canvas>
           </div>
-          <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-            <h3 class="font-semibold text-gray-900 mb-4">Bookings by Facility Type</h3>
-            <canvas id="facilityChart" height="200"></canvas>
+          <div class="bg-white rounded-[3rem] p-10 border border-lux-navy/5 premium-shadow">
+            <div class="flex items-center justify-between mb-8">
+              <h3 class="luxury-heading font-bold text-xl text-lux-navy">Asset Allocation Index</h3>
+              <span class="text-[8px] font-black uppercase tracking-widest text-lux-navy/30">Occupancy %</span>
+            </div>
+            <canvas id="facilityChart" height="220"></canvas>
           </div>
         </div>
 
-        <!-- Recent Bookings -->
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-            <h3 class="font-semibold text-gray-900">Recent Bookings</h3>
-            <a href="/admin/bookings.html" class="text-ocean-600 text-sm font-medium hover:text-ocean-700">View All</a>
+        <!-- Recent Activity -->
+        <div class="bg-white rounded-[3rem] border border-lux-navy/5 premium-shadow overflow-hidden">
+          <div class="px-10 py-8 border-b border-lux-navy/5 flex justify-between items-center">
+            <div>
+              <h3 class="luxury-heading font-bold text-xl text-lux-navy">Recent Reservations</h3>
+              <p class="text-[8px] font-bold text-lux-navy/30 uppercase tracking-widest mt-1">Live Transaction Stream</p>
+            </div>
+            <a href="/admin/bookings.html" class="px-6 py-3 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all">Audit All</a>
           </div>
           <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead class="bg-gray-50 text-gray-500">
-                <tr>
-                  <th class="px-6 py-3 text-left font-medium">Guest</th>
-                  <th class="px-6 py-3 text-left font-medium">Facility</th>
-                  <th class="px-6 py-3 text-left font-medium">Date</th>
-                  <th class="px-6 py-3 text-left font-medium">Amount</th>
-                  <th class="px-6 py-3 text-left font-medium">Status</th>
+            <table class="w-full text-left">
+              <thead>
+                <tr class="bg-lux-navy/5 text-[8px] font-black uppercase tracking-[0.3em] text-lux-navy/40">
+                  <th class="px-10 py-5">Guest Identity</th>
+                  <th class="px-10 py-5">Asset</th>
+                  <th class="px-10 py-5">Timeline</th>
+                  <th class="px-10 py-5">Inflow</th>
+                  <th class="px-10 py-5">Protocol Status</th>
                 </tr>
               </thead>
-              <tbody id="recent-bookings" class="divide-y divide-gray-100"></tbody>
+              <tbody id="recent-bookings" class="divide-y divide-lux-navy/5"></tbody>
             </table>
           </div>
         </div>
@@ -139,37 +142,43 @@
   <script>
     if (!requireAdmin()) throw new Error('Admin required');
     renderAdminNav('dashboard');
-    document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-PH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-PH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).toUpperCase();
 
     let revenueChartInstance = null;
     let facilityChartInstance = null;
 
     async function loadDashboard() {
       const res = await api.get('/admin/dashboard');
-      if (!res.success) { showToast('Failed to load dashboard', 'error'); return; }
+      if (!res.success) { showToast('Dashboard synchronization failed.', 'error'); return; }
       const { stats, recent_bookings } = res.data;
 
       document.getElementById('stat-bookings').textContent = stats.total_bookings.toLocaleString();
       document.getElementById('stat-today').textContent = stats.today_bookings.toLocaleString();
       document.getElementById('stat-pending').textContent = stats.pending_payments.toLocaleString();
       document.getElementById('stat-revenue').textContent = 'PHP ' + stats.total_revenue.toLocaleString('en-PH', {minimumFractionDigits: 0});
-      document.getElementById('stat-users').textContent = stats.total_users.toLocaleString();
       document.getElementById('stat-facilities').textContent = stats.total_facilities.toLocaleString();
 
-      // Recent bookings table
       const tbody = document.getElementById('recent-bookings');
       tbody.innerHTML = recent_bookings.map(b => {
-        const statusColors = { pending: 'bg-yellow-50 text-yellow-700', confirmed: 'bg-green-50 text-green-700', cancelled: 'bg-red-50 text-red-700', completed: 'bg-gray-50 text-gray-700' };
+        const statusColors = { 
+          pending: 'bg-lux-gold/10 text-lux-gold border-lux-gold/20', 
+          confirmed: 'bg-green-500/10 text-green-600 border-green-500/20', 
+          cancelled: 'bg-red-500/10 text-red-600 border-red-500/20', 
+          completed: 'bg-lux-navy/10 text-lux-navy/50 border-lux-navy/20' 
+        };
         return `
-          <tr class="hover:bg-gray-50 transition">
-            <td class="px-6 py-4">
-              <div class="font-medium text-gray-900">${b.guest_name}</div>
-              <div class="text-xs text-gray-400">${b.id.substring(0,8)}</div>
+          <tr class="hover:bg-lux-cream/50 transition-colors group">
+            <td class="px-10 py-6">
+              <div class="text-sm font-bold text-lux-navy">${b.guest_name}</div>
+              <div class="text-[9px] font-mono text-lux-navy/30 uppercase tracking-widest mt-1">#${b.id.substring(0,8)}</div>
             </td>
-            <td class="px-6 py-4 text-gray-700">${b.facility_name}</td>
-            <td class="px-6 py-4 text-gray-500">${b.booking_date}<br><span class="text-xs">${b.time_slot}</span></td>
-            <td class="px-6 py-4 font-medium text-gray-900">PHP ${Number(b.total_amount).toLocaleString('en-PH',{minimumFractionDigits:2})}</td>
-            <td class="px-6 py-4"><span class="px-2 py-1 text-xs font-medium rounded-full ${statusColors[b.status]||'bg-gray-50'}">${b.status.toUpperCase()}</span></td>
+            <td class="px-10 py-6 text-xs font-medium text-lux-navy/60">${b.facility_name}</td>
+            <td class="px-10 py-6">
+              <div class="text-xs font-bold text-lux-navy/60">${b.booking_date}</div>
+              <div class="text-[9px] font-black text-lux-gold uppercase tracking-widest mt-1">${b.time_slot}</div>
+            </td>
+            <td class="px-10 py-6 text-sm font-black text-lux-navy">PHP ${Number(b.total_amount).toLocaleString('en-PH',{minimumFractionDigits:2})}</td>
+            <td class="px-10 py-6"><span class="px-3 py-1 text-[8px] font-black uppercase tracking-widest rounded-full border ${statusColors[b.status]||''}">${b.status}</span></td>
           </tr>
         `;
       }).join('');
@@ -186,8 +195,8 @@
         if (revenueChartInstance) revenueChartInstance.destroy();
         revenueChartInstance = new Chart(ctx, {
           type: 'line',
-          data: { labels, datasets: [{ label: 'Revenue (PHP)', data, borderColor: '#0ea5e9', backgroundColor: 'rgba(14,165,233,0.1)', fill: true, tension: 0.4 }] },
-          options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+          data: { labels, datasets: [{ label: 'Revenue', data, borderColor: '#c5a059', backgroundColor: 'rgba(197,160,89,0.05)', fill: true, tension: 0.4, borderWidth: 3, pointRadius: 4, pointBackgroundColor: '#0c1b33', pointBorderColor: '#c5a059' }] },
+          options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(12,27,51,0.05)' } }, x: { grid: { display: false } } } }
         });
       }
 
@@ -199,8 +208,8 @@
         if (facilityChartInstance) facilityChartInstance.destroy();
         facilityChartInstance = new Chart(ctx2, {
           type: 'bar',
-          data: { labels, datasets: [{ label: 'Occupancy %', data, backgroundColor: '#0ea5e9', borderRadius: 6 }] },
-          options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100 } } }
+          data: { labels, datasets: [{ label: 'Occupancy %', data, backgroundColor: '#0c1b33', borderRadius: 8, hoverBackgroundColor: '#c5a059' }] },
+          options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100, grid: { color: 'rgba(12,27,51,0.05)' } }, x: { grid: { display: false } } } }
         });
       }
     }

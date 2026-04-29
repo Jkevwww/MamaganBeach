@@ -94,12 +94,12 @@ router.get(
   }
 );
 
-// Facebook OAuth
-router.get('/facebook', passport.authenticate('facebook', { scope: ['email'] }));
+// GitHub OAuth
+router.get('/github', passport.authenticate('github', { scope: ['user:email'] }));
 
 router.get(
-  '/facebook/callback',
-  passport.authenticate('facebook', { session: false, failureRedirect: '/login.html?error=oauth_failed' }),
+  '/github/callback',
+  passport.authenticate('github', { session: false, failureRedirect: '/login.html?error=oauth_failed' }),
   (req, res) => {
     const token = generateToken(req.user);
     res.redirect(`/auth-callback.html?token=${token}`);

@@ -44,6 +44,26 @@
   letter-spacing: -0.01em;
 }
 
+.premium-input {
+  @apply w-full px-6 py-4 rounded-2xl bg-white border border-lux-navy/10 focus:border-lux-gold focus:ring-4 focus:ring-lux-gold/5 outline-none transition-all duration-300 placeholder:text-lux-navy/20 text-lux-navy;
+}
+
+.premium-button-gold {
+  @apply px-10 py-5 premium-gradient-gold text-white font-bold rounded-full hover:shadow-[0_0_30px_rgba(197,160,89,0.4)] transition-all duration-300 uppercase tracking-widest text-sm disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.premium-button-navy {
+  @apply px-10 py-5 bg-lux-navy text-white font-bold rounded-full hover:bg-lux-gold transition-all duration-300 uppercase tracking-widest text-sm disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.luxury-badge {
+  @apply px-4 py-1.5 bg-lux-gold/10 text-lux-gold text-[10px] font-black uppercase tracking-widest rounded-full border border-lux-gold/20;
+}
+
+.page-transition {
+  animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 /* Focus visible for keyboard navigation */
 :focus-visible {
   outline: 2px solid #c5a059;

@@ -2,77 +2,88 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <!-- Viewport removed - desktop only -->
-
-  <title>Create Account - Mamagan Beach Resort</title>
+  <title>Membership Application | Mamagan Beach Resort Collection</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/tailwind-config.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-<body class="bg-ocean-50 font-sans">
-  <div class="min-h-screen flex flex-col items-center justify-center py-12 px-4">
-    <div class="max-w-md w-full">
-      <div class="text-center mb-8">
-        <a href="/" class="inline-flex items-center gap-3 mb-6">
-          <img src="/images/logos/LOGO.png" alt="Mamagan Resort Logo" class="h-12">
-          <span class="font-bold text-3xl text-ocean-900">Mamagan Beach Resort</span>
-        </a>
-        <h1 class="text-3xl font-bold text-gray-900">Create Your Account</h1>
-        <p class="text-gray-600 mt-2">Start your adventure with us today!</p>
-      </div>
+<body class="bg-lux-dark font-sans text-lux-navy min-h-screen flex items-center justify-center relative overflow-hidden py-20">
+  <!-- Premium Background -->
+  <div class="absolute inset-0 z-0">
+    <div class="absolute inset-0 bg-lux-navy/60 z-10"></div>
+    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600')] bg-cover bg-center scale-105 animate-pulse-slow"></div>
+  </div>
 
-      <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-        <form id="register-form" class="space-y-5">
-          <div>
-            <label for="full_name" class="block text-sm font-medium text-gray-800 mb-1">Full Name</label>
-            <input type="text" id="full_name" required autocomplete="name" class="w-full px-4 py-3 rounded-xl bg-gray-50 border-gray-200 focus:border-ocean-500 focus:ring-2 focus:ring-ocean-200 outline-none transition duration-300" placeholder="Juan Dela Cruz">
+  <main class="relative z-10 w-full max-w-xl px-6 page-transition">
+    <div class="text-center mb-10">
+      <a href="/" class="inline-flex items-center gap-3 mb-8 group">
+        <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-16 group-hover:scale-110 transition-transform duration-500">
+        <span class="luxury-heading font-bold text-3xl text-white tracking-tight">Mamagan <span class="text-lux-gold">Beach</span></span>
+      </a>
+      <h1 class="luxury-heading text-4xl font-bold text-white mb-2">Join the Collection</h1>
+      <p class="text-white/50 font-light tracking-widest text-[10px] uppercase">Begin your journey into bespoke coastal luxury</p>
+    </div>
+
+    <div class="glass-card p-10 md:p-12 rounded-[2.5rem] premium-shadow border border-white/10 backdrop-blur-2xl">
+      <form id="register-form" class="space-y-6">
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label for="full_name" class="block text-[10px] font-black uppercase tracking-[0.2em] text-white/40 ml-2">Full Legal Name</label>
+            <input type="text" id="full_name" required class="premium-input bg-white/5 border-white/10 text-white focus:bg-white focus:text-lux-navy" placeholder="Juan Dela Cruz">
           </div>
-          <div>
-            <label for="email" class="block text-sm font-medium text-gray-800 mb-1">Email Address</label>
-            <input type="email" id="email" required autocomplete="email" class="w-full px-4 py-3 rounded-xl bg-gray-50 border-gray-200 focus:border-ocean-500 focus:ring-2 focus:ring-ocean-200 outline-none transition duration-300" placeholder="you@example.com">
+          <div class="space-y-2">
+            <label for="email" class="block text-[10px] font-black uppercase tracking-[0.2em] text-white/40 ml-2">Digital Identity</label>
+            <input type="email" id="email" required class="premium-input bg-white/5 border-white/10 text-white focus:bg-white focus:text-lux-navy" placeholder="email@example.com">
           </div>
-          <div>
-            <label for="phone" class="block text-sm font-medium text-gray-800 mb-1">Phone <span class="text-gray-400">(optional)</span></label>
-            <input type="tel" id="phone" autocomplete="tel" class="w-full px-4 py-3 rounded-xl bg-gray-50 border-gray-200 focus:border-ocean-500 focus:ring-2 focus:ring-ocean-200 outline-none transition duration-300" placeholder="+63 912 345 6789">
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label for="phone" class="block text-[10px] font-black uppercase tracking-[0.2em] text-white/40 ml-2">Contact Number</label>
+            <input type="tel" id="phone" class="premium-input bg-white/5 border-white/10 text-white focus:bg-white focus:text-lux-navy" placeholder="+63 900 000 0000">
           </div>
-          <div>
-            <label for="password" class="block text-sm font-medium text-gray-800 mb-1">Password</label>
+          <div class="space-y-2 relative">
+            <label for="password" class="block text-[10px] font-black uppercase tracking-[0.2em] text-white/40 ml-2">Access Key</label>
             <div class="relative">
-              <input type="password" id="password" required minlength="6" autocomplete="new-password" class="w-full px-4 py-3 rounded-xl bg-gray-50 border-gray-200 focus:border-ocean-500 focus:ring-2 focus:ring-ocean-200 outline-none transition duration-300" placeholder="At least 6 characters">
-              <button type="button" onclick="togglePassword('password')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
+              <input type="password" id="password" required minlength="6" class="premium-input bg-white/5 border-white/10 text-white focus:bg-white focus:text-lux-navy" placeholder="••••••••">
+              <button type="button" onclick="togglePassword('password')" class="absolute right-6 top-1/2 -translate-y-1/2 text-white/20 hover:text-lux-gold transition-colors">
                 <i class="fas fa-eye"></i>
               </button>
             </div>
           </div>
-          <button type="submit" id="register-btn" class="w-full py-3 bg-ocean-600 text-white font-semibold rounded-xl hover:bg-ocean-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ocean-500 transition-transform transform hover:scale-105 flex items-center justify-center gap-2 shadow-md">
-            <span>Create Account</span>
+        </div>
+
+        <div class="pt-4">
+          <button type="submit" id="register-btn" class="premium-button-gold w-full flex items-center justify-center gap-4 group">
+            <span>Apply for Membership</span>
             <i id="register-spinner" class="fas fa-circle-notch fa-spin hidden"></i>
+            <i class="fas fa-crown group-hover:rotate-12 transition-transform text-xs"></i>
           </button>
-        </form>
-
-        <p class="text-center text-sm text-gray-500 mt-6">Already have an account? <a href="/login.html" class="text-ocean-600 font-medium hover:text-ocean-700">Sign in</a></p>
-
-        <div class="relative my-6">
-          <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-200"></div></div>
-          <div class="relative flex justify-center text-sm"><span class="px-4 bg-white text-gray-500">or continue with</span></div>
         </div>
+      </form>
 
-        <div class="grid grid-cols-2 gap-3">
-          <a href="/api/auth/google" class="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-200 rounded-xl text-gray-700 font-medium hover:bg-gray-50 transition-transform transform hover:scale-105">
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-6 h-6" alt="Google">
-            Google
-          </a>
-          <a href="/api/auth/facebook" class="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-200 rounded-xl text-gray-700 font-medium hover:bg-gray-50 transition-transform transform hover:scale-105">
-            <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" class="w-6 h-6" alt="Facebook">
-            Facebook
-          </a>
-        </div>
+      <div class="relative my-10">
+        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-white/10"></div></div>
+        <div class="relative flex justify-center text-[10px] font-black uppercase tracking-[0.3em]"><span class="px-4 bg-transparent text-white/20">Social Integration</span></div>
       </div>
-      <p class="text-center text-xs text-gray-400 mt-8">© 2024 Mamagan Beach Resort. All rights reserved.</p>
+
+      <div class="grid grid-cols-2 gap-4">
+        <a href="/api/auth/google" class="flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-lux-navy transition-all">
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4" alt="Google">
+          Google
+        </a>
+        <a href="/api/auth/github" class="flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-lux-navy transition-all">
+          <i class="fab fa-github text-base"></i>
+          GitHub
+        </a>
+      </div>
     </div>
-  </div>
+
+    <p class="text-center mt-10 text-[10px] font-bold uppercase tracking-widest text-white/30">
+      Already a member? <a href="/login.html" class="text-lux-gold hover:text-white transition-colors border-b border-lux-gold/30 pb-0.5">Access Your Account</a>
+    </p>
+  </main>
 
   <script src="/js/api.js?v=2"></script>
   <script src="/js/auth.js?v=2"></script>
@@ -83,67 +94,34 @@
       input.type = input.type === 'password' ? 'text' : 'password';
     }
 
-    function validateField(id, condition, msg) {
-      const el = document.getElementById(id);
-      let hint = document.getElementById(id + '-hint');
-      if (!hint) {
-        hint = document.createElement('p');
-        hint.id = id + '-hint';
-        hint.className = 'text-xs mt-1 hidden text-red-500';
-        el.parentNode.appendChild(hint);
-      }
-      if (condition) {
-        el.classList.remove('border-red-300');
-        el.classList.add('border-gray-200');
-        hint.classList.add('hidden');
-      } else {
-        el.classList.remove('border-gray-200');
-        el.classList.add('border-red-300');
-        hint.textContent = msg;
-        hint.classList.remove('hidden');
-      }
-    }
-
-    document.getElementById('full_name').addEventListener('blur', (e) => {
-      validateField('full_name', e.target.value.trim().length >= 2, 'Please enter your full name.');
-    });
-    document.getElementById('email').addEventListener('blur', (e) => {
-      validateField('email', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.target.value), 'Please enter a valid email address.');
-    });
-    document.getElementById('password').addEventListener('input', (e) => {
-      validateField('password', e.target.value.length >= 6, 'Password must be at least 6 characters.');
-    });
-
     document.getElementById('register-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const full_name = document.getElementById('full_name').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      if (!full_name || full_name.length < 2) { showToast('Please enter your full name.', 'warning'); return; }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast('Please enter a valid email address.', 'warning'); return; }
-      if (password.length < 6) { showToast('Password must be at least 6 characters.', 'warning'); return; }
-
       const btn = document.getElementById('register-btn');
       const spinner = document.getElementById('register-spinner');
       btn.disabled = true;
       spinner.classList.remove('hidden');
 
-      const res = await api.post('/auth/register', {
-        full_name,
-        email,
-        phone: document.getElementById('phone').value,
-        password,
-      });
+      try {
+        const res = await api.post('/auth/register', {
+          full_name: document.getElementById('full_name').value.trim(),
+          email: document.getElementById('email').value.trim(),
+          phone: document.getElementById('phone').value,
+          password: document.getElementById('password').value,
+        });
 
-      btn.disabled = false;
-      spinner.classList.add('hidden');
-
-      if (res.success) {
-        localStorage.setItem('token', res.token);
-        showToast('Account created successfully!', 'success');
-        setTimeout(() => { window.location.href = '/'; }, 800);
-      } else {
-        showToast(res.message || 'Registration failed', 'error');
+        if (res.success) {
+          localStorage.setItem('token', res.token);
+          showToast('Membership granted successfully.', 'success');
+          setTimeout(() => { window.location.href = '/'; }, 1000);
+        } else {
+          btn.disabled = false;
+          spinner.classList.add('hidden');
+          showToast(res.message || 'Application failed.', 'error');
+        }
+      } catch (error) {
+        btn.disabled = false;
+        spinner.classList.add('hidden');
+        showToast('System error. Please try again.', 'error');
       }
     });
   </script>

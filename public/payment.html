@@ -2,113 +2,125 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <!-- Viewport removed - desktop only -->
-
-  <title>Payment - Mamagan Beach Resort</title>
+  <title>Bespoke Settlement | Mamagan Beach Resort Collection</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/tailwind-config.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-<body class="bg-gray-50 font-sans text-gray-800">
-  <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-md shadow-sm z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-16">
-        <a href="/" class="flex items-center gap-2">
-          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12"><span class="font-bold text-2xl text-ocean-800">Mamagan Fun & Adventure Beach Resort</span>
+<body class="bg-lux-cream font-sans text-lux-navy">
+  <!-- Navbar -->
+  <nav class="fixed top-0 w-full bg-white/80 backdrop-blur-xl shadow-sm z-50 border-b border-lux-gold/10">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex justify-between items-center h-20">
+        <a href="/" class="flex items-center gap-3">
+          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-14">
+          <span class="luxury-heading font-bold text-2xl text-lux-navy tracking-tight">Mamagan <span class="text-lux-gold">Beach</span></span>
         </a>
-        <div class="hidden md:flex items-center gap-6">
-          <a href="/resorts.html" class="text-gray-600 hover:text-ocean-600 font-medium transition">Resorts</a>
-          <a href="/my-bookings.html" class="text-gray-600 hover:text-ocean-600 font-medium transition">My Bookings</a>
-          <div id="auth-nav" class="flex items-center gap-3"></div>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="/resorts.html" class="text-lux-navy/70 hover:text-lux-gold font-medium transition-colors uppercase tracking-widest text-xs">Resorts</a>
+          <a href="/my-bookings.html" class="text-lux-navy/70 hover:text-lux-gold font-medium transition-colors uppercase tracking-widest text-xs">Bookings</a>
         </div>
-        <!-- Mobile menu button removed - desktop only -->
-
       </div>
     </div>
-    <!-- Mobile menu removed - desktop only -->
-
   </nav>
 
-  <main class="pt-24 pb-20">
-    <div class="max-w-2xl mx-auto px-4">
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-10">
-        <div class="text-center mb-8">
-          <div class="w-16 h-16 bg-ocean-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i class="fas fa-credit-card text-ocean-600 text-2xl"></i>
-          </div>
-          <h1 class="text-2xl font-bold text-gray-900">Complete Your Payment</h1>
-          <p class="text-gray-500 mt-1">Secure checkout powered by PayMongo</p>
-        </div>
+  <main class="pt-32 pb-32">
+    <div class="max-w-4xl mx-auto px-6 page-transition">
+      <div class="text-center mb-16">
+        <span class="text-lux-gold font-black uppercase tracking-[0.3em] text-[10px] mb-4 block">Secure Checkout</span>
+        <h1 class="luxury-heading text-4xl font-bold text-lux-navy">Finalize Your Reservation</h1>
+      </div>
 
-        <div id="booking-summary" class="bg-gray-50 rounded-xl p-5 mb-8">
-          <div class="flex justify-between items-center mb-3">
-            <span class="text-gray-500">Booking ID</span>
-            <span class="font-mono text-sm bg-white px-2 py-1 rounded border" id="pay-booking-id">-</span>
-          </div>
-          <div class="flex justify-between items-center mb-3">
-            <span class="text-gray-500">Facility</span>
-            <span class="font-medium" id="pay-facility">-</span>
-          </div>
-          <div class="flex justify-between items-center mb-3">
-            <span class="text-gray-500">Date & Time</span>
-            <span class="font-medium" id="pay-datetime">-</span>
-          </div>
-          <div class="border-t border-gray-200 my-3"></div>
-          <div class="flex justify-between items-center">
-            <span class="font-semibold text-gray-900">Total Amount</span>
-            <span class="text-2xl font-bold text-ocean-600" id="pay-total">PHP 0</span>
-          </div>
-        </div>
-
-        <div class="space-y-4">
-          <p class="text-sm font-medium text-gray-700">Select Payment Method</p>
-          <div class="grid grid-cols-2 gap-3">
-            <button onclick="selectMethod('gcash')" id="btn-gcash" class="method-btn p-4 border-2 border-gray-200 rounded-xl text-center hover:border-ocean-300 transition">
-              <img src="https://brandlogos.net/wp-content/uploads/2022/07/gcash-logo_brandlogos.net_kxdbq.png" class="h-8 mx-auto mb-2 object-contain" alt="GCash">
-              <span class="text-sm font-medium">GCash</span>
-            </button>
-            <button onclick="selectMethod('maya')" id="btn-maya" class="method-btn p-4 border-2 border-gray-200 rounded-xl text-center hover:border-ocean-300 transition">
-              <img src="https://www.svgrepo.com/show/331295/maya.svg" class="h-8 mx-auto mb-2 object-contain" alt="Maya">
-              <span class="text-sm font-medium">Maya</span>
-            </button>
-            <button onclick="selectMethod('grabpay')" id="btn-grabpay" class="method-btn p-4 border-2 border-gray-200 rounded-xl text-center hover:border-ocean-300 transition">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Grab_Logo_2023.svg/512px-Grab_Logo_2023.svg.png" class="h-8 mx-auto mb-2 object-contain" alt="GrabPay">
-              <span class="text-sm font-medium">GrabPay</span>
-            </button>
-            <button onclick="selectMethod('card')" id="btn-card" class="method-btn p-4 border-2 border-gray-200 rounded-xl text-center hover:border-ocean-300 transition">
-              <i class="fas fa-credit-card text-2xl text-gray-600 mb-2"></i>
-              <span class="text-sm font-medium block">Credit/Debit Card</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Credit Card Form -->
-        <div id="card-form" class="hidden mt-6 space-y-4">
-          <div>
-            <label class="block text-xs font-medium text-gray-500 mb-1">Card Number</label>
-            <input type="text" id="card-number" maxlength="19" oninput="formatCardNumber(this)" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-ocean-400 focus:ring-2 focus:ring-ocean-100 outline-none font-mono" placeholder="0000 0000 0000 0000">
-          </div>
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-medium text-gray-500 mb-1">Expiry (MM/YY)</label>
-              <input type="text" id="card-expiry" maxlength="5" oninput="formatExpiry(this)" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-ocean-400 focus:ring-2 focus:ring-ocean-100 outline-none font-mono" placeholder="MM/YY">
+      <div class="grid lg:grid-cols-2 gap-12">
+        <!-- Payment Methods -->
+        <div class="space-y-8">
+          <div class="glass-card p-10 rounded-[2.5rem] premium-shadow border border-lux-navy/5">
+            <h3 class="luxury-heading font-bold text-xl mb-8">Select Method</h3>
+            <div class="grid grid-cols-2 gap-4">
+              <button onclick="selectMethod('gcash')" id="btn-gcash" class="method-btn p-6 border-2 border-lux-navy/5 rounded-2xl text-center hover:border-lux-gold transition-all group">
+                <img src="https://brandlogos.net/wp-content/uploads/2022/07/gcash-logo_brandlogos.net_kxdbq.png" class="h-8 mx-auto mb-3 object-contain" alt="GCash">
+                <span class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 group-hover:text-lux-navy transition-colors">GCash</span>
+              </button>
+              <button onclick="selectMethod('maya')" id="btn-maya" class="method-btn p-6 border-2 border-lux-navy/5 rounded-2xl text-center hover:border-lux-gold transition-all group">
+                <img src="https://www.svgrepo.com/show/331295/maya.svg" class="h-8 mx-auto mb-3 object-contain" alt="Maya">
+                <span class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 group-hover:text-lux-navy transition-colors">Maya</span>
+              </button>
+              <button onclick="selectMethod('grabpay')" id="btn-grabpay" class="method-btn p-6 border-2 border-lux-navy/5 rounded-2xl text-center hover:border-lux-gold transition-all group">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Grab_Logo_2023.svg/512px-Grab_Logo_2023.svg.png" class="h-6 mx-auto mb-5 object-contain" alt="GrabPay">
+                <span class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 group-hover:text-lux-navy transition-colors">GrabPay</span>
+              </button>
+              <button onclick="selectMethod('card')" id="btn-card" class="method-btn p-6 border-2 border-lux-navy/5 rounded-2xl text-center hover:border-lux-gold transition-all group">
+                <i class="fas fa-credit-card text-2xl text-lux-navy/20 mb-3 group-hover:text-lux-navy transition-colors"></i>
+                <span class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 group-hover:text-lux-navy transition-colors block">Credit Card</span>
+              </button>
             </div>
-            <div>
-              <label class="block text-xs font-medium text-gray-500 mb-1">CVV</label>
-              <input type="text" id="card-cvv" maxlength="4" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-ocean-400 focus:ring-2 focus:ring-ocean-100 outline-none font-mono" placeholder="123">
+
+            <!-- Card Form -->
+            <div id="card-form" class="hidden mt-8 space-y-4 fade-in">
+              <div class="space-y-1">
+                <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Card Holder Number</label>
+                <input type="text" id="card-number" maxlength="19" oninput="formatCardNumber(this)" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="0000 0000 0000 0000">
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1">
+                  <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Expiration</label>
+                  <input type="text" id="card-expiry" maxlength="5" oninput="formatExpiry(this)" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="MM/YY">
+                </div>
+                <div class="space-y-1">
+                  <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">CVC</label>
+                  <input type="text" id="card-cvv" maxlength="4" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="000">
+                </div>
+              </div>
             </div>
+
+            <button onclick="payNow()" id="pay-btn" class="w-full mt-10 py-6 bg-lux-navy text-white font-black uppercase tracking-widest rounded-full hover:bg-lux-gold hover:shadow-2xl transition-all flex items-center justify-center gap-4 disabled:opacity-30 disabled:cursor-not-allowed" disabled>
+              <span>Authorize Settlement</span>
+              <i id="pay-spinner" class="fas fa-circle-notch fa-spin hidden"></i>
+            </button>
           </div>
         </div>
 
-        <button onclick="payNow()" id="pay-btn" class="w-full mt-8 py-4 bg-ocean-500 text-white font-semibold rounded-xl hover:bg-ocean-600 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-          <span>Pay Now</span>
-          <i id="pay-spinner" class="fas fa-circle-notch fa-spin hidden"></i>
-        </button>
-
-        <div class="mt-6 text-center">
-          <button onclick="simulatePayment()" class="text-sm text-gray-400 hover:text-gray-600 underline">Simulate Payment (Test Mode)</button>
+        <!-- Itinerary Summary -->
+        <div class="space-y-8">
+          <div class="bg-lux-navy rounded-[2.5rem] p-10 text-white premium-shadow relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-lux-gold/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+            <h3 class="luxury-heading font-bold text-2xl mb-8 relative z-10">Itinerary Summary</h3>
+            
+            <div class="space-y-6 relative z-10">
+              <div class="flex justify-between items-center border-b border-white/10 pb-4">
+                <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Reservation ID</span>
+                <span class="text-sm font-mono text-lux-gold" id="pay-booking-id">-</span>
+              </div>
+              <div class="flex justify-between items-center border-b border-white/10 pb-4">
+                <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Facility</span>
+                <span class="text-sm font-bold" id="pay-facility">-</span>
+              </div>
+              <div class="flex justify-between items-center border-b border-white/10 pb-4">
+                <span class="text-[10px] font-black uppercase tracking-widest text-white/40">Temporal Window</span>
+                <span class="text-sm font-bold" id="pay-datetime">-</span>
+              </div>
+              
+              <div class="pt-6">
+                <div class="flex justify-between items-end">
+                  <span class="text-[10px] font-black uppercase tracking-widest text-lux-gold">Total Investment</span>
+                  <div class="text-right">
+                    <span class="text-xs text-white/40 block mb-1">VAT Included</span>
+                    <span class="text-4xl font-black" id="pay-total">PHP 0</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="p-8 rounded-[2rem] border border-lux-navy/5 text-center">
+            <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-widest mb-4">Secured by PayMongo Enterprise</p>
+            <div class="flex justify-center gap-6 opacity-20 grayscale">
+              <i class="fab fa-cc-visa text-2xl"></i>
+              <i class="fab fa-cc-mastercard text-2xl"></i>
+              <i class="fab fa-cc-amex text-2xl"></i>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -118,39 +130,29 @@
   <script src="/js/auth.js?v=2"></script>
   <script src="/js/toast.js?v=2"></script>
   <script>
-    // Mobile menu functionality removed - desktop only
-
-
     if (!requireAuth()) throw new Error('Auth required');
 
     const params = new URLSearchParams(window.location.search);
     const bookingId = params.get('booking');
-    let booking = null;
     let selectedMethod = null;
 
     async function loadBooking() {
       if (!bookingId) { window.location.href = '/my-bookings.html'; return; }
       const res = await api.get(`/bookings/${bookingId}`);
       if (!res.success) { window.location.href = '/my-bookings.html'; return; }
-      booking = res.data;
-      if (booking.payment_status === 'paid') {
-        window.location.href = `/ticket.html?booking=${bookingId}`;
-        return;
-      }
-      document.getElementById('pay-booking-id').textContent = booking.id.substring(0, 8);
-      document.getElementById('pay-facility').textContent = booking.facility_name;
-      document.getElementById('pay-datetime').textContent = `${booking.booking_date} (${booking.time_slot})`;
-      document.getElementById('pay-total').textContent = `PHP ${Number(booking.total_amount).toLocaleString('en-PH', {minimumFractionDigits: 2})}`;
+      const b = res.data;
+      if (b.payment_status === 'paid') { window.location.href = `/ticket.html?booking=${bookingId}`; return; }
+      
+      document.getElementById('pay-booking-id').textContent = b.id.substring(0, 8).toUpperCase();
+      document.getElementById('pay-facility').textContent = b.facility_name;
+      document.getElementById('pay-datetime').textContent = `${b.booking_date} | ${b.time_slot}`;
+      document.getElementById('pay-total').textContent = `PHP ${Number(b.total_amount).toLocaleString('en-PH', {minimumFractionDigits: 2})}`;
     }
 
     function selectMethod(method) {
       selectedMethod = method;
-      document.querySelectorAll('.method-btn').forEach(btn => {
-        btn.classList.remove('border-ocean-500', 'bg-ocean-50');
-        btn.classList.add('border-gray-200');
-      });
-      document.getElementById(`btn-${method}`).classList.remove('border-gray-200');
-      document.getElementById(`btn-${method}`).classList.add('border-ocean-500', 'bg-ocean-50');
+      document.querySelectorAll('.method-btn').forEach(btn => btn.classList.remove('border-lux-gold', 'bg-lux-gold/5'));
+      document.getElementById(`btn-${method}`).classList.add('border-lux-gold', 'bg-lux-gold/5');
 
       const cardForm = document.getElementById('card-form');
       if (method === 'card') {
@@ -178,52 +180,31 @@
     function validateCard() {
       if (selectedMethod !== 'card') return;
       const num = document.getElementById('card-number').value.replace(/\s/g, '');
-      const expiry = document.getElementById('card-expiry').value;
+      const exp = document.getElementById('card-expiry').value;
       const cvv = document.getElementById('card-cvv').value;
-      const valid = num.length >= 15 && expiry.length === 5 && cvv.length >= 3;
-      document.getElementById('pay-btn').disabled = !valid;
+      document.getElementById('pay-btn').disabled = !(num.length >= 15 && exp.length === 5 && cvv.length >= 3);
     }
 
     document.getElementById('card-cvv').addEventListener('input', validateCard);
 
     async function payNow() {
-      if (!selectedMethod) return;
-      if (selectedMethod === 'card') {
-        const num = document.getElementById('card-number').value.replace(/\s/g, '');
-        const expiry = document.getElementById('card-expiry').value;
-        const cvv = document.getElementById('card-cvv').value;
-        if (num.length < 15 || expiry.length !== 5 || cvv.length < 3) {
-          showToast('Please enter valid card details.', 'warning');
-          return;
-        }
-      }
       const btn = document.getElementById('pay-btn');
       const spinner = document.getElementById('pay-spinner');
       btn.disabled = true;
       spinner.classList.remove('hidden');
 
+      // Simulate premium processing delay
       setTimeout(async () => {
         const res = await api.post('/payments/simulate-success', { booking_id: bookingId });
-        spinner.classList.add('hidden');
         if (res.success) {
-          window.location.href = `/ticket.html?booking=${bookingId}`;
+          showToast('Payment authorized successfully.', 'success');
+          setTimeout(() => { window.location.href = `/ticket.html?booking=${bookingId}`; }, 1000);
         } else {
-          showToast(res.message || 'Payment failed', 'error');
           btn.disabled = false;
+          spinner.classList.add('hidden');
+          showToast(res.message || 'Payment declined.', 'error');
         }
-      }, 2000);
-    }
-
-    async function simulatePayment() {
-      const btn = document.getElementById('pay-btn');
-      btn.disabled = true;
-      const res = await api.post('/payments/simulate-success', { booking_id: bookingId });
-      if (res.success) {
-        window.location.href = `/ticket.html?booking=${bookingId}`;
-      } else {
-        showToast(res.message || 'Simulation failed', 'error');
-        btn.disabled = false;
-      }
+      }, 2500);
     }
 
     loadBooking();
