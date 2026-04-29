@@ -11,69 +11,70 @@
 <body class="bg-lux-dark font-sans text-lux-navy min-h-screen flex items-center justify-center relative overflow-hidden">
   <!-- Premium Background -->
   <div class="absolute inset-0 z-0">
-    <div class="absolute inset-0 bg-lux-navy/60 z-10"></div>
+    <div class="absolute inset-0 bg-lux-navy/40 z-10"></div>
+    <div class="absolute inset-0 bg-white/10 z-20"></div>
     <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1506929662033-75393ca99962?w=1600')] bg-cover bg-center scale-105 animate-pulse-slow"></div>
   </div>
 
-  <main class="relative z-10 w-full max-w-md px-6 py-12 page-transition">
+  <main class="relative z-30 w-full max-w-md px-6 py-12 page-transition">
     <div class="text-center mb-10">
       <a href="/" class="inline-flex items-center gap-3 mb-8 group">
         <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-16 group-hover:scale-110 transition-transform duration-500">
         <span class="luxury-heading font-bold text-3xl text-white tracking-tight">Mamagan <span class="text-lux-gold">Beach</span></span>
       </a>
-      <h1 class="luxury-heading text-4xl font-bold text-white mb-2">Welcome Back</h1>
-      <p class="text-white/50 font-light tracking-widest text-[10px] uppercase">The peak of coastal luxury awaits</p>
+      <h1 class="luxury-heading text-4xl font-bold text-white mb-2 drop-shadow-lg">Welcome Back</h1>
+      <p class="text-white font-medium tracking-widest text-[10px] uppercase bg-lux-navy/30 inline-block px-4 py-1 rounded-full backdrop-blur-sm">The peak of coastal luxury awaits</p>
     </div>
 
-    <div class="glass-card p-10 rounded-[2.5rem] premium-shadow border border-white/10 backdrop-blur-2xl">
+    <div class="bg-white/95 p-10 rounded-[2.5rem] premium-shadow border border-white/20 backdrop-blur-2xl">
       <!-- Error Message -->
-      <div id="error-message" class="hidden mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-200 text-xs flex items-center gap-3 fade-in">
+      <div id="error-message" class="hidden mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-600 text-xs flex items-center gap-3 fade-in">
         <i class="fas fa-circle-exclamation"></i>
         <span id="error-text"></span>
       </div>
 
       <form id="login-form" class="space-y-6">
         <div class="space-y-2">
-          <label for="email" class="block text-[10px] font-black uppercase tracking-[0.2em] text-white/40 ml-2">Digital Identity</label>
-          <input type="email" id="email" required class="premium-input bg-white/5 border-white/10 text-white focus:bg-white focus:text-lux-navy" placeholder="email@example.com">
+          <label for="email" class="block text-[10px] font-black uppercase tracking-[0.2em] text-lux-navy/60 ml-2">Digital Identity</label>
+          <input type="email" id="email" required class="premium-input bg-lux-cream/50 border-lux-navy/10 text-lux-navy focus:bg-white" placeholder="email@example.com">
         </div>
 
         <div class="space-y-2 relative">
           <div class="flex justify-between items-center ml-2">
-            <label for="password" class="block text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Access Key</label>
-            <a href="/forgot-password.html" class="text-[9px] font-bold text-lux-gold uppercase tracking-widest hover:text-white transition-colors">Forgot?</a>
+            <label for="password" class="block text-[10px] font-black uppercase tracking-[0.2em] text-lux-navy/60">Access Key</label>
+            <a href="/forgot-password.html" class="text-[9px] font-bold text-lux-gold uppercase tracking-widest hover:text-lux-navy transition-colors">Forgot?</a>
           </div>
           <div class="relative">
-            <input type="password" id="password" required class="premium-input bg-white/5 border-white/10 text-white focus:bg-white focus:text-lux-navy" placeholder="••••••••">
-            <button type="button" id="password-toggle" class="absolute right-6 top-1/2 -translate-y-1/2 text-white/20 hover:text-lux-gold transition-colors">
+            <input type="password" id="password" required class="premium-input bg-lux-cream/50 border-lux-navy/10 text-lux-navy focus:bg-white" placeholder="••••••••">
+            <button type="button" id="password-toggle" class="absolute right-6 top-1/2 -translate-y-1/2 text-lux-navy/20 hover:text-lux-gold transition-colors">
               <i id="password-toggle-icon" class="fas fa-eye"></i>
             </button>
           </div>
         </div>
 
         <div class="flex items-center gap-3 ml-2">
-          <input type="checkbox" id="remember" class="w-4 h-4 rounded border-white/10 bg-white/5 text-lux-gold focus:ring-lux-gold focus:ring-offset-lux-dark">
-          <label for="remember" class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Maintain Session</label>
+          <input type="checkbox" id="remember" class="w-4 h-4 rounded border-lux-navy/10 bg-lux-cream/50 text-lux-gold focus:ring-lux-gold">
+          <label for="remember" class="text-[10px] font-bold text-lux-navy/40 uppercase tracking-widest">Maintain Session</label>
         </div>
 
-        <button type="submit" id="login-btn" class="premium-button-gold w-full flex items-center justify-center gap-4 group">
-          <span>Authorize Access</span>
+        <button type="submit" id="login-btn" class="premium-button-gold w-full flex items-center justify-center gap-4 group py-6 shadow-xl">
+          <span class="text-xs">Authorize Access</span>
           <i id="login-spinner" class="fas fa-circle-notch fa-spin hidden"></i>
           <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform text-xs"></i>
         </button>
       </form>
 
       <div class="relative my-10">
-        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-white/10"></div></div>
-        <div class="relative flex justify-center text-[10px] font-black uppercase tracking-[0.3em]"><span class="px-4 bg-transparent text-white/20">Social Integration</span></div>
+        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-lux-navy/5"></div></div>
+        <div class="relative flex justify-center text-[10px] font-black uppercase tracking-[0.3em]"><span class="px-4 bg-white text-lux-navy/20">Social Integration</span></div>
       </div>
 
       <div class="grid grid-cols-2 gap-4">
-        <a href="/api/auth/google" class="flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-lux-navy transition-all">
+        <a href="/api/auth/google" class="flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-white border border-lux-navy/5 text-lux-navy text-[10px] font-bold uppercase tracking-widest hover:bg-lux-cream transition-all shadow-sm">
           <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4" alt="Google">
           Google
         </a>
-        <a href="/api/auth/github" class="flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-lux-navy transition-all">
+        <a href="/api/auth/github" class="flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-white border border-lux-navy/5 text-lux-navy text-[10px] font-bold uppercase tracking-widest hover:bg-lux-cream transition-all shadow-sm">
           <i class="fab fa-github text-base"></i>
           GitHub
         </a>
