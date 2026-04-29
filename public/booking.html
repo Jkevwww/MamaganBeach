@@ -188,6 +188,7 @@
       document.getElementById('summary-qty').textContent = val;
       updateTotal();
     }
+    window.changeQty = changeQty;
 
     function updateTotal() {
       const qty = parseInt(document.getElementById('quantity').value);
