@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Asset Management | Mamagan Beach Resort</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-lux-cream font-sans text-lux-navy">
+  <div class="flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="w-80 bg-white border-r border-lux-navy/5 flex-shrink-0 hidden md:flex flex-col relative z-20">
+      <div class="p-10 border-b border-lux-navy/5">
+        <a href="/" class="flex items-center gap-4 group">
+          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12 group-hover:scale-110 transition-transform">
+          <div class="flex flex-col">
+            <span class="luxury-heading font-bold text-xl leading-none">Mamagan</span>
+            <span class="text-[8px] font-black uppercase tracking-[0.4em] text-lux-gold mt-1">Beach Resort</span>
+          </div>
+        </a>
+      </div>
+      <nav id="admin-nav" class="flex-1 p-6 space-y-2"></nav>
+      <div class="p-8 border-t border-lux-navy/5">
+        <button onclick="handleSignOut()" class="w-full flex items-center gap-4 px-6 py-4 text-red-600 hover:bg-red-50 rounded-2xl transition-all group">
+          <i class="fas fa-sign-out-alt w-5 text-center group-hover:-translate-x-1 transition-transform"></i>
+          <span class="text-[10px] font-black uppercase tracking-widest">Terminate Session</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-y-auto bg-lux-cream/50">
+      <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-10">
+        <div>
+          <h1 class="luxury-heading text-2xl font-bold text-lux-navy">Asset Management</h1>
+          <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">Manage resort facilities and inventory</p>
+        </div>
+        <div class="flex items-center gap-8">
+          <button onclick="openModal('facility-modal')" class="px-8 py-3 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all shadow-xl">
+            <i class="fas fa-plus mr-2"></i>Register New Asset
+          </button>
+          <div id="auth-nav" class="flex items-center gap-3"></div>
+        </div>
+      </header>
+
+      <main class="p-10 page-transition">
+        <div id="facilities-container" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+          <!-- Facilities will be injected here -->
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Facility Modal -->
+  <div id="facility-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6">
+    <div class="absolute inset-0 bg-lux-navy/40 backdrop-blur-sm" onclick="closeModal('facility-modal')"></div>
+    <div class="relative bg-white rounded-[3rem] w-full max-w-2xl overflow-hidden shadow-2xl fade-in">
+        <div class="p-10 border-b border-lux-navy/5 flex justify-between items-center">
+            <h3 class="luxury-heading text-2xl font-bold">Asset Registration</h3>
+            <button onclick="closeModal('facility-modal')" class="text-lux-navy/20 hover:text-lux-navy transition-colors"><i class="fas fa-times"></i></button>
+        </div>
+        <form id="facility-form" class="p-10 space-y-6">
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Asset Name</label>
+                    <input type="text" name="name" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="e.g. Royal Cabana">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Asset Type</label>
+                    <select name="type" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white">
+                        <option value="cabana">Cabana</option>
+                        <option value="day_bed">Day Bed</option>
+                        <option value="jet_ski">Jet Ski</option>
+                        <option value="island_tour">Island Tour</option>
+                    </select>
+                </div>
+            </div>
+            <div class="space-y-1">
+                <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Description</label>
+                <textarea name="description" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white h-24" placeholder="Describe the premium features..."></textarea>
+            </div>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Base Rate (PHP)</label>
+                    <input type="number" name="base_price" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Max Capacity</label>
+                    <input type="number" name="capacity" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Total Units</label>
+                    <input type="number" name="total_units" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white">
+                </div>
+            </div>
+            <button type="submit" class="premium-button-gold w-full flex items-center justify-center gap-4 group">
+                <span>Synchronize Asset</span>
+                <i class="fas fa-sync-alt group-hover:rotate-180 transition-transform"></i>
+            </button>
+        </form>
+    </div>
+  </div>
+
+  <script src="/js/api.js?v=2"></script>
+  <script src="/js/auth.js?v=2"></script>
+  <script src="/js/toast.js?v=2"></script>
+  <script src="/js/admin.js?v=2"></script>
+  <script>
+    if (!requireAdmin()) throw new Error('Admin required');
+    renderAdminNav('facilities');
+
+    async function loadFacilities() {
+      const res = await api.get('/facilities'); // Assuming global list, might need resort_id
+      const container = document.getElementById('facilities-container');
+      if (!res.success) { showToast('Sync failed.', 'error'); return; }
+      
+      container.innerHTML = res.data.map(f => `
+        <div class="bg-white rounded-[2.5rem] overflow-hidden premium-shadow border border-lux-navy/5 card-hover group">
+          <div class="h-48 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('${f.images?.[0] || 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600'}')">
+            <div class="absolute top-6 left-6">
+                <span class="px-4 py-1.5 bg-white/90 backdrop-blur text-lux-navy text-[8px] font-black uppercase tracking-[0.2em] rounded-full">${f.type.replace('_',' ')}</span>
+            </div>
+          </div>
+          <div class="p-8">
+            <div class="flex justify-between items-start mb-4">
+              <h3 class="luxury-heading font-bold text-xl text-lux-navy">${f.name}</h3>
+              <div class="flex gap-2">
+                <button onclick="editFacility('${f.id}')" class="text-lux-navy/20 hover:text-lux-gold transition-colors"><i class="fas fa-edit"></i></button>
+                <button onclick="deleteFacility('${f.id}')" class="text-lux-navy/20 hover:text-red-500 transition-colors"><i class="fas fa-trash"></i></button>
+              </div>
+            </div>
+            <div class="flex justify-between items-end">
+              <div>
+                <span class="text-[8px] font-black uppercase tracking-widest text-lux-navy/30 block mb-1">Inflow per Slot</span>
+                <span class="text-2xl font-black text-lux-navy">PHP ${Number(f.base_price).toLocaleString()}</span>
+              </div>
+              <div class="text-right">
+                <span class="text-[8px] font-black uppercase tracking-widest text-lux-navy/30 block mb-1">Availability</span>
+                <span class="text-xs font-bold text-lux-gold">${f.total_units} Active Units</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    loadFacilities();
+  </script>
+</body>
+</html>

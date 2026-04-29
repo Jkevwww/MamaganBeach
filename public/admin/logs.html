@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Security Registry | Mamagan Beach Resort</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-lux-cream font-sans text-lux-navy">
+  <div class="flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="w-80 bg-white border-r border-lux-navy/5 flex-shrink-0 hidden md:flex flex-col relative z-20">
+      <div class="p-10 border-b border-lux-navy/5">
+        <a href="/" class="flex items-center gap-4 group">
+          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12 group-hover:scale-110 transition-transform">
+          <div class="flex flex-col">
+            <span class="luxury-heading font-bold text-xl leading-none">Mamagan</span>
+            <span class="text-[8px] font-black uppercase tracking-[0.4em] text-lux-gold mt-1">Beach Resort</span>
+          </div>
+        </a>
+      </div>
+      <nav id="admin-nav" class="flex-1 p-6 space-y-2"></nav>
+      <div class="p-8 border-t border-lux-navy/5">
+        <button onclick="handleSignOut()" class="w-full flex items-center gap-4 px-6 py-4 text-red-600 hover:bg-red-50 rounded-2xl transition-all group">
+          <i class="fas fa-sign-out-alt w-5 text-center group-hover:-translate-x-1 transition-transform"></i>
+          <span class="text-[10px] font-black uppercase tracking-widest">Terminate Session</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-y-auto bg-lux-cream/50">
+      <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-10">
+        <div>
+          <h1 class="luxury-heading text-2xl font-bold text-lux-navy">Security Registry</h1>
+          <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">Audit system events and operational logs</p>
+        </div>
+        <div id="auth-nav" class="flex items-center gap-3"></div>
+      </header>
+
+      <main class="p-10 page-transition">
+        <div class="bg-white rounded-[3rem] border border-lux-navy/5 premium-shadow overflow-hidden">
+          <div class="px-10 py-8 border-b border-lux-navy/5 flex justify-between items-center">
+             <div class="flex gap-4">
+                <select class="px-6 py-3 rounded-full bg-lux-cream/30 border-transparent text-[8px] font-black uppercase tracking-widest text-lux-navy outline-none">
+                    <option>All Events</option>
+                    <option>Security</option>
+                    <option>Transactions</option>
+                    <option>Management</option>
+                </select>
+             </div>
+             <button class="text-[8px] font-black uppercase tracking-[0.2em] text-lux-gold hover:text-lux-navy transition-colors">Export Ledger <i class="fas fa-download ml-2"></i></button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="bg-lux-navy/5 text-[8px] font-black uppercase tracking-[0.3em] text-lux-navy/40">
+                  <th class="px-10 py-5">Timestamp</th>
+                  <th class="px-10 py-5">Agent</th>
+                  <th class="px-10 py-5">Event Protocol</th>
+                  <th class="px-10 py-5">Detail Narrative</th>
+                </tr>
+              </thead>
+              <tbody id="logs-list" class="divide-y divide-lux-navy/5">
+                <!-- Logs will be injected here -->
+                <tr class="hover:bg-lux-cream/50 transition-colors">
+                    <td class="px-10 py-6 text-[10px] font-mono text-lux-navy/40">2024-04-29 14:22:01</td>
+                    <td class="px-10 py-6 text-xs font-bold text-lux-navy">SYSTEM_KEEPER</td>
+                    <td class="px-10 py-6"><span class="px-3 py-1 bg-green-500/10 text-green-600 text-[8px] font-black uppercase tracking-widest rounded-full">AUTH_SUCCESS</span></td>
+                    <td class="px-10 py-6 text-xs text-lux-navy/60 font-light italic">"User authorization successful via GitHub provider."</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/js/api.js?v=2"></script>
+  <script src="/js/auth.js?v=2"></script>
+  <script src="/js/toast.js?v=2"></script>
+  <script src="/js/admin.js?v=2"></script>
+  <script>
+    if (!requireAdmin()) throw new Error('Admin required');
+    renderAdminNav('logs');
+  </script>
+</body>
+</html>

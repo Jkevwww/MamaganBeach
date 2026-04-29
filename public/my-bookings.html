@@ -135,6 +135,9 @@
                 ` : b.status !== 'cancelled' ? `
                   <a href="/payment.html?booking=${b.id}" class="px-6 py-3 bg-lux-gold text-lux-navy text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-white hover:shadow-xl transition-all text-center">Finalize Payment</a>
                 ` : ''}
+                ${b.payment_status === 'paid' && b.status === 'cancelled' ? `
+                  <button onclick="requestRefund('${b.id}')" class="px-6 py-3 bg-white border border-lux-gold text-lux-gold text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold hover:text-white transition-all text-center">Request Refund</button>
+                ` : ''}
                 ${b.status !== 'cancelled' && b.status !== 'completed' ? `
                   <button onclick="cancelBooking('${b.id}')" class="px-6 py-3 border border-lux-navy/5 text-lux-navy/40 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all">Relinquish</button>
                 ` : ''}

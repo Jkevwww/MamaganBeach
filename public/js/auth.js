@@ -84,7 +84,6 @@ async function _loadUserInternal() {
 
 function updateAuthNav(user) {
   const nav = document.getElementById('auth-nav');
-  const mobileNav = document.getElementById('mobile-auth-nav');
   const isAdminPage = window.location.pathname.startsWith('/admin/');
 
   if (user) {
@@ -92,9 +91,12 @@ function updateAuthNav(user) {
     
     if (isAdminPage) {
       const adminHeaderHtml = `
-        <div class="flex items-center gap-3">
-          <img src="${user.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.full_name) + '&background=0ea5e9&color=fff'}" class="w-8 h-8 rounded-full object-cover border border-gray-200">
-          <span class="hidden sm:inline text-gray-700 font-medium">${user.full_name.split(' ')[0]} (Admin)</span>
+        <div class="flex items-center gap-4">
+          <div class="text-right hidden sm:block">
+            <p class="text-[10px] font-black uppercase tracking-widest text-lux-navy">${user.full_name}</p>
+            <p class="text-[8px] font-bold uppercase tracking-widest text-lux-gold">Executive Access</p>
+          </div>
+          <img src="${user.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.full_name) + '&background=0c1b33&color=c5a059'}" class="w-10 h-10 rounded-2xl object-cover border border-lux-navy/5 shadow-sm">
         </div>
       `;
       if (nav) nav.innerHTML = adminHeaderHtml;
@@ -102,32 +104,24 @@ function updateAuthNav(user) {
     }
 
     const desktopHtml = `
-      <a href="/my-bookings.html" class="text-gray-600 hover:text-ocean-600 font-medium transition">My Bookings</a>
-      ${isAdmin ? `<a href="/admin/dashboard.html" class="text-ocean-600 hover:text-ocean-700 font-medium transition"><i class="fas fa-cog mr-1"></i>Admin</a>` : ''}
-      <div class="flex items-center gap-3">
-        <img src="${user.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.full_name) + '&background=0ea5e9&color=fff'}" class="w-8 h-8 rounded-full object-cover border border-gray-200">
-        <span class="hidden sm:inline text-gray-700 font-medium">${user.full_name.split(' ')[0]}</span>
-        <button onclick="handleSignOut()" class="px-3 py-1 text-sm text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition">Sign Out</button>
+      <a href="/my-bookings.html" class="text-lux-navy/70 hover:text-lux-gold font-bold transition-colors uppercase tracking-widest text-[10px]">My Bookings</a>
+      ${isAdmin ? `<a href="/admin/dashboard.html" class="px-4 py-2 bg-lux-navy text-lux-gold text-[10px] font-black uppercase tracking-widest rounded-full hover:shadow-lg transition-all">Admin Panel</a>` : ''}
+      <div class="flex items-center gap-4 pl-4 border-l border-lux-navy/5">
+        <div class="text-right hidden sm:block">
+          <p class="text-[10px] font-black uppercase tracking-widest text-lux-navy">${user.full_name.split(' ')[0]}</p>
+          <p class="text-[8px] font-bold uppercase tracking-widest text-lux-gold">Gold Member</p>
+        </div>
+        <img src="${user.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.full_name) + '&background=0c1b33&color=c5a059'}" class="w-10 h-10 rounded-2xl object-cover border border-lux-navy/5 shadow-sm">
+        <button onclick="handleSignOut()" class="w-8 h-8 flex items-center justify-center text-lux-navy/30 hover:text-red-500 transition-colors"><i class="fas fa-sign-out-alt"></i></button>
       </div>
     `;
-    const mobileHtml = `
-      <a href="/my-bookings.html" class="block text-gray-700 font-medium py-2">My Bookings</a>
-      ${isAdmin ? `<a href="/admin/dashboard.html" class="block text-ocean-600 font-medium py-2"><i class="fas fa-cog mr-1"></i>Admin</a>` : ''}
-      <button onclick="handleSignOut()" class="block w-full text-center px-4 py-2 text-red-600 font-medium border border-red-200 rounded-lg">Sign Out</button>
-    `;
     if (nav) nav.innerHTML = desktopHtml;
-    if (mobileNav) mobileNav.innerHTML = mobileHtml;
   } else {
     const desktopHtml = `
-      <a href="/login.html" class="px-4 py-2 text-ocean-600 font-medium hover:bg-ocean-50 rounded-lg transition">Sign In</a>
-      <a href="/register.html" class="px-4 py-2 bg-ocean-500 text-white font-medium rounded-lg hover:bg-ocean-600 transition">Get Started</a>
-    `;
-    const mobileHtml = `
-      <a href="/login.html" class="block text-center px-4 py-2 text-ocean-600 font-medium border border-ocean-200 rounded-lg">Sign In</a>
-      <a href="/register.html" class="block text-center px-4 py-2 bg-ocean-500 text-white font-medium rounded-lg">Get Started</a>
+      <a href="/login.html" class="text-lux-navy/70 hover:text-lux-gold font-bold transition-colors uppercase tracking-widest text-[10px]">Sign In</a>
+      <a href="/register.html" class="px-8 py-3 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold hover:shadow-xl transition-all">Join the Club</a>
     `;
     if (nav) nav.innerHTML = desktopHtml;
-    if (mobileNav) mobileNav.innerHTML = mobileHtml;
   }
 }
 

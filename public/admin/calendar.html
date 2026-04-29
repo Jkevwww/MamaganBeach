@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Inventory Control | Mamagan Beach Resort</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body class="bg-lux-cream font-sans text-lux-navy">
+  <div class="flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="w-80 bg-white border-r border-lux-navy/5 flex-shrink-0 hidden md:flex flex-col relative z-20">
+      <div class="p-10 border-b border-lux-navy/5">
+        <a href="/" class="flex items-center gap-4 group">
+          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12 group-hover:scale-110 transition-transform">
+          <div class="flex flex-col">
+            <span class="luxury-heading font-bold text-xl leading-none">Mamagan</span>
+            <span class="text-[8px] font-black uppercase tracking-[0.4em] text-lux-gold mt-1">Beach Resort</span>
+          </div>
+        </a>
+      </div>
+      <nav id="admin-nav" class="flex-1 p-6 space-y-2"></nav>
+      <div class="p-8 border-t border-lux-navy/5">
+        <button onclick="handleSignOut()" class="w-full flex items-center gap-4 px-6 py-4 text-red-600 hover:bg-red-50 rounded-2xl transition-all group">
+          <i class="fas fa-sign-out-alt w-5 text-center group-hover:-translate-x-1 transition-transform"></i>
+          <span class="text-[10px] font-black uppercase tracking-widest">Terminate Session</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-y-auto bg-lux-cream/50">
+      <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-10">
+        <div>
+          <h1 class="luxury-heading text-2xl font-bold text-lux-navy">Inventory Control</h1>
+          <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">Manage blackouts and maintenance windows</p>
+        </div>
+        <div id="auth-nav" class="flex items-center gap-3"></div>
+      </header>
+
+      <main class="p-10 page-transition">
+        <div class="grid lg:grid-cols-2 gap-10">
+            <div class="bg-white rounded-[3rem] p-10 border border-lux-navy/5 premium-shadow">
+                <h3 class="luxury-heading text-xl font-bold mb-8">Asset Calendar</h3>
+                <div id="inline-calendar"></div>
+            </div>
+
+            <div class="space-y-8">
+                <div class="glass-card p-10 rounded-[3rem] premium-shadow border border-lux-navy/5">
+                    <h3 class="luxury-heading text-xl font-bold mb-8">Blackout Protocol</h3>
+                    <form id="block-form" class="space-y-6">
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Target Asset</label>
+                            <select id="facility-select" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white">
+                                <option value="all">Global (All Assets)</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Temporal Window</label>
+                            <input type="text" id="block-dates" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="Select dates...">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Justification</label>
+                            <textarea id="reason" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white h-24" placeholder="Maintenance, Private Event, etc..."></textarea>
+                        </div>
+                        <button type="submit" class="premium-button-navy w-full flex items-center justify-center gap-4 group">
+                            <span>Activate Blackout</span>
+                            <i class="fas fa-lock group-hover:scale-110 transition-transform"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/js/api.js?v=2"></script>
+  <script src="/js/auth.js?v=2"></script>
+  <script src="/js/toast.js?v=2"></script>
+  <script src="/js/admin.js?v=2"></script>
+  <script>
+    if (!requireAdmin()) throw new Error('Admin required');
+    renderAdminNav('calendar');
+
+    const calendar = flatpickr("#inline-calendar", {
+        inline: true,
+        mode: "multiple",
+        minDate: "today",
+        dateFormat: "Y-m-d",
+    });
+
+    flatpickr("#block-dates", {
+        mode: "range",
+        minDate: "today",
+        dateFormat: "Y-m-d",
+    });
+
+    async function loadFacilities() {
+        const res = await api.get('/facilities');
+        if (res.success) {
+            const select = document.getElementById('facility-select');
+            res.data.forEach(f => {
+                const opt = document.createElement('option');
+                opt.value = f.id;
+                opt.textContent = f.name;
+                select.appendChild(opt);
+            });
+        }
+    }
+
+    loadFacilities();
+  </script>
+</body>
+</html>

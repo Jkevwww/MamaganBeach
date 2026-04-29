@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Patron Records | Mamagan Beach Resort</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-lux-cream font-sans text-lux-navy">
+  <div class="flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="w-80 bg-white border-r border-lux-navy/5 flex-shrink-0 hidden md:flex flex-col relative z-20">
+      <div class="p-10 border-b border-lux-navy/5">
+        <a href="/" class="flex items-center gap-4 group">
+          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12 group-hover:scale-110 transition-transform">
+          <div class="flex flex-col">
+            <span class="luxury-heading font-bold text-xl leading-none">Mamagan</span>
+            <span class="text-[8px] font-black uppercase tracking-[0.4em] text-lux-gold mt-1">Beach Resort</span>
+          </div>
+        </a>
+      </div>
+      <nav id="admin-nav" class="flex-1 p-6 space-y-2"></nav>
+      <div class="p-8 border-t border-lux-navy/5">
+        <button onclick="handleSignOut()" class="w-full flex items-center gap-4 px-6 py-4 text-red-600 hover:bg-red-50 rounded-2xl transition-all group">
+          <i class="fas fa-sign-out-alt w-5 text-center group-hover:-translate-x-1 transition-transform"></i>
+          <span class="text-[10px] font-black uppercase tracking-widest">Terminate Session</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-y-auto bg-lux-cream/50">
+      <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-10">
+        <div>
+          <h1 class="luxury-heading text-2xl font-bold text-lux-navy">Patron Records</h1>
+          <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">Manage member registrations and profiles</p>
+        </div>
+        <div id="auth-nav" class="flex items-center gap-3"></div>
+      </header>
+
+      <main class="p-10 page-transition">
+        <div class="bg-white rounded-[3rem] border border-lux-navy/5 premium-shadow overflow-hidden">
+          <div class="px-10 py-8 border-b border-lux-navy/5 flex justify-between items-center">
+            <div class="relative w-full max-w-md group">
+                <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-lux-navy/20 group-focus-within:text-lux-gold transition-colors"></i>
+                <input type="text" id="client-search" oninput="searchClients(this.value)" class="w-full pl-14 pr-6 py-4 rounded-2xl bg-lux-cream/30 border border-transparent focus:bg-white focus:border-lux-gold outline-none transition-all text-xs" placeholder="Search by name or email...">
+            </div>
+            <span class="text-[8px] font-black uppercase tracking-widest text-lux-navy/30" id="total-clients">Synchronizing Records...</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="bg-lux-navy/5 text-[8px] font-black uppercase tracking-[0.3em] text-lux-navy/40">
+                  <th class="px-10 py-5">Patron Identity</th>
+                  <th class="px-10 py-5">Contact Details</th>
+                  <th class="px-10 py-5">Access Tier</th>
+                  <th class="px-10 py-5">Joined Date</th>
+                  <th class="px-10 py-5">Management</th>
+                </tr>
+              </thead>
+              <tbody id="clients-list" class="divide-y divide-lux-navy/5">
+                <!-- Clients will be injected here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/js/api.js?v=2"></script>
+  <script src="/js/auth.js?v=2"></script>
+  <script src="/js/toast.js?v=2"></script>
+  <script src="/js/admin.js?v=2"></script>
+  <script>
+    if (!requireAdmin()) throw new Error('Admin required');
+    renderAdminNav('clients');
+
+    let allClients = [];
+
+    async function loadClients() {
+      const res = await api.get('/admin/users'); // Assuming this endpoint exists or I need to create it
+      if (res.success) {
+        allClients = res.data;
+        document.getElementById('total-clients').textContent = `${allClients.length} Registered Patrons`;
+        renderClients(allClients);
+      }
+    }
+
+    function renderClients(list) {
+      const tbody = document.getElementById('clients-list');
+      tbody.innerHTML = list.map(u => `
+        <tr class="hover:bg-lux-cream/50 transition-colors">
+          <td class="px-10 py-6">
+            <div class="flex items-center gap-4">
+              <img src="${u.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(u.full_name) + '&background=0c1b33&color=c5a059'}" class="w-10 h-10 rounded-xl object-cover border border-lux-navy/5">
+              <div>
+                <div class="text-sm font-bold text-lux-navy">${u.full_name}</div>
+                <div class="text-[9px] font-mono text-lux-navy/30 uppercase tracking-widest mt-1">${u.id.substring(0,8)}</div>
+              </div>
+            </div>
+          </td>
+          <td class="px-10 py-6">
+            <div class="text-xs font-medium text-lux-navy/60">${u.email}</div>
+            <div class="text-[9px] font-bold text-lux-gold uppercase tracking-widest mt-1">${u.phone || 'NO CONTACT'}</div>
+          </td>
+          <td class="px-10 py-6">
+            <span class="px-3 py-1 text-[8px] font-black uppercase tracking-widest rounded-full border ${u.role === 'admin' ? 'bg-lux-navy text-lux-gold border-lux-gold/20' : 'bg-lux-gold/10 text-lux-gold border-lux-gold/20'}">
+                ${u.role === 'admin' ? 'Executive' : 'Gold Member'}
+            </span>
+          </td>
+          <td class="px-10 py-6 text-xs text-lux-navy/40">${new Date(u.created_at).toLocaleDateString()}</td>
+          <td class="px-10 py-6">
+            <button class="text-lux-navy/20 hover:text-lux-gold transition-colors"><i class="fas fa-ellipsis-v"></i></button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function searchClients(q) {
+        const filtered = allClients.filter(u => u.full_name.toLowerCase().includes(q.toLowerCase()) || u.email.toLowerCase().includes(q.toLowerCase()));
+        renderClients(filtered);
+    }
+
+    loadClients();
+  </script>
+</body>
+</html>
