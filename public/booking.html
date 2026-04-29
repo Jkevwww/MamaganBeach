@@ -114,14 +114,15 @@
     let selectedDate = null;
     let selectedSlot = null;
     let currentPrice = 0;
-    let maxQty = 99;
+    let maxQty = 10; // Default max guests
+    let minQty = 1;
 
     async function loadFacility() {
       if (!facilityId) { window.location.href = '/resorts.html'; return; }
       const res = await api.get(`/facilities/${facilityId}`);
       if (!res.success) { window.location.href = '/resorts.html'; return; }
       facility = res.data;
-      maxQty = facility.total_units || 99;
+      maxQty = Math.min(facility.capacity || 10, 10);
       document.getElementById('facility-name').textContent = facility.name;
       document.getElementById('facility-type').textContent = facility.type.replace('_', ' ').toUpperCase();
       document.getElementById('facility-price').textContent = `PHP ${Number(facility.base_price).toLocaleString()}`;
@@ -129,20 +130,30 @@
       document.getElementById('summary-facility').textContent = facility.name;
       currentPrice = parseFloat(facility.base_price);
       updateTotal();
+      updateQtyButtons();
+      
+      // Load blocked dates for this facility
+      const unavailableRes = await api.get(`/bookings/unavailable-dates?facility_id=${facilityId}`);
+      const blockedDates = unavailableRes.success ? unavailableRes.data : [];
+      
+      initCalendar(blockedDates);
     }
 
-    flatpickr('#date-picker', {
-      minDate: 'today',
-      maxDate: new Date(Date.now() + 30 * 86400000),
-      dateFormat: 'Y-m-d',
-      onChange: async (dates) => {
-        if (dates.length) {
-          selectedDate = dates[0].toISOString().split('T')[0];
-          document.getElementById('summary-date').textContent = selectedDate;
-          await loadAvailability(selectedDate);
+    function initCalendar(blockedDates) {
+      flatpickr('#date-picker', {
+        minDate: 'today',
+        maxDate: new Date(Date.now() + 60 * 86400000), // 60 days range
+        dateFormat: 'Y-m-d',
+        disable: blockedDates,
+        onChange: async (dates) => {
+          if (dates.length) {
+            selectedDate = dates[0].toISOString().split('T')[0];
+            document.getElementById('summary-date').textContent = selectedDate;
+            await loadAvailability(selectedDate);
+          }
         }
-      }
-    });
+      });
+    }
 
     async function loadAvailability(date) {
       const res = await api.get(`/facilities/${facilityId}/availability?date=${date}`);
@@ -169,25 +180,44 @@
     function selectSlot(slot, available, blocked) {
       if (blocked || available < 1) return;
       selectedSlot = slot;
-      maxQty = available;
+      // Update max based on actual slot availability if lower than capacity
+      const slotMax = Math.min(available, facility.capacity || 10);
+      maxQty = slotMax;
+      
       document.querySelectorAll('.slot-btn').forEach(btn => btn.classList.remove('bg-lux-navy', 'text-white'));
       document.querySelector(`[data-slot="${slot}"]`).classList.add('bg-lux-navy', 'text-white');
       document.getElementById('summary-time').textContent = slot;
-      document.getElementById('qty-hint').textContent = `Max ${maxQty} units available`;
+      document.getElementById('qty-hint').textContent = `Up to ${maxQty} guests allowed`;
+      
+      // Reset qty if current exceeds new max
+      const input = document.getElementById('quantity');
+      if (parseInt(input.value) > maxQty) {
+        input.value = maxQty;
+        document.getElementById('summary-qty').textContent = maxQty;
+      }
+      
       updateTotal();
+      updateQtyButtons();
     }
 
     function changeQty(delta) {
       const input = document.getElementById('quantity');
       let val = parseInt(input.value) + delta;
-      if (val < 1) val = 1;
-      if (val > maxQty) {
-        showToast(`Only ${maxQty} units available for this slot.`, 'warning');
-        val = maxQty;
-      }
+      
+      if (val < minQty) val = minQty;
+      if (val > maxQty) val = maxQty;
+      
       input.value = val;
       document.getElementById('summary-qty').textContent = val;
       updateTotal();
+      updateQtyButtons();
+    }
+    
+    function updateQtyButtons() {
+      const input = document.getElementById('quantity');
+      const val = parseInt(input.value);
+      document.getElementById('qty-minus').disabled = val <= minQty;
+      document.getElementById('qty-plus').disabled = val >= maxQty;
     }
     window.changeQty = changeQty;
 

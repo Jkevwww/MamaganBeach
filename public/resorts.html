@@ -37,20 +37,52 @@
       </div>
 
       <!-- Search & Filters -->
-      <div class="glass-card p-8 rounded-[2rem] premium-shadow mb-16 flex flex-col lg:flex-row items-center justify-between gap-8 fade-in" style="animation-delay: 0.2s;">
-        <div class="relative w-full lg:max-w-md group">
-          <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-lux-navy/30 group-focus-within:text-lux-gold transition-colors"></i>
-          <input type="text" id="facility-search" oninput="searchFacilities(this.value)" 
-            class="w-full pl-14 pr-6 py-4 rounded-2xl bg-white/50 border border-lux-navy/5 focus:border-lux-gold focus:bg-white outline-none transition-all placeholder:text-lux-navy/20" 
-            placeholder="Search our collection...">
+      <div class="glass-card p-8 rounded-[2rem] premium-shadow mb-16 flex flex-col gap-8 fade-in" style="animation-delay: 0.2s;">
+        <div class="flex flex-col lg:flex-row items-center justify-between gap-8">
+          <div class="relative w-full lg:max-w-md group">
+            <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-lux-navy/30 group-focus-within:text-lux-gold transition-colors"></i>
+            <input type="text" id="facility-search" 
+              class="w-full pl-14 pr-12 py-4 rounded-2xl bg-white/50 border border-lux-navy/5 focus:border-lux-gold focus:bg-white outline-none transition-all placeholder:text-lux-navy/20" 
+              placeholder="Search by name, description, or amenities...">
+            <button id="clear-search" class="absolute right-5 top-1/2 -translate-y-1/2 text-lux-navy/20 hover:text-lux-gold hidden"><i class="fas fa-times-circle"></i></button>
+          </div>
+
+          <div class="flex flex-wrap justify-center gap-3" id="type-filters">
+            <button data-type="all" class="filter-btn active px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest bg-lux-navy text-white transition-all shadow-lg hover:shadow-lux-navy/20">All</button>
+            <button data-type="cabana" class="filter-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest bg-white text-lux-navy border border-lux-navy/5 hover:border-lux-gold transition-all">Cabanas</button>
+            <button data-type="day_bed" class="filter-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest bg-white text-lux-navy border border-lux-navy/5 hover:border-lux-gold transition-all">Day Beds</button>
+            <button data-type="jet_ski" class="filter-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest bg-white text-lux-navy border border-lux-navy/5 hover:border-lux-gold transition-all">Jet Skis</button>
+            <button data-type="island_tour" class="filter-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest bg-white text-lux-navy border border-lux-navy/5 hover:border-lux-gold transition-all">Tours</button>
+          </div>
         </div>
 
-        <div class="flex flex-wrap justify-center gap-3">
-          <button onclick="filterFacilities('all')" class="filter-btn active px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest bg-lux-navy text-white transition-all shadow-lg hover:shadow-lux-navy/20">All</button>
-          <button onclick="filterFacilities('cabana')" class="filter-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest bg-white text-lux-navy border border-lux-navy/5 hover:border-lux-gold transition-all">Cabanas</button>
-          <button onclick="filterFacilities('day_bed')" class="filter-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest bg-white text-lux-navy border border-lux-navy/5 hover:border-lux-gold transition-all">Day Beds</button>
-          <button onclick="filterFacilities('jet_ski')" class="filter-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest bg-white text-lux-navy border border-lux-navy/5 hover:border-lux-gold transition-all">Jet Skis</button>
-          <button onclick="filterFacilities('island_tour')" class="filter-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest bg-white text-lux-navy border border-lux-navy/5 hover:border-lux-gold transition-all">Tours</button>
+        <div class="pt-8 border-t border-lux-navy/5 flex flex-wrap items-center justify-between gap-6">
+          <div class="flex flex-wrap items-center gap-6">
+            <div class="flex flex-col gap-2">
+              <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30">Price Range (PHP)</label>
+              <div class="flex items-center gap-4">
+                <input type="number" id="min-price" class="w-24 px-4 py-2 rounded-xl bg-white/50 border border-lux-navy/5 text-xs outline-none" placeholder="Min">
+                <span class="text-lux-navy/20">-</span>
+                <input type="number" id="max-price" class="w-24 px-4 py-2 rounded-xl bg-white/50 border border-lux-navy/5 text-xs outline-none" placeholder="Max">
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30">Capacity</label>
+              <select id="capacity-filter" class="px-4 py-2 rounded-xl bg-white/50 border border-lux-navy/5 text-xs outline-none cursor-pointer">
+                <option value="any">Any Capacity</option>
+                <option value="2">2+ Guests</option>
+                <option value="5">5+ Guests</option>
+                <option value="10">10+ Guests</option>
+              </select>
+            </div>
+            
+            <button id="clear-all-filters" class="text-[10px] font-black uppercase tracking-widest text-lux-gold hover:text-lux-navy transition-colors">Clear All Filters</button>
+          </div>
+          
+          <div class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40">
+            Showing <span id="result-count" class="text-lux-navy">0</span> results
+          </div>
         </div>
       </div>
 
@@ -97,7 +129,16 @@
   <script>
     let allFacilities = [];
     let currentResort = null;
-    let currentFilter = 'all';
+    let searchTimeout = null;
+
+    // Filter State
+    const state = {
+      type: 'all',
+      search: '',
+      minPrice: null,
+      maxPrice: null,
+      capacity: 'any'
+    };
 
     async function loadFacilities() {
       try {
@@ -109,7 +150,10 @@
         currentResort = resorts.data[0];
         const detail = await api.get(`/resorts/${currentResort.id}`);
         allFacilities = detail.data?.facilities || [];
-        applyFilters();
+        
+        // Load initial state from URL if present
+        loadStateFromURL();
+        applyFilters(false); // Initial load, no smooth scroll
       } catch (e) {
         console.error(e);
         showToast('System error. Please try again.', 'error');
@@ -118,6 +162,9 @@
 
     function renderFacilities(list) {
       const container = document.getElementById('facilities-grid');
+      const countEl = document.getElementById('result-count');
+      countEl.textContent = list.length;
+
       if (!list.length) {
         container.innerHTML = `
           <div class="col-span-full text-center py-24 fade-in">
@@ -125,67 +172,199 @@
               <i class="fas fa-search text-lux-navy/20 text-3xl"></i>
             </div>
             <h3 class="luxury-heading text-2xl font-bold text-lux-navy mb-2">No matching facilities</h3>
-            <p class="text-lux-navy/40 italic">Try a different search or filter category.</p>
+            <p class="text-lux-navy/40 italic">Try a different search or adjust your filters.</p>
           </div>
         `;
         return;
       }
-      container.innerHTML = list.map((f, idx) => `
-        <div class="bg-white rounded-[2rem] overflow-hidden premium-shadow card-hover fade-in group" style="animation-delay: ${idx * 0.1}s">
-          <div class="h-72 bg-cover bg-center relative transition-transform duration-700 group-hover:scale-110" style="background-image: url('${f.images?.[0] || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600'}')">
-            <div class="absolute top-6 left-6">
-              <span class="px-4 py-1.5 bg-white/90 backdrop-blur text-lux-navy text-[10px] font-black uppercase tracking-widest rounded-full shadow-xl">${f.type.replace('_',' ')}</span>
-            </div>
-          </div>
-          <div class="p-8 relative bg-white">
-            <h3 class="luxury-heading font-bold text-2xl text-lux-navy mb-3 group-hover:text-lux-gold transition-colors">${f.name}</h3>
-            <p class="text-lux-navy/50 text-sm mb-6 line-clamp-2 italic font-light leading-relaxed">"${f.description || 'Experience the essence of coastal luxury.'}"</p>
-            <div class="flex items-center gap-6 text-[10px] font-bold uppercase tracking-widest text-lux-navy/30 mb-8 pb-8 border-b border-lux-navy/5">
-              <span class="flex items-center gap-2"><i class="fas fa-user-group text-lux-gold"></i>Up to ${f.capacity}</span>
-              <span class="flex items-center gap-2"><i class="fas fa-layer-group text-lux-gold"></i>${f.total_units} units</span>
-            </div>
-            <div class="flex justify-between items-end">
-              <div>
-                <span class="text-[10px] font-bold uppercase tracking-widest text-lux-navy/30 block mb-1">Starting at</span>
-                <span class="text-3xl font-black text-lux-navy">PHP ${Number(f.base_price).toLocaleString()}</span>
-                <span class="text-lux-navy/20 text-[10px] font-bold">/SLOT</span>
+
+      container.innerHTML = list.map((f, idx) => {
+        let displayName = f.name;
+        let displayDesc = f.description || 'Experience the essence of coastal luxury.';
+        
+        // Highlight search matches
+        if (state.search) {
+          const regex = new RegExp(`(${state.search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+          displayName = displayName.replace(regex, '<mark class="bg-lux-gold/30 text-lux-navy p-0 rounded">$1</mark>');
+          displayDesc = displayDesc.replace(regex, '<mark class="bg-lux-gold/30 text-lux-navy p-0 rounded">$1</mark>');
+        }
+
+        return `
+          <div class="bg-white rounded-[2rem] overflow-hidden premium-shadow card-hover fade-in group" style="animation-delay: ${idx * 0.05}s">
+            <div class="h-72 bg-cover bg-center relative transition-transform duration-700 group-hover:scale-110" style="background-image: url('${f.images?.[0] || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600'}')">
+              <div class="absolute top-6 left-6">
+                <span class="px-4 py-1.5 bg-white/90 backdrop-blur text-lux-navy text-[10px] font-black uppercase tracking-widest rounded-full shadow-xl">${f.type.replace('_',' ')}</span>
               </div>
-              <a href="/booking.html?facility=${f.id}" class="px-10 py-5 bg-lux-navy text-white text-xs font-black uppercase tracking-widest rounded-full hover:bg-lux-gold hover:shadow-[0_20px_40px_rgba(197,160,89,0.3)] transition-all duration-300">Book Now</a>
+            </div>
+            <div class="p-8 relative bg-white">
+              <h3 class="luxury-heading font-bold text-2xl text-lux-navy mb-3 group-hover:text-lux-gold transition-colors">${displayName}</h3>
+              <p class="text-lux-navy/50 text-sm mb-6 line-clamp-2 italic font-light leading-relaxed">"${displayDesc}"</p>
+              <div class="flex items-center gap-6 text-[10px] font-bold uppercase tracking-widest text-lux-navy/30 mb-8 pb-8 border-b border-lux-navy/5">
+                <span class="flex items-center gap-2"><i class="fas fa-user-group text-lux-gold"></i>Up to ${f.capacity}</span>
+                <span class="flex items-center gap-2"><i class="fas fa-layer-group text-lux-gold"></i>${f.total_units} units</span>
+              </div>
+              <div class="flex justify-between items-end">
+                <div>
+                  <span class="text-[10px] font-bold uppercase tracking-widest text-lux-navy/30 block mb-1">Starting at</span>
+                  <span class="text-3xl font-black text-lux-navy">PHP ${Number(f.base_price).toLocaleString()}</span>
+                  <span class="text-lux-navy/20 text-[10px] font-bold">/SLOT</span>
+                </div>
+                <a href="/booking.html?facility=${f.id}" class="px-10 py-5 bg-lux-navy text-white text-xs font-black uppercase tracking-widest rounded-full hover:bg-lux-gold hover:shadow-[0_20px_40px_rgba(197,160,89,0.3)] transition-all duration-300">Book Now</a>
+              </div>
             </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
-    function filterFacilities(type) {
-      currentFilter = type;
-      document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('bg-lux-navy', 'text-white', 'shadow-lg');
-        btn.classList.add('bg-white', 'text-lux-navy', 'border', 'border-lux-navy/5');
-      });
-      event.target.classList.remove('bg-white', 'text-lux-navy', 'border', 'border-lux-navy/5');
-      event.target.classList.add('bg-lux-navy', 'text-white', 'shadow-lg');
-      applyFilters();
-    }
-
-    function searchFacilities(query) {
-      applyFilters();
-    }
-
-    function applyFilters() {
-      const query = document.getElementById('facility-search').value.trim().toLowerCase();
+    function applyFilters(updateURL = true) {
       let filtered = allFacilities;
-      if (currentFilter !== 'all') {
-        filtered = filtered.filter(f => f.type === currentFilter);
+
+      // 1. Filter by Type
+      if (state.type !== 'all') {
+        filtered = filtered.filter(f => f.type === state.type);
       }
-      if (query) {
+
+      // 2. Filter by Search (Case Insensitive)
+      if (state.search) {
+        const q = state.search.toLowerCase();
         filtered = filtered.filter(f => 
-          f.name.toLowerCase().includes(query) ||
-          (f.description && f.description.toLowerCase().includes(query)) ||
-          f.type.toLowerCase().includes(query)
+          f.name.toLowerCase().includes(q) ||
+          (f.description && f.description.toLowerCase().includes(q)) ||
+          f.type.toLowerCase().includes(q)
         );
       }
+
+      // 3. Filter by Price
+      if (state.minPrice !== null) {
+        filtered = filtered.filter(f => parseFloat(f.base_price) >= state.minPrice);
+      }
+      if (state.maxPrice !== null) {
+        filtered = filtered.filter(f => parseFloat(f.base_price) <= state.maxPrice);
+      }
+
+      // 4. Filter by Capacity
+      if (state.capacity !== 'any') {
+        filtered = filtered.filter(f => f.capacity >= parseInt(state.capacity));
+      }
+
       renderFacilities(filtered);
+      if (updateURL) syncURL();
+    }
+
+    // Event Listeners
+    document.getElementById('facility-search').addEventListener('input', (e) => {
+      const val = e.target.value.trim();
+      state.search = val;
+      document.getElementById('clear-search').classList.toggle('hidden', !val);
+      
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => applyFilters(), 300); // Debounce
+    });
+
+    document.getElementById('clear-search').addEventListener('click', () => {
+      document.getElementById('facility-search').value = '';
+      state.search = '';
+      document.getElementById('clear-search').classList.add('hidden');
+      applyFilters();
+    });
+
+    document.getElementById('type-filters').addEventListener('click', (e) => {
+      const btn = e.target.closest('.filter-btn');
+      if (!btn) return;
+      
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.remove('bg-lux-navy', 'text-white', 'shadow-lg');
+        b.classList.add('bg-white', 'text-lux-navy', 'border', 'border-lux-navy/5');
+      });
+      
+      btn.classList.remove('bg-white', 'text-lux-navy', 'border', 'border-lux-navy/5');
+      btn.classList.add('bg-lux-navy', 'text-white', 'shadow-lg');
+      
+      state.type = btn.dataset.type;
+      applyFilters();
+    });
+
+    document.getElementById('min-price').addEventListener('input', (e) => {
+      state.minPrice = e.target.value ? parseFloat(e.target.value) : null;
+      applyFilters();
+    });
+
+    document.getElementById('max-price').addEventListener('input', (e) => {
+      state.maxPrice = e.target.value ? parseFloat(e.target.value) : null;
+      applyFilters();
+    });
+
+    document.getElementById('capacity-filter').addEventListener('change', (e) => {
+      state.capacity = e.target.value;
+      applyFilters();
+    });
+
+    document.getElementById('clear-all-filters').addEventListener('click', () => {
+      state.type = 'all';
+      state.search = '';
+      state.minPrice = null;
+      state.maxPrice = null;
+      state.capacity = 'any';
+      
+      // Reset UI
+      document.getElementById('facility-search').value = '';
+      document.getElementById('min-price').value = '';
+      document.getElementById('max-price').value = '';
+      document.getElementById('capacity-filter').value = 'any';
+      document.getElementById('clear-search').classList.add('hidden');
+      
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.remove('bg-lux-navy', 'text-white', 'shadow-lg');
+        b.classList.add('bg-white', 'text-lux-navy', 'border', 'border-lux-navy/5');
+        if (b.dataset.type === 'all') {
+          b.classList.remove('bg-white', 'text-lux-navy', 'border', 'border-lux-navy/5');
+          b.classList.add('bg-lux-navy', 'text-white', 'shadow-lg');
+        }
+      });
+      
+      applyFilters();
+    });
+
+    // URL Persistence
+    function syncURL() {
+      const params = new URLSearchParams();
+      if (state.type !== 'all') params.set('type', state.type);
+      if (state.search) params.set('q', state.search);
+      if (state.minPrice) params.set('min', state.minPrice);
+      if (state.maxPrice) params.set('max', state.maxPrice);
+      if (state.capacity !== 'any') params.set('cap', state.capacity);
+      
+      const newURL = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
+      window.history.replaceState({}, '', newURL);
+    }
+
+    function loadStateFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('type')) state.type = params.get('type');
+      if (params.get('q')) state.search = params.get('q');
+      if (params.get('min')) state.minPrice = parseFloat(params.get('min'));
+      if (params.get('max')) state.maxPrice = parseFloat(params.get('max'));
+      if (params.get('cap')) state.capacity = params.get('cap');
+
+      // Sync UI
+      if (state.search) {
+        document.getElementById('facility-search').value = state.search;
+        document.getElementById('clear-search').classList.remove('hidden');
+      }
+      if (state.minPrice) document.getElementById('min-price').value = state.minPrice;
+      if (state.maxPrice) document.getElementById('max-price').value = state.maxPrice;
+      if (state.capacity !== 'any') document.getElementById('capacity-filter').value = state.capacity;
+      
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        if (b.dataset.type === state.type) {
+          b.classList.remove('bg-white', 'text-lux-navy', 'border', 'border-lux-navy/5');
+          b.classList.add('bg-lux-navy', 'text-white', 'shadow-lg');
+        } else {
+          b.classList.add('bg-white', 'text-lux-navy', 'border', 'border-lux-navy/5');
+          b.classList.remove('bg-lux-navy', 'text-white', 'shadow-lg');
+        }
+      });
     }
 
     loadFacilities();

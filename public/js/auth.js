@@ -2,32 +2,33 @@
  * Global Sign Out Handler
  * Attached to window to ensure it's accessible from any onclick attribute.
  */
-window.handleSignOut = function() {
-  console.log('Signing out...');
-  
-  // 1. Clear all authentication data from storage immediately
-  localStorage.removeItem('token');
-  localStorage.removeItem('rememberEmail');
-  sessionStorage.clear();
-  
-  // 2. Reset local auth state
-  if (typeof currentUser !== 'undefined') currentUser = null;
-  if (typeof authInitialized !== 'undefined') authInitialized = false;
-  if (typeof authPromise !== 'undefined') authPromise = null;
+window.handleSignOut = async function() {
+  try {
+    // 1. Clear all authentication data from storage immediately
+    localStorage.removeItem('token');
+    localStorage.removeItem('rememberEmail');
+    sessionStorage.clear();
 
-  // 3. Notify server to clear session (best-effort, non-blocking)
-  if (typeof api !== 'undefined' && typeof api.post === 'function') {
-    api.post('/auth/logout').catch(() => {});
+    // 2. Notify server to clear session
+    if (typeof api !== 'undefined' && typeof api.post === 'function') {
+      await api.post('/auth/logout').catch(() => {});
+    }
+
+    if (typeof showToast === 'function') {
+      showToast('Successfully logged out', 'success');
+    }
+
+    // 3. Reset local auth state
+    currentUser = null;
+    authInitialized = false;
+    authPromise = null;
+
+    // 4. Redirect and prevent going back to authenticated pages
+    window.location.replace('/login.html');
+  } catch (err) {
+    console.error('Logout error:', err);
+    window.location.href = '/';
   }
-
-  // 4. Update UI if possible
-  if (typeof updateAuthNav === 'function') {
-    updateAuthNav(null);
-  }
-
-  // 5. Force redirect to home page
-  // Use location.href and then replace to ensure the browser registers the intent
-  window.location.href = '/';
 };
 
 // For backward compatibility if any script still expects 'logout'
