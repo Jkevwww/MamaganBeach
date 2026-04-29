@@ -38,14 +38,14 @@
       </div>
 
       <!-- Search & Filters -->
-      <div class="glass-card p-8 rounded-[2rem] premium-shadow mb-16 flex flex-col gap-8 fade-in" style="animation-delay: 0.2s;">
+      <div class="glass-card p-8 rounded-[2rem] premium-shadow mb-16 flex flex-col gap-8 fade-in delay-200">
         <div class="flex flex-col lg:flex-row items-center justify-between gap-8">
           <div class="relative w-full lg:max-w-md group">
             <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-lux-navy/30 group-focus-within:text-lux-gold transition-colors"></i>
             <input type="text" id="facility-search" 
               class="w-full pl-14 pr-12 py-4 rounded-2xl bg-white/50 border border-lux-navy/5 focus:border-lux-gold focus:bg-white outline-none transition-all placeholder:text-lux-navy/20" 
               placeholder="Search by name, description, or amenities...">
-            <button id="clear-search" class="absolute right-5 top-1/2 -translate-y-1/2 text-lux-navy/20 hover:text-lux-gold hidden"><i class="fas fa-times-circle"></i></button>
+            <button id="clear-search" title="Clear search" aria-label="Clear search" class="absolute right-5 top-1/2 -translate-y-1/2 text-lux-navy/20 hover:text-lux-gold hidden"><i class="fas fa-times-circle"></i></button>
           </div>
 
           <div class="flex flex-wrap justify-center gap-3" id="type-filters">
@@ -69,8 +69,8 @@
             </div>
 
             <div class="flex flex-col gap-2">
-              <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30">Capacity</label>
-              <select id="capacity-filter" class="px-4 py-2 rounded-xl bg-white/50 border border-lux-navy/5 text-xs outline-none cursor-pointer">
+              <label for="capacity-filter" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30">Capacity</label>
+              <select id="capacity-filter" title="Filter by capacity" aria-label="Filter by capacity" class="px-4 py-2 rounded-xl bg-white/50 border border-lux-navy/5 text-xs outline-none cursor-pointer">
                 <option value="any">Any Capacity</option>
                 <option value="2">2+ Guests</option>
                 <option value="5">5+ Guests</option>
