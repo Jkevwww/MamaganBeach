@@ -61,7 +61,7 @@ router.post('/login', async (req, res) => {
 
     const user = result.rows[0];
     if (!user.password_hash) {
-      return res.status(401).json({ success: false, message: 'This account uses social login. Please sign in with Google or Facebook.' });
+      return res.status(401).json({ success: false, message: 'This account uses social login. Please sign in with Google or GitHub.' });
     }
 
     const valid = await bcrypt.compare(password, user.password_hash);
