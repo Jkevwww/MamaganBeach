@@ -2,88 +2,88 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <!-- Viewport removed - desktop only -->
-
-  <title>Reports - Mamagan Beach Resort</title>
+  <title>Financial Intelligence | Mamagan Beach Resort</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/tailwind-config.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="bg-gray-50 font-sans text-gray-800">
+<body class="bg-lux-cream font-sans text-lux-navy">
   <div class="flex h-screen overflow-hidden">
-    <aside class="w-64 bg-white border-r border-gray-200 flex-shrink-0 hidden md:flex flex-col">
-      <div class="p-6 border-b border-gray-100">
-        <a href="/" class="flex items-center gap-2">
-          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12"><span class="font-bold text-2xl text-ocean-800">Mamagan Fun & Adventure Beach Resort</span>
+    <!-- Sidebar -->
+    <aside class="w-80 bg-white border-r border-lux-navy/5 flex-shrink-0 hidden md:flex flex-col relative z-20">
+      <div class="p-10 border-b border-lux-navy/5">
+        <a href="/" class="flex items-center gap-4 group">
+          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12 group-hover:scale-110 transition-transform">
+          <div class="flex flex-col">
+            <span class="luxury-heading font-bold text-xl leading-none">Mamagan</span>
+            <span class="text-[8px] font-black uppercase tracking-[0.4em] text-lux-gold mt-1">Beach Resort</span>
+          </div>
         </a>
-        <p class="text-xs text-gray-400 mt-1">Admin Panel</p>
       </div>
-      <nav id="admin-nav" class="flex-1 p-4 space-y-1"></nav>
-      <div class="p-4 border-t border-gray-100">
-        <button onclick="handleSignOut()" class="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition">
-          <i class="fas fa-sign-out-alt w-5 text-center"></i>
-          <span class="font-medium">Sign Out</span>
+      <nav id="admin-nav" class="flex-1 p-6 space-y-2"></nav>
+      <div class="p-8 border-t border-lux-navy/5">
+        <button onclick="handleSignOut()" class="w-full flex items-center gap-4 px-6 py-4 text-red-600 hover:bg-red-50 rounded-2xl transition-all group">
+          <i class="fas fa-sign-out-alt w-5 text-center group-hover:-translate-x-1 transition-transform"></i>
+          <span class="text-[10px] font-black uppercase tracking-widest">Terminate Session</span>
         </button>
       </div>
     </aside>
 
-    <div class="flex-1 overflow-y-auto">
-      <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
-        <div class="flex items-center gap-3">
-          <!-- Mobile sidebar toggle removed - desktop only -->
-
-          <h1 class="text-xl font-bold text-gray-900">Revenue & Occupancy Reports</h1>
+    <!-- Main Content -->
+    <div class="flex-1 overflow-y-auto bg-lux-cream/50">
+      <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-10">
+        <div>
+          <h1 class="luxury-heading text-2xl font-bold text-lux-navy">Financial Intelligence</h1>
+          <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">In-depth revenue and occupancy analysis</p>
         </div>
-        <div class="flex items-center gap-3">
-          <div id="auth-nav" class="flex items-center gap-3"></div>
-          <!-- Mobile logout button removed - desktop only -->
-
-        </div>
+        <div id="auth-nav" class="flex items-center gap-3"></div>
       </header>
 
-      <main class="p-6">
+      <main class="p-10 space-y-10 page-transition">
         <!-- Revenue Report -->
-        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-6">
-          <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
-            <h3 class="font-semibold text-gray-900">Revenue Report</h3>
-            <div class="flex gap-2">
-              <button onclick="loadRevenue('daily')" class="rev-filter px-4 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition active-rev bg-ocean-500 text-white border-ocean-500">Daily</button>
-              <button onclick="loadRevenue('weekly')" class="rev-filter px-4 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition">Weekly</button>
-              <button onclick="loadRevenue('monthly')" class="rev-filter px-4 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition">Monthly</button>
+        <div class="bg-white rounded-[3rem] p-10 border border-lux-navy/5 premium-shadow">
+          <div class="flex flex-wrap justify-between items-center mb-10 gap-6">
+            <h3 class="luxury-heading text-xl font-bold">Revenue Stream</h3>
+            <div class="flex p-1 bg-lux-cream rounded-full border border-lux-navy/5">
+              <button onclick="loadRevenue('daily')" class="rev-filter px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-full transition-all bg-lux-navy text-lux-gold">Daily</button>
+              <button onclick="loadRevenue('weekly')" class="rev-filter px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-full transition-all text-lux-navy/40 hover:text-lux-navy">Weekly</button>
+              <button onclick="loadRevenue('monthly')" class="rev-filter px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-full transition-all text-lux-navy/40 hover:text-lux-navy">Monthly</button>
             </div>
+          </div>
           <canvas id="revenueChart" height="100"></canvas>
         </div>
 
         <!-- Occupancy Report -->
-        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-          <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
-            <h3 class="font-semibold text-gray-900">Occupancy Report</h3>
-            <div class="flex gap-2">
-              <input type="date" id="occ-from" onchange="loadOccupancy()" class="px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-ocean-400">
-              <input type="date" id="occ-to" onchange="loadOccupancy()" class="px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-ocean-400">
+        <div class="bg-white rounded-[3rem] border border-lux-navy/5 premium-shadow overflow-hidden">
+          <div class="px-10 py-8 border-b border-lux-navy/5 flex justify-between items-center gap-8">
+            <h3 class="luxury-heading text-xl font-bold">Asset Occupancy Index</h3>
+            <div class="flex gap-4">
+              <input type="date" id="occ-from" onchange="loadOccupancy()" class="px-6 py-3 rounded-2xl bg-lux-cream/30 border-transparent text-[8px] font-black uppercase tracking-widest text-lux-navy outline-none focus:bg-white focus:border-lux-gold transition-all">
+              <input type="date" id="occ-to" onchange="loadOccupancy()" class="px-6 py-3 rounded-2xl bg-lux-cream/30 border-transparent text-[8px] font-black uppercase tracking-widest text-lux-navy outline-none focus:bg-white focus:border-lux-gold transition-all">
             </div>
+          </div>
           <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead class="bg-gray-50 text-gray-500">
-                <tr>
-                  <th class="px-6 py-3 text-left font-medium">Facility</th>
-                  <th class="px-6 py-3 text-left font-medium">Type</th>
-                  <th class="px-6 py-3 text-left font-medium">Total Bookings</th>
-                  <th class="px-6 py-3 text-left font-medium">Units Booked</th>
-                  <th class="px-6 py-3 text-left font-medium">Total Units</th>
-                  <th class="px-6 py-3 text-left font-medium">Occupancy Rate</th>
+            <table class="w-full text-left">
+              <thead>
+                <tr class="bg-lux-navy/5 text-[8px] font-black uppercase tracking-[0.3em] text-lux-navy/40">
+                  <th class="px-10 py-5">Asset</th>
+                  <th class="px-10 py-5">Total Reservations</th>
+                  <th class="px-10 py-5">Units Engaged</th>
+                  <th class="px-10 py-5">Managed Inventory</th>
+                  <th class="px-10 py-5">Occupancy Rate</th>
                 </tr>
               </thead>
-              <tbody id="occupancy-table" class="divide-y divide-gray-100">
-                <tr><td colspan="6" class="px-6 py-8 text-center text-gray-400">Select date range to view occupancy</td></tr>
+              <tbody id="occupancy-table" class="divide-y divide-lux-navy/5">
+                <tr><td colspan="5" class="px-10 py-20 text-center text-lux-navy/20 text-[10px] font-bold uppercase tracking-widest">Select date range for synchronization...</td></tr>
               </tbody>
             </table>
           </div>
+        </div>
       </main>
     </div>
+  </div>
 
   <script src="/js/api.js?v=2"></script>
   <script src="/js/auth.js?v=2"></script>
@@ -96,18 +96,17 @@
 
     async function loadRevenue(period) {
       document.querySelectorAll('.rev-filter').forEach(btn => {
-        btn.classList.remove('bg-ocean-500', 'text-white', 'border-ocean-500');
-        btn.classList.add('border-gray-200');
+        btn.classList.remove('bg-lux-navy', 'text-lux-gold');
+        btn.classList.add('text-lux-navy/40');
       });
-      event.target.classList.remove('border-gray-200');
-      event.target.classList.add('bg-ocean-500', 'text-white', 'border-ocean-500');
+      event.target.classList.remove('text-lux-navy/40');
+      event.target.classList.add('bg-lux-navy', 'text-lux-gold');
 
       const res = await api.get(`/admin/reports/revenue?period=${period}`);
       if (!res.success) return;
 
       const labels = res.data.map(d => d.period).reverse();
       const data = res.data.map(d => parseFloat(d.revenue)).reverse();
-      const counts = res.data.map(d => parseInt(d.bookings_count)).reverse();
 
       const ctx = document.getElementById('revenueChart').getContext('2d');
       if (revenueChart) revenueChart.destroy();
@@ -116,17 +115,14 @@
         type: 'bar',
         data: {
           labels,
-          datasets: [
-            { label: 'Revenue (PHP)', data, backgroundColor: '#0ea5e9', borderRadius: 6, yAxisID: 'y' },
-            { label: 'Bookings', data: counts, backgroundColor: '#f59e0b', borderRadius: 6, yAxisID: 'y1' }
-          ]
+          datasets: [{ label: 'Revenue (PHP)', data, backgroundColor: '#c5a059', borderRadius: 12 }]
         },
         options: {
           responsive: true,
-          interaction: { mode: 'index', intersect: false },
+          plugins: { legend: { display: false } },
           scales: {
-            y: { type: 'linear', display: true, position: 'left', beginAtZero: true },
-            y1: { type: 'linear', display: true, position: 'right', beginAtZero: true, grid: { drawOnChartArea: false } }
+            y: { beginAtZero: true, grid: { color: 'rgba(12,27,51,0.05)' } },
+            x: { grid: { display: false } }
           }
         }
       });
@@ -142,25 +138,28 @@
       const res = await api.get(url);
       const tbody = document.getElementById('occupancy-table');
       if (!res.success || !res.data.length) {
-        tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-400">No data available.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="px-10 py-20 text-center text-lux-navy/20 text-[10px] font-bold uppercase tracking-widest">No matching data in current window.</td></tr>';
         return;
       }
 
       tbody.innerHTML = res.data.map(row => {
         const rate = parseFloat(row.occupancy_rate) || 0;
-        const rateColor = rate >= 80 ? 'bg-green-500' : rate >= 50 ? 'bg-yellow-500' : 'bg-red-500';
+        const rateColor = rate >= 80 ? 'bg-green-500' : rate >= 50 ? 'bg-lux-gold' : 'bg-red-400';
         return `
-          <tr class="hover:bg-gray-50 transition">
-            <td class="px-6 py-4 font-medium text-gray-900">${row.facility_name}</td>
-            <td class="px-6 py-4 text-gray-500 capitalize">${row.type.replace('_',' ')}</td>
-            <td class="px-6 py-4">${row.total_bookings || 0}</td>
-            <td class="px-6 py-4">${row.total_units_booked || 0}</td>
-            <td class="px-6 py-4">${row.total_units}</td>
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-3">
-                <div class="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div class="h-full ${rateColor} rounded-full" style="width: ${Math.min(rate, 100)}%"></div>
-                <span class="text-sm font-medium">${rate.toFixed(1)}%</span>
+          <tr class="hover:bg-lux-cream/50 transition-colors">
+            <td class="px-10 py-6">
+                <div class="text-sm font-bold text-lux-navy">${row.facility_name}</div>
+                <div class="text-[8px] font-black uppercase tracking-widest text-lux-navy/30 mt-1">${row.type.replace('_',' ')}</div>
+            </td>
+            <td class="px-10 py-6 text-sm font-medium text-lux-navy/60">${row.total_bookings || 0}</td>
+            <td class="px-10 py-6 text-sm font-medium text-lux-navy/60">${row.total_units_booked || 0}</td>
+            <td class="px-10 py-6 text-sm font-medium text-lux-navy/60">${row.total_units}</td>
+            <td class="px-10 py-6">
+              <div class="flex items-center gap-4">
+                <div class="w-32 h-1.5 bg-lux-navy/5 rounded-full overflow-hidden">
+                  <div class="h-full ${rateColor} rounded-full transition-all duration-1000" style="width: ${Math.min(rate, 100)}%"></div>
+                </div>
+                <span class="text-xs font-black text-lux-navy">${rate.toFixed(1)}%</span>
               </div>
             </td>
           </tr>
@@ -168,8 +167,7 @@
       }).join('');
     }
 
-    // Load daily revenue by default
-    document.querySelector('.rev-filter')?.click();
+    loadRevenue('daily');
   </script>
 </body>
 </html>

@@ -2,80 +2,81 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <!-- Viewport removed - desktop only -->
-
-  <title>QR Check-in - Mamagan Beach Resort</title>
+  <title>Arrival Verification | Mamagan Beach Resort</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/tailwind-config.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-  <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="bg-gray-50 font-sans text-gray-800">
+<body class="bg-lux-cream font-sans text-lux-navy">
   <div class="flex h-screen overflow-hidden">
-    <aside class="w-64 bg-white border-r border-gray-200 flex-shrink-0 hidden md:flex flex-col">
-      <div class="p-6 border-b border-gray-100">
-        <a href="/" class="flex items-center gap-2">
-          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12"><span class="font-bold text-2xl text-ocean-800">Mamagan Fun & Adventure Beach Resort</span>
+    <!-- Sidebar -->
+    <aside class="w-80 bg-white border-r border-lux-navy/5 flex-shrink-0 hidden md:flex flex-col relative z-20">
+      <div class="p-10 border-b border-lux-navy/5">
+        <a href="/" class="flex items-center gap-4 group">
+          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12 group-hover:scale-110 transition-transform">
+          <div class="flex flex-col">
+            <span class="luxury-heading font-bold text-xl leading-none">Mamagan</span>
+            <span class="text-[8px] font-black uppercase tracking-[0.4em] text-lux-gold mt-1">Beach Resort</span>
+          </div>
         </a>
-        <p class="text-xs text-gray-400 mt-1">Admin Panel</p>
       </div>
-      <nav id="admin-nav" class="flex-1 p-4 space-y-1"></nav>
-      <div class="p-4 border-t border-gray-100">
-        <button onclick="handleSignOut()" class="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition">
-          <i class="fas fa-sign-out-alt w-5 text-center"></i>
-          <span class="font-medium">Sign Out</span>
+      <nav id="admin-nav" class="flex-1 p-6 space-y-2"></nav>
+      <div class="p-8 border-t border-lux-navy/5">
+        <button onclick="handleSignOut()" class="w-full flex items-center gap-4 px-6 py-4 text-red-600 hover:bg-red-50 rounded-2xl transition-all group">
+          <i class="fas fa-sign-out-alt w-5 text-center group-hover:-translate-x-1 transition-transform"></i>
+          <span class="text-[10px] font-black uppercase tracking-widest">Terminate Session</span>
         </button>
       </div>
     </aside>
 
-    <div class="flex-1 overflow-y-auto">
-      <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
-        <div class="flex items-center gap-3">
-          <!-- Mobile sidebar toggle removed - desktop only -->
-
-          <h1 class="text-xl font-bold text-gray-900">QR Check-in</h1>
+    <!-- Main Content -->
+    <div class="flex-1 overflow-y-auto bg-lux-cream/50">
+      <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-10">
+        <div>
+          <h1 class="luxury-heading text-2xl font-bold text-lux-navy">Arrival Verification</h1>
+          <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">Validate guest admission passes</p>
         </div>
-        <div class="flex items-center gap-3">
-          <div id="auth-nav" class="flex items-center gap-3"></div>
-          <!-- Mobile logout button removed - desktop only -->
-
-        </div>
+        <div id="auth-nav" class="flex items-center gap-3"></div>
       </header>
 
-      <main class="p-6">
-        <div class="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          <!-- Scanner -->
-          <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-            <h3 class="font-semibold text-gray-900 mb-4"><i class="fas fa-camera mr-2 text-ocean-500"></i>Scan QR Code</h3>
-            <div id="qr-reader" class="rounded-xl overflow-hidden border border-gray-200"></div>
-            <div class="mt-4 flex gap-3">
-              <button onclick="startScan()" class="flex-1 py-2.5 bg-ocean-500 text-white font-medium rounded-xl hover:bg-ocean-600 transition"><i class="fas fa-play mr-1"></i>Start Camera</button>
-              <button onclick="stopScan()" class="flex-1 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition"><i class="fas fa-stop mr-1"></i>Stop</button>
+      <main class="p-10 page-transition">
+        <div class="grid lg:grid-cols-2 gap-10 max-w-6xl mx-auto">
+          <!-- Premium Scanner -->
+          <div class="bg-white rounded-[3rem] p-10 border border-lux-navy/5 premium-shadow">
+            <h3 class="luxury-heading text-xl font-bold mb-8">Digital QR Scan</h3>
+            <div id="qr-reader" class="rounded-[2rem] overflow-hidden border-2 border-lux-gold/20 bg-lux-navy/5 aspect-square flex items-center justify-center">
+                <i class="fas fa-camera text-4xl text-lux-navy/10 animate-pulse"></i>
+            </div>
+            <div class="mt-8 flex gap-4">
+              <button onclick="startScan()" class="flex-1 py-4 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all">Activate Optics</button>
+              <button onclick="stopScan()" class="px-8 py-4 border border-lux-navy/5 text-lux-navy/40 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-red-50 hover:text-red-500 transition-all">Deactivate</button>
             </div>
           </div>
 
-          <!-- Manual Entry -->
-          <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-            <h3 class="font-semibold text-gray-900 mb-4"><i class="fas fa-keyboard mr-2 text-ocean-500"></i>Manual Entry</h3>
-            <div class="space-y-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Paste QR Payload or Booking ID</label>
-                <textarea id="manual-qr" rows="4" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-ocean-400 focus:ring-2 focus:ring-ocean-100 outline-none text-sm font-mono" placeholder='{"booking_id":"...","v":"..."}'></textarea>
+          <!-- Manual Verification -->
+          <div class="space-y-8">
+              <div class="glass-card p-10 rounded-[3rem] premium-shadow border border-lux-navy/5">
+                <h3 class="luxury-heading text-xl font-bold mb-8">Manual Audit</h3>
+                <div class="space-y-6">
+                  <div class="space-y-1">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Admission ID or Payload</label>
+                    <textarea id="manual-qr" rows="4" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white h-32" placeholder="Paste verification string..."></textarea>
+                  </div>
+                  <button onclick="verifyManual()" class="w-full py-5 bg-lux-gold text-lux-navy text-[10px] font-black uppercase tracking-widest rounded-full hover:shadow-xl transition-all">Authorize Manually</button>
+                </div>
               </div>
-              <button onclick="verifyManual()" class="w-full py-3 bg-ocean-500 text-white font-semibold rounded-xl hover:bg-ocean-600 transition">Verify & Check In</button>
-            </div>
-          </div>
-        </div>
 
-        <!-- Result -->
-        <div id="checkin-result" class="max-w-2xl mx-auto mt-8 hidden">
-          <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm text-center">
-            <div id="result-icon" class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4"></div>
-            <h2 id="result-title" class="text-xl font-bold mb-2"></h2>
-            <p id="result-message" class="text-gray-500 mb-6"></p>
-            <div id="result-details" class="bg-gray-50 rounded-xl p-4 text-left text-sm space-y-2 hidden"></div>
+              <!-- Live Result Result -->
+              <div id="checkin-result" class="hidden fade-in">
+                <div class="bg-lux-navy rounded-[3rem] p-10 text-white premium-shadow relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-lux-gold/20 rounded-full blur-3xl"></div>
+                    <div id="result-content" class="relative z-10 text-center">
+                        <!-- Result details will be injected here -->
+                    </div>
+                </div>
+              </div>
           </div>
         </div>
       </main>
@@ -96,13 +97,12 @@
       html5QrCode = new Html5Qrcode("qr-reader");
       html5QrCode.start(
         { facingMode: "environment" },
-        { fps: 10, qrbox: { width: 250, height: 250 } },
+        { fps: 15, qrbox: { width: 300, height: 300 } },
         (decodedText) => {
           stopScan();
           verifyQR(decodedText);
-        },
-        (err) => {}
-      ).catch(err => alert('Camera error: ' + err));
+        }
+      ).catch(err => alert('Optic Sync Failed: ' + err));
     }
 
     function stopScan() {
@@ -122,47 +122,35 @@
     async function verifyManual() {
       const val = document.getElementById('manual-qr').value.trim();
       if (!val) return;
-      let payload = val;
-      try {
-        // If user pasted raw JSON, validate it
-        JSON.parse(val);
-      } catch {
-        // If just booking ID, construct payload (won't pass verification but server handles gracefully)
-        payload = JSON.stringify({ booking_id: val, v: '' });
-      }
-      const res = await api.post('/tickets/verify', { qr_payload: payload });
-      showResult(res);
+      verifyQR(val);
     }
 
     function showResult(res) {
       const container = document.getElementById('checkin-result');
-      const icon = document.getElementById('result-icon');
-      const title = document.getElementById('result-title');
-      const msg = document.getElementById('result-message');
-      const details = document.getElementById('result-details');
-
+      const content = document.getElementById('result-content');
       container.classList.remove('hidden');
+
       if (res.success) {
-        icon.className = 'w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4';
-        icon.innerHTML = '<i class="fas fa-check text-green-600 text-3xl"></i>';
-        title.textContent = 'Check-in Successful!';
-        title.className = 'text-xl font-bold mb-2 text-green-700';
-        msg.textContent = `Welcome, ${res.data.guest_name}!`;
-        details.classList.remove('hidden');
-        details.innerHTML = `
-          <div class="flex justify-between"><span class="text-gray-500">Facility</span><span class="font-medium">${res.data.facility_name}</span></div>
-          <div class="flex justify-between"><span class="text-gray-500">Date</span><span class="font-medium">${res.data.booking_date}</span></div>
-          <div class="flex justify-between"><span class="text-gray-500">Time</span><span class="font-medium">${res.data.time_slot}</span></div>
-          <div class="flex justify-between"><span class="text-gray-500">Quantity</span><span class="font-medium">${res.data.quantity}</span></div>
-          <div class="flex justify-between"><span class="text-gray-500">Checked In</span><span class="font-medium text-green-600">${new Date(res.data.checked_in_at).toLocaleTimeString()}</span></div>
+        content.innerHTML = `
+          <div class="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-green-500/30">
+            <i class="fas fa-check text-green-400 text-3xl"></i>
+          </div>
+          <h2 class="luxury-heading text-2xl font-bold mb-2 text-white">Access Granted</h2>
+          <p class="text-[10px] font-black uppercase tracking-widest text-lux-gold mb-8">Welcome, ${res.data.guest_name}</p>
+          <div class="space-y-4 text-left bg-white/5 p-6 rounded-2xl border border-white/10">
+            <div class="flex justify-between items-center"><span class="text-[8px] font-black uppercase tracking-widest text-white/40">Asset</span><span class="text-xs font-bold">${res.data.facility_name}</span></div>
+            <div class="flex justify-between items-center"><span class="text-[8px] font-black uppercase tracking-widest text-white/40">Temporal</span><span class="text-xs font-bold">${res.data.booking_date} | ${res.data.time_slot}</span></div>
+            <div class="flex justify-between items-center"><span class="text-[8px] font-black uppercase tracking-widest text-white/40">Verified At</span><span class="text-xs font-bold text-lux-gold">${new Date(res.data.checked_in_at).toLocaleTimeString()}</span></div>
+          </div>
         `;
       } else {
-        icon.className = 'w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4';
-        icon.innerHTML = '<i class="fas fa-times text-red-600 text-3xl"></i>';
-        title.textContent = 'Check-in Failed';
-        title.className = 'text-xl font-bold mb-2 text-red-700';
-        msg.textContent = res.message || 'Invalid or expired ticket.';
-        details.classList.add('hidden');
+        content.innerHTML = `
+          <div class="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-red-500/30">
+            <i class="fas fa-times text-red-400 text-3xl"></i>
+          </div>
+          <h2 class="luxury-heading text-2xl font-bold mb-2 text-white">Access Denied</h2>
+          <p class="text-white/40 text-[10px] font-black uppercase tracking-widest mb-4">${res.message || 'Invalid or Expired Protocol'}</p>
+        `;
       }
     }
   </script>
