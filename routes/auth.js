@@ -70,16 +70,34 @@ router.post('/login', async (req, res) => {
     }
 
     const token = generateToken(user);
+    
+    // Log for debugging
+    console.log(`User login successful: ${user.email} (Role: ${user.role})`);
+
     res.json({
       success: true,
       message: 'Login successful.',
       token,
-      user: { id: user.id, email: user.email, full_name: user.full_name, role: user.role, avatar_url: user.avatar_url },
+      user: { 
+        id: user.id, 
+        email: user.email, 
+        full_name: user.full_name, 
+        role: user.role, 
+        avatar_url: user.avatar_url 
+      },
     });
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ success: false, message: 'Server error during login.' });
   }
+});
+
+// Verify token and role
+router.get('/verify', authenticateToken, (req, res) => {
+  res.json({
+    success: true,
+    user: req.user
+  });
 });
 
 // Google OAuth

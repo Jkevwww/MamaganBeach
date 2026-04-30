@@ -14,7 +14,7 @@ async function logout() {
 
   // 2. Clear ALL local authentication data IMMEDIATELY (Synchronous)
   localStorage.removeItem('token');
-  localStorage.removeItem('user'); // Also remove 'user' as requested
+  localStorage.removeItem('user');
   localStorage.removeItem('rememberEmail');
   sessionStorage.clear();
 
@@ -44,7 +44,6 @@ async function logout() {
     }
 
     // 6. Redirect IMMEDIATELY
-    // Use replace to prevent back-navigation
     setTimeout(() => {
       window.location.replace('/login.html');
     }, 300);
@@ -89,42 +88,54 @@ async function _loadUserInternal() {
     return null;
   }
   try {
+    // Use the verify endpoint for real-time validation if needed, or just /me
     const res = await api.get('/auth/me');
     if (res.success && res.user) {
       currentUser = res.user;
+      localStorage.setItem('user', JSON.stringify(currentUser)); // Sync storage
       updateAuthNav(currentUser);
 
       const isAdminPage = window.location.pathname.startsWith('/admin/');
       
       // Auto-redirect admin on auth pages to dashboard
       if (currentUser.role === 'admin' && /\/(login|register)\.html/.test(window.location.pathname)) {
-        window.location.href = '/admin/dashboard.html';
+        window.location.replace('/admin/dashboard.html');
       }
       
       // Auto-redirect non-admin from admin pages
       if (isAdminPage && currentUser.role !== 'admin') {
+        console.warn('Unauthorized access attempt to admin page by:', currentUser.email);
         if (typeof showToast === 'function') {
           showToast('Admin access required.', 'error');
         }
-        window.location.href = '/';
+        window.location.replace('/');
         return null;
       }
 
       authInitialized = true;
       return currentUser;
     } else {
-      localStorage.removeItem('token');
-      currentUser = null;
-      updateAuthNav(null);
-      authInitialized = true;
+      console.error('Session validation failed:', res.message);
+      _clearAuthAndRedirect();
       return null;
     }
-  } catch {
-    localStorage.removeItem('token');
-    currentUser = null;
-    updateAuthNav(null);
-    authInitialized = true;
+  } catch (err) {
+    console.error('Auth check error:', err);
+    _clearAuthAndRedirect();
     return null;
+  }
+}
+
+function _clearAuthAndRedirect() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  sessionStorage.clear();
+  currentUser = null;
+  updateAuthNav(null);
+  authInitialized = true;
+  
+  if (window.location.pathname.startsWith('/admin/') || window.location.pathname === '/my-bookings.html') {
+    window.location.replace('/login.html?redirect=' + encodeURIComponent(window.location.pathname + window.location.search));
   }
 }
 
@@ -179,7 +190,7 @@ function requireAuth() {
   const token = localStorage.getItem('token');
   if (!token) {
     const currentPath = window.location.pathname + window.location.search;
-    window.location.href = '/login.html?redirect=' + encodeURIComponent(currentPath);
+    window.location.replace('/login.html?redirect=' + encodeURIComponent(currentPath));
     return false;
   }
   return true;
@@ -187,16 +198,26 @@ function requireAuth() {
 
 function requireAdmin() {
   if (!requireAuth()) return false;
-  // If we have a token but currentUser is not yet loaded, we check the role once loaded
-  if (currentUser) {
-    if (currentUser.role !== 'admin') {
-      if (typeof showToast === 'function') {
-        showToast('Admin access required.', 'error');
-      }
-      setTimeout(() => { window.location.href = '/'; }, 500);
-      return false;
+  
+  const userStr = localStorage.getItem('user');
+  const user = userStr ? JSON.parse(userStr) : null;
+  
+  console.log('Checking admin privileges...', user ? user.role : 'No user in storage');
+
+  if (user && user.role !== 'admin') {
+    if (typeof showToast === 'function') {
+      showToast('Admin access required.', 'error');
     }
+    window.location.replace('/');
+    return false;
   }
+  
+  // If we have a token but currentUser is not yet loaded, we check the role once loaded
+  if (currentUser && currentUser.role !== 'admin') {
+    window.location.replace('/');
+    return false;
+  }
+  
   return true;
 }
 
@@ -209,7 +230,6 @@ function handleAuthError(response) {
     }
   }
   if (response && (response.message === 'Invalid or expired token.' || response.message === 'Access denied. No token provided.')) {
-    // Standardized behavior: if token is invalid/expired, log out immediately
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     sessionStorage.clear();
@@ -219,4 +239,12 @@ function handleAuthError(response) {
 
 document.addEventListener('DOMContentLoaded', () => {
   loadUser();
+  
+  // Prevent back button after logout on sensitive pages
+  if (window.location.pathname.startsWith('/admin/')) {
+    history.pushState(null, null, location.href);
+    window.onpopstate = function() {
+      history.pushState(null, null, location.href);
+    };
+  }
 });

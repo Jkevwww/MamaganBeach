@@ -115,11 +115,33 @@
           remember: document.getElementById('remember').checked
         });
 
+        console.log('Login response:', res);
+
         if (res.success) {
-          if (document.getElementById('remember').checked) localStorage.setItem('token', res.token);
-          else sessionStorage.setItem('token', res.token);
+          // Store credentials
+          localStorage.setItem('token', res.token);
+          localStorage.setItem('user', JSON.stringify(res.user));
           
-          window.location.href = res.user.role === 'admin' ? '/admin/dashboard.html' : '/';
+          console.log('Token stored:', res.token);
+          console.log('User role:', res.user.role);
+
+          showToast('Welcome back, ' + (res.user.full_name || 'Valued Guest'), 'success');
+          
+          // Determine redirect destination
+          let target = '/';
+          if (res.user.role === 'admin') {
+            target = '/admin/dashboard.html';
+          }
+          
+          const urlParams = new URLSearchParams(window.location.search);
+          const redirect = urlParams.get('redirect');
+          if (redirect) target = decodeURIComponent(redirect);
+          
+          console.log('Redirecting to:', target);
+          
+          setTimeout(() => {
+            window.location.replace(target);
+          }, 800);
         } else {
           btn.disabled = false;
           spinner.classList.add('hidden');
