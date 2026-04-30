@@ -117,30 +117,40 @@ router.patch('/bookings/:id/status', async (req, res) => {
 // Block date for facility
 router.post('/block-dates', async (req, res) => {
   try {
-    const { facility_id, resort_id, block_date, reason } = req.body;
-    if (!block_date || (!facility_id && !resort_id)) {
-      return res.status(400).json({ success: false, message: 'block_date and facility_id or resort_id required.' });
+    const { facility_id, resort_id, start_date, end_date, reason } = req.body;
+    if (!start_date || (!facility_id && !resort_id)) {
+      return res.status(400).json({ success: false, message: 'start_date and facility_id or resort_id required.' });
     }
 
-    const id = uuidv4();
-    await query(
-      `INSERT INTO blocked_dates (id, facility_id, resort_id, block_date, reason, created_by)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [id, facility_id || null, resort_id || null, block_date, reason || null, req.user.id]
-    );
+    const startDate = new Date(start_date);
+    const endDate = new Date(end_date || start_date);
+    const dates = [];
+    
+    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+      dates.push(new Date(d).toISOString().split('T')[0]);
+    }
 
-    if (facility_id) {
+    for (const date of dates) {
+      const id = uuidv4();
       await query(
-        `UPDATE availability SET is_blocked = true, blocked_reason = ?
-         WHERE facility_id = ? AND date = ?`,
-        [reason || 'Blocked by admin', facility_id, block_date]
+        `INSERT INTO blocked_dates (id, facility_id, resort_id, block_date, reason, created_by)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [id, facility_id || null, resort_id || null, date, reason || null, req.user.id]
       );
+
+      if (facility_id) {
+        await query(
+          `UPDATE availability SET is_blocked = true, blocked_reason = ?
+           WHERE facility_id = ? AND date = ?`,
+          [reason || 'Blocked by admin', facility_id, date]
+        );
+      }
     }
 
-    res.json({ success: true, message: 'Date blocked successfully.' });
+    res.json({ success: true, message: `${dates.length} date(s) blocked successfully.` });
   } catch (err) {
     console.error('Block date error:', err);
-    res.status(500).json({ success: false, message: 'Failed to block date.' });
+    res.status(500).json({ success: false, message: 'Failed to block dates.' });
   }
 });
 

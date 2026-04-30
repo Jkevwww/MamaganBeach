@@ -92,13 +92,25 @@
         mode: "multiple",
         minDate: "today",
         dateFormat: "Y-m-d",
+        onDayCreate: function(dObj, dStr, fp, dayElem) {
+            // Future: highlight blocked dates
+        }
     });
 
-    flatpickr("#block-dates", {
+    const dateRangePicker = flatpickr("#block-dates", {
         mode: "range",
         minDate: "today",
         dateFormat: "Y-m-d",
     });
+
+    async function loadBlockedDates() {
+        const facilityId = document.getElementById('facility-select').value;
+        const res = await api.get(`/admin/block-dates${facilityId !== 'all' ? '?facility_id=' + facilityId : ''}`);
+        if (res.success) {
+            const blockedDates = res.data.map(d => d.block_date);
+            calendar.set('selectedDates', blockedDates);
+        }
+    }
 
     async function loadFacilities() {
         const res = await api.get('/facilities');
@@ -111,7 +123,37 @@
                 select.appendChild(opt);
             });
         }
+        await loadBlockedDates();
     }
+
+    document.getElementById('block-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const facilityId = document.getElementById('facility-select').value;
+        const dateStr = document.getElementById('block-dates').value;
+        const reason = document.getElementById('reason').value;
+
+        if (!dateStr) return showToast('Temporal window is required.', 'error');
+
+        const [start, end] = dateStr.split(' to ');
+        
+        const res = await api.post('/admin/block-dates', {
+            facility_id: facilityId === 'all' ? null : facilityId,
+            start_date: start,
+            end_date: end || start,
+            reason: reason
+        });
+
+        if (res.success) {
+            showToast('Blackout protocol activated.', 'success');
+            document.getElementById('block-form').reset();
+            dateRangePicker.clear();
+            loadBlockedDates();
+        } else {
+            showToast(res.message || 'Protocol failure.', 'error');
+        }
+    });
+
+    document.getElementById('facility-select').addEventListener('change', loadBlockedDates);
 
     loadFacilities();
   </script>

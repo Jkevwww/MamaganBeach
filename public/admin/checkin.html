@@ -93,25 +93,62 @@
 
     let html5QrCode = null;
 
-    function startScan() {
-      if (html5QrCode) stopScan();
-      html5QrCode = new Html5Qrcode("qr-reader");
-      html5QrCode.start(
-        { facingMode: "environment" },
-        { fps: 15, qrbox: { width: 300, height: 300 } },
-        (decodedText) => {
-          stopScan();
-          verifyQR(decodedText);
+    async function startScan() {
+      const readerDiv = document.getElementById('qr-reader');
+      const startBtn = document.querySelector('button[onclick="startScan()"]');
+      
+      try {
+        if (html5QrCode) {
+          await stopScan();
         }
-      ).catch(err => alert('Optic Sync Failed: ' + err));
+
+        readerDiv.innerHTML = ''; // Clear the icon
+        html5QrCode = new Html5Qrcode("qr-reader");
+        
+        startBtn.disabled = true;
+        startBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        startBtn.textContent = 'Synchronizing...';
+
+        await html5QrCode.start(
+          { facingMode: "environment" },
+          { fps: 15, qrbox: { width: 250, height: 250 } },
+          (decodedText) => {
+            console.log('Protocol Decoded:', decodedText);
+            stopScan();
+            verifyQR(decodedText);
+          }
+        );
+        
+        startBtn.textContent = 'Optics Active';
+        showToast('Camera system initialized.', 'success');
+      } catch (err) {
+        console.error('Camera failed:', err);
+        readerDiv.innerHTML = '<i class="fas fa-exclamation-triangle text-red-500 text-4xl"></i>';
+        startBtn.disabled = false;
+        startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        startBtn.textContent = 'Activate Optics';
+        alert('Optic Sync Failed: Please ensure camera permissions are granted.');
+      }
     }
 
-    function stopScan() {
+    async function stopScan() {
+      const startBtn = document.querySelector('button[onclick="startScan()"]');
+      const readerDiv = document.getElementById('qr-reader');
+
       if (html5QrCode) {
-        html5QrCode.stop().then(() => {
+        try {
+          await html5QrCode.stop();
           html5QrCode.clear();
           html5QrCode = null;
-        }).catch(() => {});
+          
+          readerDiv.innerHTML = '<i class="fas fa-camera text-4xl text-lux-navy/10 animate-pulse"></i>';
+          startBtn.disabled = false;
+          startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+          startBtn.textContent = 'Activate Optics';
+          showToast('Camera system deactivated.', 'info');
+        } catch (err) {
+          console.error('Failed to stop scanner:', err);
+        }
       }
     }
 
@@ -121,8 +158,16 @@
     }
 
     async function verifyManual() {
-      const val = document.getElementById('manual-qr').value.trim();
-      if (!val) return;
+      const input = document.getElementById('manual-qr');
+      const val = input.value.trim();
+      
+      if (!val) {
+        input.classList.add('border-red-500', 'animate-shake');
+        alert('⚠️ ALARM: Manual authorization requires a valid admission ID or payload string.');
+        setTimeout(() => input.classList.remove('border-red-500', 'animate-shake'), 2000);
+        return;
+      }
+      
       verifyQR(val);
     }
 
