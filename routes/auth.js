@@ -126,16 +126,27 @@ router.get('/me', async (req, res) => {
 
 // Logout endpoint
 router.post('/logout', (req, res) => {
-  if (req.logout) {
+  const cleanup = () => {
+    if (req.session) {
+      req.session.destroy((err) => {
+        if (err) console.error('Session destroy error:', err);
+        res.clearCookie('connect.sid');
+        res.json({ success: true, message: 'Signed out successfully.' });
+      });
+    } else {
+      res.clearCookie('connect.sid');
+      res.json({ success: true, message: 'Signed out successfully.' });
+    }
+  };
+
+  if (req.logout && req.isAuthenticated && req.isAuthenticated()) {
     req.logout((err) => {
       if (err) console.error('Passport logout error:', err);
+      cleanup();
     });
+  } else {
+    cleanup();
   }
-  if (req.session) {
-    req.session.destroy();
-  }
-  res.clearCookie('connect.sid');
-  res.json({ success: true, message: 'Signed out successfully.' });
 });
 
 module.exports = router;

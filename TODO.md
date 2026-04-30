@@ -7,7 +7,7 @@
 - [ ] 3. Fix `public/js/admin.js` — rename/remove duplicate `requireAdmin()`
 - [ ] 4. Fix `routes/payments.js` — add paid guard in simulate-success; add webhook signature verification
 - [ ] 5. Fix `utils/validators.js` — change `'grabpay'` → `'grab_pay'`
-- [ ] 6. Fix `public/js/auth.js` — null-safe fallback for `user.full_name`
+- [x] 6. Fix `public/js/auth.js` — null-safe fallback for `user.full_name`
 - [ ] 7. Fix `routes/bookings.js` — wrap booking creation + availability in DB transaction
 - [ ] 8. Fix `scripts/init-db.js` — improve SQL splitting robustness
 

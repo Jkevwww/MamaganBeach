@@ -14,12 +14,15 @@ window.handleSignOut = function() {
   sessionStorage.clear();
 
   // 3. Notify server (Non-blocking background call)
-  if (token && typeof api !== 'undefined' && typeof api.post === 'function') {
-    // Send token explicitly if needed, or api.js will try to get it from localStorage (which is now empty)
-    // Most logout endpoints just clear the session cookie or blacklist the token.
+  // Use keepalive to ensure the request completes even if the page navigates
+  if (token) {
     fetch('/api/auth/logout', {
       method: 'POST',
-      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+      headers: { 
+        'Authorization': `Bearer ${token}`, 
+        'Content-Type': 'application/json' 
+      },
+      keepalive: true
     }).catch(() => {});
   }
 
@@ -35,7 +38,9 @@ window.handleSignOut = function() {
 
   // 6. Redirect IMMEDIATELY to prevent UI hang
   // Use replace to prevent back-navigation
-  window.location.replace('/login.html');
+  setTimeout(() => {
+    window.location.replace('/login.html');
+  }, 100);
 };
 
 // For backward compatibility if any script still expects 'logout'
@@ -68,10 +73,23 @@ async function _loadUserInternal() {
     if (res.success && res.user) {
       currentUser = res.user;
       updateAuthNav(currentUser);
+
+      const isAdminPage = window.location.pathname.startsWith('/admin/');
+      
       // Auto-redirect admin on auth pages to dashboard
       if (currentUser.role === 'admin' && /\/(login|register)\.html/.test(window.location.pathname)) {
         window.location.href = '/admin/dashboard.html';
       }
+      
+      // Auto-redirect non-admin from admin pages
+      if (isAdminPage && currentUser.role !== 'admin') {
+        if (typeof showToast === 'function') {
+          showToast('Admin access required.', 'error');
+        }
+        window.location.href = '/';
+        return null;
+      }
+
       authInitialized = true;
       return currentUser;
     } else {
@@ -96,15 +114,17 @@ function updateAuthNav(user) {
 
   if (user) {
     const isAdmin = user.role === 'admin';
+    const fullName = user.full_name || 'Valued Guest';
+    const firstName = fullName.split(' ')[0];
     
     if (isAdminPage) {
       const adminHeaderHtml = `
         <div class="flex items-center gap-4">
           <div class="text-right hidden sm:block">
-            <p class="text-[10px] font-black uppercase tracking-widest text-lux-navy">${user.full_name}</p>
+            <p class="text-[10px] font-black uppercase tracking-widest text-lux-navy">${fullName}</p>
             <p class="text-[8px] font-bold uppercase tracking-widest text-lux-gold">Executive Access</p>
           </div>
-          <img src="${user.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.full_name) + '&background=0c1b33&color=c5a059'}" class="w-10 h-10 rounded-2xl object-cover border border-lux-navy/5 shadow-sm">
+          <img src="${user.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(fullName) + '&background=0c1b33&color=c5a059'}" class="w-10 h-10 rounded-2xl object-cover border border-lux-navy/5 shadow-sm">
         </div>
       `;
       if (nav) nav.innerHTML = adminHeaderHtml;
@@ -116,10 +136,10 @@ function updateAuthNav(user) {
       ${isAdmin ? `<a href="/admin/dashboard.html" class="px-4 py-2 bg-lux-navy text-lux-gold text-[10px] font-black uppercase tracking-widest rounded-full hover:shadow-lg transition-all">Admin Panel</a>` : ''}
       <div class="flex items-center gap-4 pl-4 border-l border-lux-navy/5">
         <div class="text-right hidden sm:block">
-          <p class="text-[10px] font-black uppercase tracking-widest text-lux-navy">${user.full_name.split(' ')[0]}</p>
+          <p class="text-[10px] font-black uppercase tracking-widest text-lux-navy">${firstName}</p>
           <p class="text-[8px] font-bold uppercase tracking-widest text-lux-gold">Gold Member</p>
         </div>
-        <img src="${user.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.full_name) + '&background=0c1b33&color=c5a059'}" class="w-10 h-10 rounded-2xl object-cover border border-lux-navy/5 shadow-sm">
+        <img src="${user.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(fullName) + '&background=0c1b33&color=c5a059'}" class="w-10 h-10 rounded-2xl object-cover border border-lux-navy/5 shadow-sm">
         <button onclick="handleSignOut()" class="w-8 h-8 flex items-center justify-center text-lux-navy/30 hover:text-red-500 transition-colors"><i class="fas fa-sign-out-alt"></i></button>
       </div>
     `;
@@ -136,7 +156,8 @@ function updateAuthNav(user) {
 function requireAuth() {
   const token = localStorage.getItem('token');
   if (!token) {
-    window.location.href = '/login.html?redirect=' + encodeURIComponent(window.location.pathname + window.location.search);
+    const currentPath = window.location.pathname + window.location.search;
+    window.location.href = '/login.html?redirect=' + encodeURIComponent(currentPath);
     return false;
   }
   return true;
@@ -144,15 +165,15 @@ function requireAuth() {
 
 function requireAdmin() {
   if (!requireAuth()) return false;
+  // If we have a token but currentUser is not yet loaded, we check the role once loaded
   if (currentUser) {
     if (currentUser.role !== 'admin') {
       if (typeof showToast === 'function') {
         showToast('Admin access required.', 'error');
       }
-      window.location.href = '/';
+      setTimeout(() => { window.location.href = '/'; }, 500);
       return false;
     }
-    return true;
   }
   return true;
 }
