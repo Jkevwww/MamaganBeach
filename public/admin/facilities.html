@@ -111,24 +111,44 @@
     if (!requireAdmin()) throw new Error('Admin required');
     renderAdminNav('facilities');
 
+    let currentResortId = null;
+    let editingFacilityId = null;
+
+    async function loadResort() {
+      const res = await api.get('/resorts');
+      if (res.success && res.data.length > 0) {
+        currentResortId = res.data[0].id;
+      }
+    }
+
     async function loadFacilities() {
-      const res = await api.get('/facilities'); // Assuming global list, might need resort_id
+      const res = await api.get('/facilities');
       const container = document.getElementById('facilities-container');
-      if (!res.success) { showToast('Sync failed.', 'error'); return; }
+      if (!res.success) { 
+        showToast('Synchronization failed. Backend link inactive.', 'error'); 
+        container.innerHTML = '<div class="col-span-full text-center py-20 text-lux-navy/20 font-black uppercase tracking-[0.5em]">System Offline</div>';
+        return; 
+      }
       
+      if (res.data.length === 0) {
+        container.innerHTML = '<div class="col-span-full text-center py-20 text-lux-navy/20 font-black uppercase tracking-[0.5em]">No Assets Registered</div>';
+        return;
+      }
+
       container.innerHTML = res.data.map(f => `
         <div class="bg-white rounded-[2.5rem] overflow-hidden premium-shadow border border-lux-navy/5 card-hover group">
-          <div class="h-48 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('${f.images?.[0] || 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600'}')">
+          <div class="h-48 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 relative" style="background-image: url('${f.images?.[0] || 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600'}')">
             <div class="absolute top-6 left-6">
                 <span class="px-4 py-1.5 bg-white/90 backdrop-blur text-lux-navy text-[8px] font-black uppercase tracking-[0.2em] rounded-full">${f.type.replace('_',' ')}</span>
             </div>
+            ${!f.is_active ? '<div class="absolute inset-0 bg-lux-navy/60 flex items-center justify-center"><span class="text-white text-[10px] font-black uppercase tracking-widest border border-white/20 px-4 py-2 rounded-full">Inactive</span></div>' : ''}
           </div>
           <div class="p-8">
             <div class="flex justify-between items-start mb-4">
               <h3 class="luxury-heading font-bold text-xl text-lux-navy">${f.name}</h3>
               <div class="flex gap-2">
-                <button onclick="editFacility('${f.id}')" class="text-lux-navy/20 hover:text-lux-gold transition-colors"><i class="fas fa-edit"></i></button>
-                <button onclick="deleteFacility('${f.id}')" class="text-lux-navy/20 hover:text-red-500 transition-colors"><i class="fas fa-trash"></i></button>
+                <button onclick="editFacility('${f.id}')" class="w-8 h-8 rounded-full bg-lux-cream/50 flex items-center justify-center text-lux-navy/20 hover:text-lux-gold hover:bg-lux-navy transition-all"><i class="fas fa-edit text-xs"></i></button>
+                <button onclick="deleteFacility('${f.id}')" class="w-8 h-8 rounded-full bg-lux-cream/50 flex items-center justify-center text-lux-navy/20 hover:text-red-500 hover:bg-red-50 transition-all"><i class="fas fa-trash text-xs"></i></button>
               </div>
             </div>
             <div class="flex justify-between items-end">
@@ -137,8 +157,8 @@
                 <span class="text-2xl font-black text-lux-navy">PHP ${Number(f.base_price).toLocaleString()}</span>
               </div>
               <div class="text-right">
-                <span class="text-[8px] font-black uppercase tracking-widest text-lux-navy/30 block mb-1">Availability</span>
-                <span class="text-xs font-bold text-lux-gold">${f.total_units} Active Units</span>
+                <span class="text-[8px] font-black uppercase tracking-widest text-lux-navy/30 block mb-1">Inventory</span>
+                <span class="text-xs font-bold text-lux-gold">${f.total_units} Managed Units</span>
               </div>
             </div>
           </div>
@@ -146,10 +166,78 @@
       `).join('');
     }
 
-    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    async function editFacility(id) {
+      const res = await api.get(`/facilities/${id}`);
+      if (!res.success) return showToast('Unable to retrieve asset details.', 'error');
+      
+      const f = res.data;
+      editingFacilityId = f.id;
+      const form = document.getElementById('facility-form');
+      form.elements['name'].value = f.name;
+      form.elements['type'].value = f.type;
+      form.elements['description'].value = f.description || '';
+      form.elements['base_price'].value = f.base_price;
+      form.elements['capacity'].value = f.capacity;
+      form.elements['total_units'].value = f.total_units;
+      
+      document.querySelector('#facility-modal h3').textContent = 'Asset Modification';
+      openModal('facility-modal');
+    }
 
-    loadFacilities();
+    async function deleteFacility(id) {
+      if (!confirm('Are you sure you want to decommission this asset? This action is irreversible if no dependencies exist.')) return;
+      const res = await api.delete(`/facilities/${id}`);
+      if (res.success) {
+        showToast('Asset decommissioned successfully.', 'success');
+        loadFacilities();
+      } else {
+        showToast(res.message || 'Decommissioning failed.', 'error');
+      }
+    }
+
+    document.getElementById('facility-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+      
+      if (!currentResortId) await loadResort();
+      data.resort_id = currentResortId;
+
+      let res;
+      if (editingFacilityId) {
+        res = await api.put(`/facilities/${editingFacilityId}`, data);
+      } else {
+        res = await api.post('/facilities', data);
+      }
+
+      if (res.success) {
+        showToast(editingFacilityId ? 'Asset synchronized successfully.' : 'New asset registered.', 'success');
+        closeModal('facility-modal');
+        e.target.reset();
+        editingFacilityId = null;
+        document.querySelector('#facility-modal h3').textContent = 'Asset Registration';
+        loadFacilities();
+      } else {
+        showToast(res.message || 'Synchronization failure.', 'error');
+      }
+    });
+
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { 
+        document.getElementById(id).classList.add('hidden'); 
+        if (id === 'facility-modal') {
+            editingFacilityId = null;
+            document.getElementById('facility-form').reset();
+            document.querySelector('#facility-modal h3').textContent = 'Asset Registration';
+        }
+    }
+
+    async function init() {
+      await loadResort();
+      await loadFacilities();
+    }
+
+    init();
   </script>
 </body>
 </html>

@@ -96,5 +96,27 @@ router.put('/:id', authenticateToken, requireRole(['admin']), async (req, res) =
   }
 });
 
+// Admin: Delete facility
+router.delete('/:id', authenticateToken, requireRole(['admin']), async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Check if facility has bookings
+    const bookings = await query('SELECT id FROM bookings WHERE facility_id = ? LIMIT 1', [id]);
+    if (bookings.rows.length > 0) {
+      return res.status(400).json({ success: false, message: 'Cannot delete facility with existing bookings. Mark it as inactive instead.' });
+    }
+
+    const result = await query('DELETE FROM facilities WHERE id = ?', [id]);
+    if (result.rows.affectedRows === 0) {
+      return res.status(404).json({ success: false, message: 'Facility not found.' });
+    }
+    res.json({ success: true, message: 'Facility deleted successfully.' });
+  } catch (err) {
+    console.error('Delete facility error:', err);
+    res.status(500).json({ success: false, message: 'Failed to delete facility.' });
+  }
+});
+
 module.exports = router;
 
