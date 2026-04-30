@@ -113,17 +113,23 @@
 
         if (res.success) {
           localStorage.setItem('token', res.token);
-          showToast('Membership granted successfully.', 'success');
+          if (typeof showToast === 'function') {
+            showToast('Membership granted successfully.', 'success');
+          }
           setTimeout(() => { window.location.href = '/'; }, 1000);
         } else {
           btn.disabled = false;
           spinner.classList.add('hidden');
-          showToast(res.message || 'Application failed.', 'error');
+          if (typeof showToast === 'function') {
+            showToast(res.message || 'Application failed.', 'error');
+          }
         }
       } catch (error) {
         btn.disabled = false;
         spinner.classList.add('hidden');
-        showToast('System error. Please try again.', 'error');
+        if (typeof showToast === 'function') {
+          showToast('System error. Please try again.', 'error');
+        }
       }
     });
   </script>
