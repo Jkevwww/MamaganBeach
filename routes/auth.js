@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const passport = require('../config/passport');
 const { query } = require('../config/database');
-const { generateToken } = require('../middleware/auth');
+const { generateToken, authenticateToken, requireRole } = require('../middleware/auth');
 const { registerSchema, loginSchema } = require('../utils/validators');
 const { v4: uuidv4 } = require('uuid');
 
@@ -131,7 +131,6 @@ router.get('/me', async (req, res) => {
     const token = authHeader && authHeader.split(' ')[1];
     if (!token) return res.json({ success: false, user: null });
 
-    const jwt = require('jsonwebtoken');
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default_jwt_secret');
     const result = await query('SELECT id, email, full_name, phone, avatar_url, role, auth_provider FROM users WHERE id = ?', [decoded.id]);
     if (result.rows.length === 0) return res.json({ success: false, user: null });
@@ -161,6 +160,15 @@ router.post('/logout', (req, res) => {
     req.logout((err) => {
       if (err) console.error('Passport logout error:', err);
       cleanup();
+    });
+  } else {
+    cleanup();
+  }
+});
+
+module.exports = router;
+
+;
     });
   } else {
     cleanup();

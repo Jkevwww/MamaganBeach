@@ -10,6 +10,9 @@ const passport = require('./config/passport');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Trust proxy for secure cookies on Render/Heroku
+app.set('trust proxy', 1);
+
 // Rate limiter
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -39,8 +42,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Session for OAuth
+const MySQLStore = require('express-mysql-session')(session);
+const { pool } = require('./config/database');
+const sessionStore = new MySQLStore({}, pool);
+
 app.use(session({
   secret: process.env.SESSION_SECRET || 'default_session_secret',
+  store: sessionStore,
   resave: false,
   saveUninitialized: false,
   cookie: {
