@@ -122,14 +122,13 @@
           localStorage.setItem('token', res.token);
           localStorage.setItem('user', JSON.stringify(res.user));
           
-          console.log('Token stored:', res.token);
-          console.log('User role:', res.user.role);
+          console.log('Authorization established:', res.user.role);
 
-          showToast('Welcome back, ' + (res.user.full_name || 'Valued Guest'), 'success');
+          showToast('Access Authorized: Welcome back, ' + (res.user.full_name || 'Administrator'), 'success');
           
           // Determine redirect destination
           let target = '/';
-          if (res.user.role === 'admin') {
+          if (res.user && res.user.role === 'admin') {
             target = '/admin/dashboard.html';
           }
           
@@ -137,11 +136,11 @@
           const redirect = urlParams.get('redirect');
           if (redirect) target = decodeURIComponent(redirect);
           
-          console.log('Redirecting to:', target);
+          console.log('Redirecting to secure terminal:', target);
           
           setTimeout(() => {
             window.location.replace(target);
-          }, 800);
+          }, 500);
         } else {
           btn.disabled = false;
           spinner.classList.add('hidden');

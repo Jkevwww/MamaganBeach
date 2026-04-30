@@ -197,22 +197,26 @@ function requireAuth() {
 }
 
 function requireAdmin() {
-  if (!requireAuth()) return false;
-  
+  const token = localStorage.getItem('token');
   const userStr = localStorage.getItem('user');
-  const user = userStr ? JSON.parse(userStr) : null;
+  let user = null;
   
-  console.log('Checking admin privileges...', user ? user.role : 'No user in storage');
+  try {
+    user = userStr ? JSON.parse(userStr) : null;
+  } catch (e) {
+    console.error('Session data corrupted');
+  }
 
-  if (user && user.role !== 'admin') {
-    if (typeof showToast === 'function') {
-      showToast('Admin access required.', 'error');
+  if (!token || !user || user.role !== 'admin') {
+    if (typeof showToast === 'function' && user) {
+      showToast('Administrative privileges required.', 'error');
     }
-    window.location.replace('/');
+    const currentPath = window.location.pathname + window.location.search;
+    window.location.replace('/login.html?redirect=' + encodeURIComponent(currentPath));
     return false;
   }
   
-  // If we have a token but currentUser is not yet loaded, we check the role once loaded
+  // If we have a local admin user, we still check the live status if currentUser is loaded
   if (currentUser && currentUser.role !== 'admin') {
     window.location.replace('/');
     return false;

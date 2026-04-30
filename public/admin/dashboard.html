@@ -141,6 +141,22 @@
   <script src="/js/toast.js?v=2"></script>
   <script src="/js/admin.js?v=2"></script>
   <script>
+    // Immediate Admin Authorization Check
+    (function() {
+      const token = localStorage.getItem('token');
+      const userStr = localStorage.getItem('user');
+      try {
+        const user = userStr ? JSON.parse(userStr) : null;
+        if (!token || !user || user.role !== 'admin') {
+          console.warn('Unauthorized Access: Redirecting to login...');
+          window.location.replace('/login.html?redirect=' + encodeURIComponent(window.location.pathname));
+          return;
+        }
+      } catch (e) {
+        window.location.replace('/login.html');
+      }
+    })();
+
     if (!requireAdmin()) throw new Error('Admin required');
     renderAdminNav('dashboard');
     document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-PH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).toUpperCase();
