@@ -59,17 +59,17 @@
     <div class="relative bg-white rounded-[3rem] w-full max-w-2xl overflow-hidden shadow-2xl fade-in">
         <div class="p-10 border-b border-lux-navy/5 flex justify-between items-center">
             <h3 class="luxury-heading text-2xl font-bold">Asset Registration</h3>
-            <button onclick="closeModal('facility-modal')" class="text-lux-navy/20 hover:text-lux-navy transition-colors"><i class="fas fa-times"></i></button>
+            <button onclick="closeModal('facility-modal')" title="Close modal" aria-label="Close modal" class="text-lux-navy/20 hover:text-lux-navy transition-colors"><i class="fas fa-times"></i></button>
         </div>
         <form id="facility-form" class="p-10 space-y-6">
             <div class="grid md:grid-cols-2 gap-6">
                 <div class="space-y-1">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Asset Name</label>
-                    <input type="text" name="name" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="e.g. Royal Cabana">
+                    <label for="facility-name" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Asset Name</label>
+                    <input type="text" id="facility-name" name="name" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="e.g. Royal Cabana">
                 </div>
                 <div class="space-y-1">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Asset Type</label>
-                    <select name="type" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white">
+                    <label for="facility-type" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Asset Type</label>
+                    <select id="facility-type" name="type" required title="Select asset type" aria-label="Asset type" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white">
                         <option value="cabana">Cabana</option>
                         <option value="day_bed">Day Bed</option>
                         <option value="jet_ski">Jet Ski</option>
@@ -78,21 +78,21 @@
                 </div>
             </div>
             <div class="space-y-1">
-                <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Description</label>
-                <textarea name="description" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white h-24" placeholder="Describe the premium features..."></textarea>
+                <label for="facility-description" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Description</label>
+                <textarea id="facility-description" name="description" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white h-24" placeholder="Describe the premium features..."></textarea>
             </div>
             <div class="grid md:grid-cols-3 gap-6">
                 <div class="space-y-1">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Base Rate (PHP)</label>
-                    <input type="number" name="base_price" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white">
+                    <label for="facility-price" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Base Rate (PHP)</label>
+                    <input type="number" id="facility-price" name="base_price" required title="Base Rate" placeholder="Enter base price" aria-label="Base Rate" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white">
                 </div>
                 <div class="space-y-1">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Max Capacity</label>
-                    <input type="number" name="capacity" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white">
+                    <label for="facility-capacity" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Max Capacity</label>
+                    <input type="number" id="facility-capacity" name="capacity" required title="Max Capacity" placeholder="Enter max capacity" aria-label="Max Capacity" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white">
                 </div>
                 <div class="space-y-1">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Total Units</label>
-                    <input type="number" name="total_units" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white">
+                    <label for="facility-units" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Total Units</label>
+                    <input type="number" id="facility-units" name="total_units" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="0">
                 </div>
             </div>
             <button type="submit" class="premium-button-gold w-full flex items-center justify-center gap-4 group">
