@@ -5,7 +5,7 @@ const { query } = require('../config/database');
 const { generateToken, authenticateToken, requireRole } = require('../middleware/auth');
 const { registerSchema, loginSchema } = require('../utils/validators');
 const { v4: uuidv4 } = require('uuid');
-
+const jwt = require('jsonwebtoken');
 const router = express.Router();
 
 // Local Register
