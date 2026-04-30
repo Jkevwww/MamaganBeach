@@ -1,10 +1,9 @@
 /**
- * Global Sign Out Handler
- * Attached to window to ensure it's accessible from any onclick attribute.
+ * Standardized Logout Function
  */
-window.handleSignOut = function() {
+async function logout() {
   // Add a confirmation step to ensure the action is intentional
-  if (!confirm('Are you sure you want to terminate your session and sign out?')) {
+  if (!confirm('Are you sure you want to log out and terminate your session?')) {
     return;
   }
 
@@ -13,43 +12,59 @@ window.handleSignOut = function() {
   // 1. Capture token before clearing for the API call
   const token = localStorage.getItem('token');
 
-  // 2. Clear all local authentication data IMMEDIATELY (Synchronous)
+  // 2. Clear ALL local authentication data IMMEDIATELY (Synchronous)
   localStorage.removeItem('token');
+  localStorage.removeItem('user'); // Also remove 'user' as requested
   localStorage.removeItem('rememberEmail');
   sessionStorage.clear();
 
   // 3. Notify server (Non-blocking background call)
-  // Use keepalive to ensure the request completes even if the page navigates
-  if (token) {
-    fetch('/api/auth/logout', {
-      method: 'POST',
-      headers: { 
-        'Authorization': `Bearer ${token}`, 
-        'Content-Type': 'application/json' 
-      },
-      keepalive: true
-    }).catch(err => console.error('Logout sync failed:', err));
+  try {
+    if (token) {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: { 
+          'Authorization': `Bearer ${token}`, 
+          'Content-Type': 'application/json' 
+        },
+        keepalive: true
+      });
+    }
+  } catch (error) {
+    console.error('Logout error:', error);
+  } finally {
+    // 4. Reset local state
+    currentUser = null;
+    authInitialized = false;
+    authPromise = null;
+
+    // 5. Show toast if possible
+    if (typeof showToast === 'function') {
+      showToast('Successfully logged out', 'success');
+    }
+
+    // 6. Redirect IMMEDIATELY
+    // Use replace to prevent back-navigation
+    setTimeout(() => {
+      window.location.replace('/login.html');
+    }, 300);
   }
+}
 
-  // 4. Reset local state
-  currentUser = null;
-  authInitialized = false;
-  authPromise = null;
+// Aliases for compatibility
+window.logout = logout;
+window.handleSignOut = logout;
 
-  // 5. Show toast if possible
-  if (typeof showToast === 'function') {
-    showToast('Successfully logged out', 'success');
+/**
+ * Global event listener for logout buttons
+ */
+document.addEventListener('click', (e) => {
+  const logoutBtn = e.target.closest('#logout-btn') || e.target.closest('.logout-btn');
+  if (logoutBtn) {
+    e.preventDefault();
+    logout();
   }
-
-  // 6. Redirect IMMEDIATELY to prevent UI hang
-  // Use replace to prevent back-navigation
-  setTimeout(() => {
-    window.location.replace('/login.html');
-  }, 300); // Slightly longer delay to ensure toast is visible and state is cleared
-};
-
-// For backward compatibility if any script still expects 'logout'
-window.logout = window.handleSignOut;
+});
 
 let currentUser = null;
 let authInitialized = false;
@@ -129,7 +144,7 @@ function updateAuthNav(user) {
             <p class="text-[10px] font-black uppercase tracking-widest text-lux-navy">${fullName}</p>
             <p class="text-[8px] font-bold uppercase tracking-widest text-lux-gold">Executive Access</p>
           </div>
-          <img src="${user.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(fullName) + '&background=0c1b33&color=c5a059'}" class="w-10 h-10 rounded-2xl object-cover border border-lux-navy/5 shadow-sm">
+          <img src="${user.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(fullName) + '&background=0c1b33&color=c5a059'}" class="w-10 h-10 rounded-2xl object-cover border border-lux-navy/5 shadow-sm" alt="User profile">
         </div>
       `;
       if (nav) nav.innerHTML = adminHeaderHtml;
@@ -144,8 +159,10 @@ function updateAuthNav(user) {
           <p class="text-[10px] font-black uppercase tracking-widest text-lux-navy">${firstName}</p>
           <p class="text-[8px] font-bold uppercase tracking-widest text-lux-gold">Gold Member</p>
         </div>
-        <img src="${user.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(fullName) + '&background=0c1b33&color=c5a059'}" class="w-10 h-10 rounded-2xl object-cover border border-lux-navy/5 shadow-sm">
-        <button onclick="handleSignOut()" class="w-8 h-8 flex items-center justify-center text-lux-navy/30 hover:text-red-500 transition-colors"><i class="fas fa-sign-out-alt"></i></button>
+        <img src="${user.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(fullName) + '&background=0c1b33&color=c5a059'}" class="w-10 h-10 rounded-2xl object-cover border border-lux-navy/5 shadow-sm" alt="User profile">
+        <button id="logout-btn" title="Sign Out" aria-label="Sign Out" class="w-8 h-8 flex items-center justify-center text-lux-navy/30 hover:text-red-500 transition-colors">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
       </div>
     `;
     if (nav) nav.innerHTML = desktopHtml;
@@ -192,7 +209,11 @@ function handleAuthError(response) {
     }
   }
   if (response && (response.message === 'Invalid or expired token.' || response.message === 'Access denied. No token provided.')) {
-    handleSignOut();
+    // Standardized behavior: if token is invalid/expired, log out immediately
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    sessionStorage.clear();
+    window.location.replace('/login.html');
   }
 }
 
