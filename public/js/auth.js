@@ -3,6 +3,11 @@
  * Attached to window to ensure it's accessible from any onclick attribute.
  */
 window.handleSignOut = function() {
+  // Add a confirmation step to ensure the action is intentional
+  if (!confirm('Are you sure you want to terminate your session and sign out?')) {
+    return;
+  }
+
   console.log('Initiating sign-out...');
   
   // 1. Capture token before clearing for the API call
@@ -23,7 +28,7 @@ window.handleSignOut = function() {
         'Content-Type': 'application/json' 
       },
       keepalive: true
-    }).catch(() => {});
+    }).catch(err => console.error('Logout sync failed:', err));
   }
 
   // 4. Reset local state
@@ -40,7 +45,7 @@ window.handleSignOut = function() {
   // Use replace to prevent back-navigation
   setTimeout(() => {
     window.location.replace('/login.html');
-  }, 100);
+  }, 300); // Slightly longer delay to ensure toast is visible and state is cleared
 };
 
 // For backward compatibility if any script still expects 'logout'
