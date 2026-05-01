@@ -56,6 +56,16 @@
           </div>
         </div>
 
+        <div class="space-y-2 relative">
+          <label for="confirm_password" class="block text-[10px] font-black uppercase tracking-[0.2em] text-lux-navy/60 ml-2">Confirm Access Key</label>
+          <div class="relative">
+            <input type="password" id="confirm_password" required minlength="6" class="premium-input bg-lux-cream/50 border-lux-navy/10 text-lux-navy focus:bg-white" placeholder="••••••••">
+            <button type="button" onclick="togglePassword('confirm_password')" title="Toggle password visibility" aria-label="Toggle password visibility" class="absolute right-6 top-1/2 -translate-y-1/2 text-lux-navy/20 hover:text-lux-gold transition-colors">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
         <div class="pt-4">
           <button type="submit" id="register-btn" class="premium-button-gold w-full flex items-center justify-center gap-4 group py-6 shadow-xl">
             <span class="text-xs">Apply for Membership</span>
@@ -100,6 +110,17 @@
       e.preventDefault();
       const btn = document.getElementById('register-btn');
       const spinner = document.getElementById('register-spinner');
+      
+      const password = document.getElementById('password').value;
+      const confirm_password = document.getElementById('confirm_password').value;
+      
+      if (password !== confirm_password) {
+        if (typeof showToast === 'function') {
+          showToast('Passwords do not match.', 'error');
+        }
+        return;
+      }
+      
       btn.disabled = true;
       spinner.classList.remove('hidden');
 
@@ -108,15 +129,22 @@
           full_name: document.getElementById('full_name').value.trim(),
           email: document.getElementById('email').value.trim(),
           phone: document.getElementById('phone').value,
-          password: document.getElementById('password').value,
+          password: password,
         });
 
         if (res.success) {
           localStorage.setItem('token', res.token);
+          localStorage.setItem('user', JSON.stringify(res.user));
           if (typeof showToast === 'function') {
             showToast('Membership granted successfully.', 'success');
           }
-          setTimeout(() => { window.location.href = '/'; }, 1000);
+          setTimeout(() => { 
+            if (res.user && res.user.role === 'admin') {
+              window.location.href = '/admin/dashboard.html';
+            } else {
+              window.location.href = '/'; 
+            }
+          }, 1000);
         } else {
           btn.disabled = false;
           spinner.classList.add('hidden');
