@@ -41,9 +41,11 @@ async function sendTicketEmail(to, bookingDetails) {
         <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 4px; margin-top: 20px;">
           <p style="margin: 0; font-size: 13px; color: #92400e;"><strong>Reminder:</strong> Please arrive 15 minutes before your scheduled time. Cancellations must be made at least 24 hours in advance for a refund.</p>
         </div>
+      </div>
       <div style="background: #f1f5f9; padding: 20px; text-align: center; font-size: 12px; color: #94a3b8;">
         Mamagan Fun & Adventure Beach Resort | Barangay Mamagan, Coastal Road, Philippines
       </div>
+    </div>
   `;
 
   await transporter.sendMail({

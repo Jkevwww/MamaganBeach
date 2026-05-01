@@ -19,19 +19,3 @@ function renderAdminNav(activePage) {
     </a>
   `).join('');
 }
-
-async function loadAdminUser() {
-  const user = await loadUser();
-  if (!user) {
-    // loadUser already redirected to login if no token
-    return null;
-  }
-  if (user.role !== 'admin') {
-    if (typeof showToast === 'function') {
-      showToast('Admin access required.', 'error');
-    }
-    window.location.href = '/';
-    return null;
-  }
-  return user;
-}

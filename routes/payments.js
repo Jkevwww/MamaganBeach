@@ -7,6 +7,7 @@ const { generateBookingQR } = require('../utils/generateQR');
 const { sendTicketEmail } = require('../services/emailService');
 const { sendBookingSMS } = require('../services/smsService');
 const { v4: uuidv4 } = require('uuid');
+const crypto = require('crypto');
 
 const router = express.Router();
 
@@ -167,6 +168,9 @@ router.post('/simulate-success', authenticateToken, async (req, res) => {
     }
 
     const booking = bookingResult.rows[0];
+    if (booking.payment_status === 'paid') {
+      return res.status(400).json({ success: false, message: 'Booking is already paid.' });
+    }
 
     await query(
       `UPDATE bookings SET payment_status = 'paid', status = 'confirmed', updated_at = NOW() WHERE id = ?`,
