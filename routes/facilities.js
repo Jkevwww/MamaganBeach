@@ -6,6 +6,20 @@ const { v4: uuidv4 } = require('uuid');
 
 const router = express.Router();
 
+// Get all facilities
+router.get('/', async (req, res) => {
+  try {
+    const result = await query(
+      `SELECT f.*, r.name as resort_name FROM facilities f
+       JOIN resorts r ON f.resort_id = r.id ORDER BY f.created_at DESC`
+    );
+    res.json({ success: true, data: result.rows });
+  } catch (err) {
+    console.error('Get facilities error:', err);
+    res.status(500).json({ success: false, message: 'Failed to load facilities.' });
+  }
+});
+
 // Get facility details
 router.get('/:id', async (req, res) => {
   try {
