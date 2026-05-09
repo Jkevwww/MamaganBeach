@@ -77,9 +77,30 @@
                     </select>
                 </div>
             </div>
+
             <div class="space-y-1">
                 <label for="facility-description" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Description</label>
                 <textarea id="facility-description" name="description" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white h-24" placeholder="Describe the premium features..."></textarea>
+            </div>
+
+            <div class="space-y-4">
+              <div class="grid md:grid-cols-2 gap-6">
+                <div class="space-y-1">
+                  <label for="facility-image-link" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Image URL (optional)</label>
+                  <input type="url" id="facility-image-link" name="images_link" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="https://...">
+                </div>
+                <div class="space-y-1">
+                  <label for="facility-image-file" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Upload Image (optional)</label>
+                  <input type="file" id="facility-image-file" name="image_file" accept="image/*" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white">
+                </div>
+              </div>
+
+              <div class="flex items-center gap-4">
+                <span class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30">Preview</span>
+                <div id="facility-image-preview" class="w-20 h-20 rounded-2xl bg-lux-navy/5 border border-lux-navy/10 overflow-hidden flex items-center justify-center">
+                  <span class="text-[10px] font-bold text-lux-navy/20">No image</span>
+                </div>
+              </div>
             </div>
             <div class="grid md:grid-cols-3 gap-6">
                 <div class="space-y-1">
@@ -179,7 +200,26 @@
       form.elements['base_price'].value = f.base_price;
       form.elements['capacity'].value = f.capacity;
       form.elements['total_units'].value = f.total_units;
-      
+
+      // Image preview + link (if present)
+      const preview = document.getElementById('facility-image-preview');
+      const imageLinkInput = document.getElementById('facility-image-link');
+      preview.innerHTML = '';
+      const firstImg = (Array.isArray(f.images) && f.images.length) ? f.images[0] : null;
+      if (firstImg) {
+        preview.style.backgroundImage = `url('${firstImg}')`;
+        preview.style.backgroundSize = 'cover';
+        preview.style.backgroundPosition = 'center';
+        preview.innerHTML = '';
+        imageLinkInput.value = firstImg;
+      } else {
+        preview.style.backgroundImage = '';
+        preview.style.backgroundSize = '';
+        preview.style.backgroundPosition = '';
+        preview.innerHTML = '<span class="text-[10px] font-bold text-lux-navy/20">No image</span>';
+        imageLinkInput.value = '';
+      }
+
       document.querySelector('#facility-modal h3').textContent = 'Asset Modification';
       openModal('facility-modal');
     }
@@ -195,19 +235,87 @@
       }
     }
 
+    // Image preview logic (link + local file)
+    const imageLinkInput = document.getElementById('facility-image-link');
+    const imageFileInput = document.getElementById('facility-image-file');
+
+    function setPreviewFromLink(link) {
+      const preview = document.getElementById('facility-image-preview');
+      preview.innerHTML = '';
+      if (link) {
+        preview.style.backgroundImage = `url('${link}')`;
+        preview.style.backgroundSize = 'cover';
+        preview.style.backgroundPosition = 'center';
+        preview.innerHTML = '';
+      } else {
+        preview.style.backgroundImage = '';
+        preview.style.backgroundSize = '';
+        preview.style.backgroundPosition = '';
+        preview.innerHTML = '<span class="text-[10px] font-bold text-lux-navy/20">No image</span>';
+      }
+    }
+
+    if (imageLinkInput) {
+      imageLinkInput.addEventListener('input', () => {
+        // If user is uploading a file, prefer file preview.
+        if (imageFileInput && imageFileInput.files && imageFileInput.files.length > 0) return;
+        setPreviewFromLink(imageLinkInput.value.trim());
+      });
+    }
+
+    if (imageFileInput) {
+      imageFileInput.addEventListener('change', () => {
+        const preview = document.getElementById('facility-image-preview');
+        preview.innerHTML = '';
+        const file = imageFileInput.files && imageFileInput.files[0];
+        if (!file) {
+          setPreviewFromLink(imageLinkInput ? imageLinkInput.value.trim() : '');
+          return;
+        }
+        const url = URL.createObjectURL(file);
+        preview.style.backgroundImage = `url('${url}')`;
+        preview.style.backgroundSize = 'cover';
+        preview.style.backgroundPosition = 'center';
+      });
+    }
+
     document.getElementById('facility-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const formData = new FormData(e.target);
-      const data = Object.fromEntries(formData.entries());
-      
+
       if (!currentResortId) await loadResort();
-      data.resort_id = currentResortId;
+
+      const form = e.target;
+      const hasFile = !!(imageFileInput && imageFileInput.files && imageFileInput.files.length > 0);
+      const linkVal = imageLinkInput ? imageLinkInput.value.trim() : '';
 
       let res;
-      if (editingFacilityId) {
-        res = await api.put(`/facilities/${editingFacilityId}`, data);
+
+      if (hasFile) {
+        // multipart upload (local file)
+        const fd = new FormData(form);
+        fd.set('resort_id', currentResortId);
+        if (!linkVal) fd.delete('images_link');
+        // api.js is JSON-only, so use fetch directly
+        const endpoint = editingFacilityId ? `/api/facilities/${editingFacilityId}` : '/api/facilities';
+        const token = localStorage.getItem('token');
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+        res = await fetch(endpoint, {
+          method: editingFacilityId ? 'PUT' : 'POST',
+          headers,
+          body: fd,
+        }).then(r => r.json().catch(() => ({})));
       } else {
-        res = await api.post('/facilities', data);
+        // JSON submit (link only)
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+        data.resort_id = currentResortId;
+        if (!linkVal) delete data.images_link;
+        if (editingFacilityId) {
+          res = await api.put(`/facilities/${editingFacilityId}`, data);
+        } else {
+          res = await api.post('/facilities', data);
+        }
       }
 
       if (res.success) {
@@ -224,11 +332,20 @@
 
     function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
     function closeModal(id) { 
-        document.getElementById(id).classList.add('hidden'); 
+        document.getElementById(id).classList.add('hidden');
         if (id === 'facility-modal') {
             editingFacilityId = null;
             document.getElementById('facility-form').reset();
             document.querySelector('#facility-modal h3').textContent = 'Asset Registration';
+
+            // reset preview
+            const preview = document.getElementById('facility-image-preview');
+            if (preview) {
+              preview.style.backgroundImage = '';
+              preview.style.backgroundSize = '';
+              preview.style.backgroundPosition = '';
+              preview.innerHTML = '<span class="text-[10px] font-bold text-lux-navy/20">No image</span>';
+            }
         }
     }
 

@@ -26,6 +26,8 @@ const facilitySchema = Joi.object({
   name: Joi.string().min(1).max(255).required(),
   type: Joi.string().valid('cabana', 'day_bed', 'jet_ski', 'island_tour').required(),
   description: Joi.string().allow('', null),
+  // Optional image link (local file uploads are handled separately via multer)
+  images_link: Joi.string().uri().allow('', null),
   base_price: Joi.number().positive().required(),
   capacity: Joi.number().integer().min(1).default(1),
   total_units: Joi.number().integer().min(1).required(),
