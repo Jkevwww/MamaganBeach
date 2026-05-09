@@ -15,6 +15,9 @@
     .calendar-day.active { background-color: #00234b; color: white; }
     .calendar-day.maintenance { background-color: #c5a059; color: white; }
     .calendar-day.today { border: 2px solid #c5a059; font-weight: 800; }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0, 35, 75, 0.05); }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #c5a059; border-radius: 10px; }
   </style>
 </head>
 <body class="bg-lux-cream font-sans text-lux-navy">
@@ -133,7 +136,7 @@
 
               <div class="bg-white rounded-[3rem] p-8 premium-shadow overflow-hidden">
                 <h4 class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 mb-6">Upcoming Blackouts</h4>
-                <div id="maintenance-list" class="space-y-4 max-h-[300px] overflow-y-auto pr-2">
+                <div id="maintenance-list" class="space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                   <!-- List items -->
                 </div>
               </div>
@@ -219,12 +222,54 @@
     const STORAGE_KEY_ASSETS = 'mamagan_assets';
     const STORAGE_KEY_MAINT = 'mamagan_maintenance';
 
-    let assets = JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [
-      { id: '1', name: 'Royal Villa', category: 'Accommodation', status: 'Available', rate: 15000, description: 'Private pool, ocean view, 2 bedrooms.', image: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=800&q=80' },
-      { id: '2', name: 'Zen Garden Spa', category: 'Wellness', status: 'Maintenance', rate: 5000, description: 'Traditional massage and aromatherapy center.', image: 'https://images.unsplash.com/photo-1544161515-4ae6ce6be87e?auto=format&fit=crop&w=800&q=80' }
-    ];
+    let assets = [];
+    let maintenance = [];
 
-    let maintenance = JSON.parse(localStorage.getItem(STORAGE_KEY_MAINT)) || [];
+    async function initData() {
+      // 1. Load Maintenance from LocalStorage
+      try {
+        const storedMaint = localStorage.getItem(STORAGE_KEY_MAINT);
+        maintenance = storedMaint ? JSON.parse(storedMaint) : [];
+      } catch(e) {
+        console.error('Maintenance data corrupted', e);
+        maintenance = [];
+      }
+
+      // 2. Load Assets from LocalStorage
+      try {
+        const storedAssets = localStorage.getItem(STORAGE_KEY_ASSETS);
+        if (storedAssets) {
+          assets = JSON.parse(storedAssets);
+        } else {
+          // 3. Fallback: Load from API if localStorage is empty
+          console.log('LocalStorage empty, syncing from server...');
+          const res = await api.get('/facilities');
+          if (res.success && res.data) {
+            assets = res.data.map(f => ({
+              id: f.id.toString(),
+              name: f.name,
+              category: f.type,
+              status: f.status || 'Available',
+              rate: f.base_price,
+              description: f.description,
+              image: (f.images && f.images.length > 0) ? f.images[0] : ''
+            }));
+            saveData();
+          } else {
+            // Static defaults if API fails
+            assets = [
+              { id: '1', name: 'Royal Villa', category: 'Accommodation', status: 'Available', rate: 15000, description: 'Private pool, ocean view, 2 bedrooms.', image: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=800&q=80' },
+              { id: '2', name: 'Zen Garden Spa', category: 'Wellness', status: 'Maintenance', rate: 5000, description: 'Traditional massage and aromatherapy center.', image: 'https://images.unsplash.com/photo-1544161515-4ae6ce6be87e?auto=format&fit=crop&w=800&q=80' }
+            ];
+          }
+        }
+      } catch(e) {
+        console.error('Asset data corrupted', e);
+        assets = [];
+      }
+      
+      renderAssets();
+    }
 
     function saveData() {
       localStorage.setItem(STORAGE_KEY_ASSETS, JSON.stringify(assets));
@@ -244,6 +289,7 @@
         btnAssets.classList.remove('text-lux-navy/40');
         btnCalendar.classList.remove('bg-white', 'shadow-sm', 'text-lux-navy');
         btnCalendar.classList.add('text-lux-navy/40');
+        renderAssets();
       } else {
         btnCalendar.classList.add('bg-white', 'shadow-sm', 'text-lux-navy');
         btnCalendar.classList.remove('text-lux-navy/40');
@@ -257,9 +303,13 @@
     // --- Assets Logic ---
     function renderAssets() {
       const container = document.getElementById('assets-container');
-      const query = document.getElementById('asset-search').value.toLowerCase();
+      if (!container) return;
       
-      const filtered = assets.filter(a => a.name.toLowerCase().includes(query) || a.category.toLowerCase().includes(query));
+      const query = document.getElementById('asset-search').value.toLowerCase();
+      const filtered = assets.filter(a => 
+        (a.name && a.name.toLowerCase().includes(query)) || 
+        (a.category && a.category.toLowerCase().includes(query))
+      );
       
       if(filtered.length === 0) {
         container.innerHTML = '<div class="col-span-full py-20 text-center opacity-20 font-black uppercase tracking-[0.5em]">No Assets Found</div>';
@@ -269,27 +319,27 @@
       container.innerHTML = filtered.map(a => `
         <div class="bg-white rounded-[2.5rem] overflow-hidden premium-shadow group hover:-translate-y-2 transition-all duration-500 border border-lux-navy/5">
           <div class="h-56 overflow-hidden relative">
-            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-110" style="background-image: url(\'${a.image || \'/images/placeholders/asset-placeholder.jpg\'}\')"></div>
+            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-110" style="background-image: url('${a.image || '/images/placeholders/asset-placeholder.jpg'}')"></div>
             <div class="absolute top-6 right-6 flex gap-2">
-              <button onclick="editAsset(\'${a.id}\')" class="w-10 h-10 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-lux-navy hover:text-lux-gold transition-all shadow-lg"><i class="fas fa-pencil-alt text-xs"></i></button>
-              <button onclick="deleteAsset(\'${a.id}\')" class="w-10 h-10 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-lg"><i class="fas fa-trash-alt text-xs"></i></button>
+              <button onclick="editAsset('${a.id}')" class="w-10 h-10 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-lux-navy hover:text-lux-gold transition-all shadow-lg"><i class="fas fa-pencil-alt text-xs"></i></button>
+              <button onclick="deleteAsset('${a.id}')" class="w-10 h-10 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-lg"><i class="fas fa-trash-alt text-xs"></i></button>
             </div>
             <div class="absolute bottom-6 left-6">
-              <span class="px-4 py-1.5 bg-lux-navy/90 backdrop-blur text-white text-[8px] font-black uppercase tracking-widest rounded-full">${a.category}</span>
+              <span class="px-4 py-1.5 bg-lux-navy/90 backdrop-blur text-white text-[8px] font-black uppercase tracking-widest rounded-full">${a.category || 'Asset'}</span>
             </div>
           </div>
           <div class="p-8 space-y-4">
             <div class="flex justify-between items-start">
               <div>
                 <h3 class="luxury-heading text-xl font-bold">${a.name}</h3>
-                <span class="text-[9px] font-bold ${getStatusColor(a.status)} uppercase tracking-widest">${a.status}</span>
+                <span class="text-[9px] font-bold ${getStatusColor(a.status)} uppercase tracking-widest">${a.status || 'Available'}</span>
               </div>
-              <p class="text-xl font-black text-lux-gold">₱${Number(a.rate).toLocaleString()}</p>
+              <p class="text-xl font-black text-lux-gold">₱${Number(a.rate || 0).toLocaleString()}</p>
             </div>
-            <p class="text-xs text-lux-navy/50 leading-relaxed line-clamp-2">${a.description || \'No description provided.\'}</p>
+            <p class="text-xs text-lux-navy/50 leading-relaxed line-clamp-2">${a.description || 'No description provided.'}</p>
             <div class="pt-6 border-t border-lux-navy/5 flex justify-between items-center">
-              <span class="text-[8px] font-black text-lux-navy/20 uppercase tracking-widest italic">ID: ${a.id.substring(0,8)}</span>
-              <button onclick="editAsset(\'${a.id}\')" class="text-[9px] font-black text-lux-gold hover:text-lux-navy uppercase tracking-[0.2em] transition-all">Details <i class="fas fa-chevron-right ml-1"></i></button>
+              <span class="text-[8px] font-black text-lux-navy/20 uppercase tracking-widest italic">ID: ${(a.id || '').substring(0,8)}</span>
+              <button onclick="editAsset('${a.id}')" class="text-[9px] font-black text-lux-gold hover:text-lux-navy uppercase tracking-[0.2em] transition-all">Details <i class="fas fa-chevron-right ml-1"></i></button>
             </div>
           </div>
         </div>
@@ -304,10 +354,10 @@
 
     function getStatusColor(status) {
       switch(status) {
-        case \'Available\': return \'text-green-500\';
-        case \'Maintenance\': return \'text-amber-500\';
-        case \'Occupied\': return \'text-lux-gold\';
-        default: return \'text-red-500\';
+        case 'Available': return 'text-green-500';
+        case 'Maintenance': return 'text-amber-500';
+        case 'Occupied': return 'text-lux-gold';
+        default: return 'text-red-500';
       }
     }
 
@@ -319,8 +369,9 @@
       
       form.reset();
       document.getElementById('asset-id').value = '';
-      document.getElementById('img-preview').style.backgroundImage = 'none';
-      document.getElementById('img-preview').innerHTML = '<i class="fas fa-image text-lux-navy/10 text-xl"></i>';
+      const preview = document.getElementById('img-preview');
+      preview.style.backgroundImage = 'none';
+      preview.innerHTML = '<i class="fas fa-image text-lux-navy/10 text-xl"></i>';
 
       if(id) {
         const asset = assets.find(a => a.id === id);
@@ -354,27 +405,32 @@
       const urlInput = document.getElementById('img-url-input');
       const fileInput = document.getElementById('img-file-input');
       
-      if(type === \'url\') {
-        urlTab.classList.add(\'bg-lux-navy\', \'text-white\');
-        urlTab.classList.remove(\'text-lux-navy/40\');
-        fileTab.classList.remove(\'bg-lux-navy\', \'text-white\');
-        fileTab.classList.add(\'text-lux-navy/40\');
-        urlInput.classList.remove(\'hidden\');
-        fileInput.classList.add(\'hidden\');
+      if(type === 'url') {
+        urlTab.classList.add('bg-lux-navy', 'text-white');
+        urlTab.classList.remove('text-lux-navy/40');
+        fileTab.classList.remove('bg-lux-navy', 'text-white');
+        fileTab.classList.add('text-lux-navy/40');
+        urlInput.classList.remove('hidden');
+        fileInput.classList.add('hidden');
       } else {
-        fileTab.classList.add(\'bg-lux-navy\', \'text-white\');
-        fileTab.classList.remove(\'text-lux-navy/40\');
-        urlTab.classList.remove(\'bg-lux-navy\', \'text-white\');
-        urlTab.classList.add(\'text-lux-navy/40\');
-        fileInput.classList.remove(\'hidden\');
-        urlInput.classList.add(\'hidden\');
+        fileTab.classList.add('bg-lux-navy', 'text-white');
+        fileTab.classList.remove('text-lux-navy/40');
+        urlTab.classList.remove('bg-lux-navy', 'text-white');
+        urlTab.classList.add('text-lux-navy/40');
+        fileInput.classList.remove('hidden');
+        urlInput.classList.add('hidden');
       }
     }
 
     function updatePreview(src) {
       const preview = document.getElementById('img-preview');
-      preview.style.backgroundImage = `url(\'${src}\')`;
-      preview.innerHTML = '';
+      if (src) {
+        preview.style.backgroundImage = `url('${src}')`;
+        preview.innerHTML = '';
+      } else {
+        preview.style.backgroundImage = 'none';
+        preview.innerHTML = '<i class="fas fa-image text-lux-navy/10 text-xl"></i>';
+      }
     }
 
     document.getElementById('asset-image-url').addEventListener('input', (e) => updatePreview(e.target.value));
@@ -390,9 +446,9 @@
     document.getElementById('asset-form').addEventListener('submit', (e) => {
       e.preventDefault();
       const id = document.getElementById('asset-id').value;
-      const fileInput = document.getElementById('asset-image-file');
-      const urlInput = document.getElementById('asset-image-url');
       const preview = document.getElementById('img-preview').style.backgroundImage;
+      
+      const imageStr = preview && preview !== 'none' ? preview.replace(/^url\(["']?/, '').replace(/["']?\)$/, '') : '';
       
       const assetData = {
         id: id || Date.now().toString(),
@@ -401,12 +457,12 @@
         status: document.getElementById('asset-status').value,
         rate: document.getElementById('asset-rate').value,
         description: document.getElementById('asset-description').value,
-        image: preview.slice(5, -2) // remove url("")
+        image: imageStr
       };
 
       if(id) {
         const index = assets.findIndex(a => a.id === id);
-        assets[index] = assetData;
+        if (index !== -1) assets[index] = assetData;
         showToast('Asset updated successfully', 'success');
       } else {
         assets.push(assetData);
@@ -420,11 +476,11 @@
 
     window.editAsset = (id) => openAssetModal(id);
     window.deleteAsset = (id) => {
-      if(confirm(\'Are you sure you want to decommission this asset?\')) {
+      if(confirm('Are you sure you want to decommission this asset?')) {
         assets = assets.filter(a => a.id !== id);
         saveData();
         renderAssets();
-        showToast(\'Asset decommissioned\', \'info\')
+        showToast('Asset decommissioned', 'info');
       }
     };
 
@@ -435,6 +491,7 @@
     function initCalendar() {
       const daysContainer = document.getElementById('calendar-days');
       const monthYearLabel = document.getElementById('calendar-month-year');
+      if (!daysContainer) return;
       
       const firstDay = new Date(currentYear, currentMonth, 1).getDay();
       const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
@@ -444,12 +501,12 @@
       
       daysContainer.innerHTML = '';
       
-      // Fill empty slots
       for(let i = 0; i < firstDay; i++) {
         const emptyDiv = document.createElement('div');
         emptyDiv.className = 'calendar-day empty';
         daysContainer.appendChild(emptyDiv);
       }
+      
       const today = new Date();
       for(let d = 1; d <= daysInMonth; d++) {
         const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
@@ -461,7 +518,6 @@
           dayDiv.classList.add('today');
         }
         
-        // Check for maintenance
         const isMaintenance = maintenance.some(m => {
           const start = new Date(m.start);
           const end = new Date(m.end);
@@ -489,6 +545,8 @@
 
     function renderMaintenanceList() {
       const container = document.getElementById('maintenance-list');
+      if (!container) return;
+      
       if(maintenance.length === 0) {
         container.innerHTML = '<p class="text-[10px] font-bold text-lux-navy/20 uppercase tracking-widest text-center py-8">No maintenance scheduled</p>';
         return;
@@ -501,12 +559,12 @@
             <div class="flex items-center gap-4">
               <div class="w-2 h-2 rounded-full bg-lux-gold"></div>
               <div>
-                <h5 class="text-[10px] font-black uppercase tracking-widest">${asset ? asset.name : \'Unknown Asset\'}</h5>
+                <h5 class="text-[10px] font-black uppercase tracking-widest">${asset ? asset.name : 'Unknown Asset'}</h5>
                 <p class="text-[8px] font-bold text-lux-navy/40 uppercase tracking-widest">${m.start} to ${m.end}</p>
                 <p class="text-[8px] font-medium text-lux-navy/60 italic">${m.reason}</p>
               </div>
             </div>
-            <button onclick="deleteMaintenance(\'${m.id}\')" class="opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:scale-111 transition-transform"><i class="fas fa-times-circle"></i></button>
+            <button onclick="deleteMaintenance('${m.id}')" class="opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:scale-110 transition-transform"><i class="fas fa-times-circle"></i></button>
           </div>
         `;
       }).join('');
@@ -543,19 +601,27 @@
     };
 
     // --- Init ---
-    try {
-      if (!requireAdmin()) throw new Error('Admin required');
-      renderAdminNav('facilities');
-      renderAssets();
-      
-      document.getElementById('logout-btn').addEventListener('click', () => {
-        logout();
-      });
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        // Essential initialization
+        if (typeof renderAdminNav === 'function') renderAdminNav('facilities');
+        
+        const isAdmin = await loadUser();
+        if (!isAdmin || currentUser.role !== 'admin') {
+           window.location.replace('/login.html');
+           return;
+        }
 
-    } catch(err) {
-      console.error(err);
-      window.location.href = '/login.html';
-    }
+        await initData();
+        
+        document.getElementById('logout-btn').addEventListener('click', () => {
+          logout();
+        });
+
+      } catch(err) {
+        console.error('Initialization error:', err);
+      }
+    });
   </script>
 </body>
 </html>
