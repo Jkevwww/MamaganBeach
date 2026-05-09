@@ -1,53 +1,136 @@
 /**
- * Asset Management System (Vanilla JS + localStorage)
+ * Asset Management System (Vanilla JS + Backend API)
  * Mamagan Beach Resort - Admin Panel
  */
 
 let assets = [];
 let editingId = null;
 let currentImageSource = 'url'; // 'url' or 'file'
+let currentResortId = null;
 
 // --- State Management ---
 
-function loadFromStorage() {
-    const data = localStorage.getItem('mamagan_assets');
-    assets = data ? JSON.parse(data) : [];
-    renderAssets();
+async function loadResort() {
+    try {
+        const res = await api.get('/resorts');
+        if (res.success && res.data.length > 0) {
+            currentResortId = res.data[0].id;
+        }
+    } catch (err) {
+        console.error('Failed to load resort info:', err);
+    }
 }
 
-function saveToStorage() {
-    localStorage.setItem('mamagan_assets', JSON.stringify(assets));
-    renderAssets();
+async function loadAssets() {
+    try {
+        const res = await api.get('/facilities');
+        if (res.success) {
+            assets = res.data;
+            renderAssets();
+        } else {
+            showToast(res.message || 'Failed to load assets', 'error');
+        }
+    } catch (err) {
+        console.error('Failed to load assets:', err);
+        showToast('Connection error. Could not reach backend.', 'error');
+    }
 }
 
 // --- CRUD Operations ---
 
-function createAsset(assetData) {
-    const newAsset = {
-        id: Date.now().toString(),
-        createdAt: new Date().toISOString(),
-        ...assetData
-    };
-    assets.push(newAsset);
-    saveToStorage();
-    showToast('Asset registered successfully', 'success');
-}
+async function handleAssetSubmit(e) {
+    e.preventDefault();
+    
+    if (!currentResortId) await loadResort();
+    if (!currentResortId) {
+        showToast('System Error: No resort linked to this session.', 'error');
+        return;
+    }
 
-function updateAsset(id, updatedData) {
-    const index = assets.findIndex(a => a.id === id);
-    if (index !== -1) {
-        assets[index] = { ...assets[index], ...updatedData, updatedAt: new Date().toISOString() };
-        saveToStorage();
-        showToast('Asset updated successfully', 'success');
+    const form = e.target;
+    const submitBtn = document.getElementById('submit-btn');
+    const imageFile = document.getElementById('facility-image-file');
+    const hasFile = currentImageSource === 'file' && imageFile && imageFile.files && imageFile.files.length > 0;
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span>Processing...</span><i class="fas fa-spinner fa-spin"></i>';
+
+    let res;
+    try {
+        if (hasFile) {
+            // Use FormData for file upload
+            const fd = new FormData(form);
+            fd.append('resort_id', currentResortId);
+            
+            // For file uploads, we need to bypass api.js and use fetch directly 
+            // to let the browser set the boundary for multipart/form-data
+            const endpoint = editingId ? `/api/facilities/${editingId}` : '/api/facilities';
+            const token = localStorage.getItem('token');
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+            res = await fetch(endpoint, {
+                method: editingId ? 'PUT' : 'POST',
+                headers,
+                body: fd,
+            }).then(r => r.json());
+        } else {
+            // Standard JSON submit
+            const formData = new FormData(form);
+            const data = {
+                name: formData.get('name'),
+                type: formData.get('type'),
+                status: formData.get('status'),
+                base_price: formData.get('base_price'),
+                capacity: formData.get('capacity'),
+                total_units: formData.get('total_units'),
+                description: formData.get('description'),
+                images_link: formData.get('images_link'),
+                resort_id: currentResortId
+            };
+            
+            // Remove images_link if empty
+            if (!data.images_link) delete data.images_link;
+            
+            if (editingId) {
+                res = await api.put(`/facilities/${editingId}`, data);
+            } else {
+                res = await api.post('/facilities', data);
+            }
+        }
+
+        if (res.success) {
+            showToast(editingId ? 'Asset updated successfully' : 'Asset registered successfully', 'success');
+            closeModal('facility-modal');
+            loadAssets();
+        } else {
+            showToast(res.message || 'Action failed', 'error');
+        }
+    } catch (err) {
+        console.error('Submit error:', err);
+        showToast('Connection error. Please try again.', 'error');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>${editingId ? 'Update Asset' : 'Save Asset'}</span><i class="fas fa-${editingId ? 'save' : 'save'} group-hover:scale-110 transition-transform"></i>`;
     }
 }
 
-function deleteAsset(id) {
+async function deleteAsset(id) {
     const asset = assets.find(a => a.id === id);
-    if (confirm(`Are you sure you want to delete "${asset.name}"?`)) {
-        assets = assets.filter(a => a.id !== id);
-        saveToStorage();
-        showToast('Asset removed', 'success');
+    if (!asset) return;
+
+    if (confirm(`Are you sure you want to decommission "${asset.name}"? This action cannot be undone.`)) {
+        try {
+            const res = await api.delete(`/facilities/${id}`);
+            if (res.success) {
+                showToast('Asset removed successfully', 'success');
+                loadAssets();
+            } else {
+                showToast(res.message || 'Failed to remove asset', 'error');
+            }
+        } catch (err) {
+            console.error('Delete error:', err);
+            showToast('Connection error', 'error');
+        }
     }
 }
 
@@ -65,17 +148,23 @@ function renderAssets() {
                 </div>
                 <div class="space-y-1">
                     <h3 class="luxury-heading text-xl font-bold text-lux-navy/40">No assets registered yet</h3>
-                    <p class="text-[10px] font-bold text-lux-navy/20 uppercase tracking-widest">Start by adding your first resort facility</p>
+                    <p class="text-[10px] font-bold text-lux-navy/20 uppercase tracking-widest">Connect to backend to synchronize inventory</p>
                 </div>
             </div>
         `;
         return;
     }
 
-    container.innerHTML = assets.map(asset => `
+    container.innerHTML = assets.map(asset => {
+        // Handle images array from backend
+        const imageUrl = (asset.images && asset.images.length > 0) 
+            ? asset.images[0] 
+            : '/images/placeholders/asset-placeholder.jpg';
+
+        return `
         <div class="bg-white rounded-[2.5rem] overflow-hidden premium-shadow border border-lux-navy/5 card-hover group fade-in">
             <div class="h-48 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 relative" 
-                 style="background-image: url('${asset.image || '/images/placeholders/asset-placeholder.jpg'}')">
+                 style="background-image: url('${imageUrl}')">
                 <div class="absolute top-6 left-6">
                     <span class="px-4 py-1.5 bg-white/90 backdrop-blur text-lux-navy text-[8px] font-black uppercase tracking-[0.2em] rounded-full">${asset.type}</span>
                 </div>
@@ -87,9 +176,9 @@ function renderAssets() {
                         <i class="fas fa-trash text-[10px]"></i>
                     </button>
                 </div>
-                ${asset.status !== 'Active' ? `
+                ${!asset.is_active ? `
                     <div class="absolute inset-0 bg-lux-navy/60 flex items-center justify-center">
-                        <span class="text-white text-[10px] font-black uppercase tracking-widest border border-white/20 px-4 py-2 rounded-full">${asset.status}</span>
+                        <span class="text-white text-[10px] font-black uppercase tracking-widest border border-white/20 px-4 py-2 rounded-full">Inactive</span>
                     </div>
                 ` : ''}
             </div>
@@ -97,18 +186,23 @@ function renderAssets() {
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <h3 class="luxury-heading font-bold text-xl text-lux-navy">${asset.name}</h3>
-                        <span class="text-[8px] font-black uppercase tracking-widest text-lux-navy/30">${asset.status}</span>
+                        <div class="flex gap-2 mt-1">
+                            <span class="text-[8px] font-black uppercase tracking-widest text-lux-navy/30">${asset.status || 'Verified'}</span>
+                            <span class="text-[8px] font-black uppercase tracking-widest text-lux-gold">• ${asset.capacity} Guests</span>
+                            <span class="text-[8px] font-black uppercase tracking-widest text-lux-navy/30">• ${asset.total_units} Units</span>
+                        </div>
                     </div>
                     <span class="text-xl font-black text-lux-gold">₱${Number(asset.base_price).toLocaleString()}</span>
                 </div>
                 <p class="text-xs text-lux-navy/60 leading-relaxed line-clamp-2 mb-6 font-medium">${asset.description || 'No description provided.'}</p>
                 <div class="pt-6 border-t border-lux-navy/5 flex justify-between items-center">
                     <span class="text-[8px] font-black uppercase tracking-widest text-lux-navy/20 italic">ID: ${asset.id.substring(0, 8)}</span>
-                    <button onclick="openEditModal('${asset.id}')" class="text-[8px] font-black uppercase tracking-widest text-lux-gold hover:text-lux-navy transition-colors">Details <i class="fas fa-chevron-right ml-1"></i></button>
+                    <button onclick="openEditModal('${asset.id}')" class="text-[8px] font-black uppercase tracking-widest text-lux-gold hover:text-lux-navy transition-colors">Modify <i class="fas fa-chevron-right ml-1"></i></button>
                 </div>
             </div>
         </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // --- Modal Logic ---
@@ -162,31 +256,45 @@ function resetForm() {
     toggleImageSource('url');
 }
 
-function openEditModal(id) {
-    const asset = assets.find(a => a.id === id);
-    if (!asset) return;
+async function openEditModal(id) {
+    try {
+        const res = await api.get(`/facilities/${id}`);
+        if (!res.success) {
+            showToast('Unable to fetch asset details', 'error');
+            return;
+        }
 
-    editingId = id;
-    const form = document.getElementById('facility-form');
-    
-    form.elements['name'].value = asset.name;
-    form.elements['type'].value = asset.type;
-    form.elements['status'].value = asset.status;
-    form.elements['base_price'].value = asset.base_price;
-    form.elements['description'].value = asset.description;
-    
-    if (asset.image && asset.image.startsWith('http')) {
-        toggleImageSource('url');
-        form.elements['images_link'].value = asset.image;
-    } else if (asset.image) {
-        toggleImageSource('file');
+        const asset = res.data;
+        editingId = id;
+        const form = document.getElementById('facility-form');
+        
+        form.elements['name'].value = asset.name;
+        form.elements['type'].value = asset.type;
+        form.elements['status'].value = asset.status || 'Active';
+        form.elements['base_price'].value = asset.base_price;
+        form.elements['capacity'].value = asset.capacity || 1;
+        form.elements['total_units'].value = asset.total_units || 1;
+        form.elements['description'].value = asset.description || '';
+        
+        const firstImg = (asset.images && asset.images.length > 0) ? asset.images[0] : null;
+        
+        if (firstImg && firstImg.startsWith('http')) {
+            toggleImageSource('url');
+            form.elements['images_link'].value = firstImg;
+            updatePreview(firstImg);
+        } else if (firstImg) {
+            toggleImageSource('url'); // Show as URL even if it's a local path for editing purposes
+            form.elements['images_link'].value = firstImg;
+            updatePreview(firstImg);
+        }
+
+        document.querySelector('#facility-modal h3').textContent = 'Modify Asset';
+        document.querySelector('#submit-btn span').textContent = 'Update Asset';
+        openModal('facility-modal');
+    } catch (err) {
+        console.error('Edit load error:', err);
+        showToast('Error loading details', 'error');
     }
-
-    updatePreview(asset.image);
-
-    document.querySelector('#facility-modal h3').textContent = 'Modify Asset';
-    document.querySelector('#submit-btn span').textContent = 'Update Asset';
-    openModal('facility-modal');
 }
 
 // --- Image Handling ---
@@ -215,71 +323,39 @@ function handleFileSelect(e) {
 
 // --- Initialization ---
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Shared Admin Nav Check (from your context)
-    if (typeof requireAdmin === 'function' && !requireAdmin()) {
-        window.location.href = '/login.html';
-        return;
-    }
+document.addEventListener('DOMContentLoaded', async () => {
+    // Auth Check
+    if (typeof requireAdmin === 'function' && !requireAdmin()) return;
+    
     if (typeof renderAdminNav === 'function') {
         renderAdminNav('facilities');
     }
 
-    loadFromStorage();
+    await loadResort();
+    await loadAssets();
 
     const form = document.getElementById('facility-form');
     const imageLink = document.getElementById('facility-image-link');
     const imageFile = document.getElementById('facility-image-file');
 
-    imageLink.addEventListener('input', (e) => {
-        if (currentImageSource === 'url') {
-            updatePreview(e.target.value.trim());
-        }
-    });
-
-    imageFile.addEventListener('change', handleFileSelect);
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const formData = new FormData(form);
-        const assetData = {
-            name: formData.get('name'),
-            type: formData.get('type'),
-            status: formData.get('status'),
-            base_price: formData.get('base_price'),
-            description: formData.get('description'),
-        };
-
-        // Handle Image
-        if (currentImageSource === 'url') {
-            assetData.image = formData.get('images_link');
-        } else {
-            const file = imageFile.files[0];
-            if (file) {
-                assetData.image = await new Promise((resolve) => {
-                    const reader = new FileReader();
-                    reader.onload = (ev) => resolve(ev.target.result);
-                    reader.readAsDataURL(file);
-                });
-            } else if (editingId) {
-                // Keep old image if editing and no new file selected
-                const oldAsset = assets.find(a => a.id === editingId);
-                assetData.image = oldAsset ? oldAsset.image : '';
+    if (imageLink) {
+        imageLink.addEventListener('input', (e) => {
+            if (currentImageSource === 'url') {
+                updatePreview(e.target.value.trim());
             }
-        }
+        });
+    }
 
-        if (editingId) {
-            updateAsset(editingId, assetData);
-        } else {
-            createAsset(assetData);
-        }
+    if (imageFile) {
+        imageFile.addEventListener('change', handleFileSelect);
+    }
 
-        closeModal('facility-modal');
-    });
+    if (form) {
+        form.addEventListener('submit', handleAssetSubmit);
+    }
 });
 
-// Expose functions to global scope for HTML onclick handlers
+// Expose functions to global scope
 window.openModal = openModal;
 window.closeModal = closeModal;
 window.toggleImageSource = toggleImageSource;

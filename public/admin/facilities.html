@@ -70,12 +70,10 @@
                 <div class="space-y-1">
                     <label for="facility-type" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Asset Category</label>
                     <select id="facility-type" name="type" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white">
-                        <option value="Cabana">Cabana</option>
-                        <option value="Day Bed">Day Bed</option>
-                        <option value="Jet Ski">Jet Ski</option>
-                        <option value="Island Tour">Island Tour</option>
-                        <option value="Villa">Villa</option>
-                        <option value="Equipment">Equipment</option>
+                        <option value="cabana">Cabana</option>
+                        <option value="day_bed">Day Bed</option>
+                        <option value="jet_ski">Jet Ski</option>
+                        <option value="island_tour">Island Tour</option>
                     </select>
                 </div>
             </div>
@@ -89,9 +87,18 @@
                         <option value="Retired">Retired</option>
                     </select>
                 </div>
+            <div class="grid md:grid-cols-3 gap-6">
                 <div class="space-y-1">
                     <label for="facility-price" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Rate (PHP)</label>
                     <input type="number" id="facility-price" name="base_price" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="0.00">
+                </div>
+                <div class="space-y-1">
+                    <label for="facility-capacity" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Capacity</label>
+                    <input type="number" id="facility-capacity" name="capacity" required min="1" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" value="1">
+                </div>
+                <div class="space-y-1">
+                    <label for="facility-units" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Total Units</label>
+                    <input type="number" id="facility-units" name="total_units" required min="1" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" value="1">
                 </div>
             </div>
 
