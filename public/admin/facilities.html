@@ -45,31 +45,42 @@
     <!-- Main Content -->
     <div class="flex-1 overflow-y-auto bg-lux-cream/50">
       <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-30">
-        <div>
-          <h1 class="luxury-heading text-2xl font-bold text-lux-navy">Facility Management</h1>
-          <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">Assets, Inventory & Maintenance Control</p>
+        <div class="flex items-center gap-6">
+            <!-- Mobile Menu Toggle -->
+            <button class="md:hidden text-lux-navy text-xl"><i class="fas fa-bars"></i></button>
+            <div>
+              <h1 class="luxury-heading text-2xl font-bold text-lux-navy">Facility Management</h1>
+              <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">Assets, Inventory & Maintenance Control</p>
+            </div>
         </div>
         <div class="flex items-center gap-6">
-          <div class="flex bg-lux-navy/5 p-1 rounded-full">
+          <div class="flex bg-lux-navy/5 p-1 rounded-full border border-lux-navy/5">
             <button onclick="switchTab('assets')" id="btn-tab-assets" class="tab-btn px-6 py-2 text-[10px] font-black uppercase tracking-widest rounded-full transition-all bg-white shadow-sm text-lux-navy">Assets</button>
             <button onclick="switchTab('calendar')" id="btn-tab-calendar" class="tab-btn px-6 py-2 text-[10px] font-black uppercase tracking-widest rounded-full transition-all text-lux-navy/40 hover:text-lux-navy">Maintenance</button>
           </div>
           <button onclick="openAssetModal()" class="px-8 py-3 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all shadow-xl">
             <i class="fas fa-plus mr-2"></i>New Asset
           </button>
+          <div id="auth-nav"></div>
         </div>
       </header>
 
       <main class="p-10 page-transition">
         <!-- Assets Tab -->
         <section id="tab-content-assets" class="space-y-8">
-          <div class="flex justify-between items-end">
+          <div class="flex flex-col md:flex-row justify-between items-center gap-6">
             <div>
               <h3 class="luxury-heading text-xl font-bold">Registered Assets</h3>
               <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">Total inventory overview</p>
             </div>
-            <div class="flex gap-4">
-              <input type="text" id="asset-search" oninput="renderAssets()" placeholder="Search assets..." class="px-6 py-2 bg-white rounded-full border border-lux-navy/5 text-[10px] font-bold uppercase tracking-widest outline-none focus:border-lux-gold w-64">
+            <div class="flex items-center gap-4 w-full md:w-auto">
+              <div class="relative w-full md:w-80">
+                <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-lux-navy/20"></i>
+                <input type="text" id="asset-search" oninput="renderAssets()" placeholder="Search assets..." class="w-full pl-14 pr-6 py-3 bg-white rounded-full border border-lux-navy/5 text-[10px] font-bold uppercase tracking-widest outline-none focus:border-lux-gold shadow-sm">
+              </div>
+              <button onclick="clearAllAssets()" class="px-6 py-3 bg-red-50 text-red-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-red-600 hover:text-white transition-all whitespace-nowrap">
+                <i class="fas fa-trash-sweep mr-2"></i>Clear All
+              </button>
             </div>
           </div>
           <div id="assets-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
@@ -107,11 +118,12 @@
               </div>
             </div>
 
-            <!-- Blackout Form -->
+            <!-- Maintenance CRUD -->
             <div class="space-y-6">
               <div class="bg-white rounded-[3rem] p-8 premium-shadow">
-                <h4 class="luxury-heading text-lg font-bold mb-6">Schedule Maintenance</h4>
+                <h4 id="maint-form-title" class="luxury-heading text-lg font-bold mb-6">Schedule Maintenance</h4>
                 <form id="maintenance-form" class="space-y-4">
+                  <input type="hidden" id="maint-id">
                   <div class="space-y-1">
                     <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Select Asset</label>
                     <select id="maint-asset-id" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white"></select>
@@ -130,13 +142,16 @@
                     <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Reason</label>
                     <input type="text" id="maint-reason" placeholder="Routine check, cleaning, repair..." required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white">
                   </div>
-                  <button type="submit" class="premium-button-gold w-full mt-4">Schedule Blackout</button>
+                  <div class="flex gap-2">
+                    <button type="submit" id="maint-submit-btn" class="premium-button-gold flex-1">Schedule Blackout</button>
+                    <button type="button" id="maint-cancel-btn" onclick="resetMaintenanceForm()" class="hidden px-6 py-3 bg-lux-navy/5 text-lux-navy/40 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-navy/10 transition-all">Cancel</button>
+                  </div>
                 </form>
               </div>
 
               <div class="bg-white rounded-[3rem] p-8 premium-shadow overflow-hidden">
                 <h4 class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 mb-6">Upcoming Blackouts</h4>
-                <div id="maintenance-list" class="space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                <div id="maintenance-list" class="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                   <!-- List items -->
                 </div>
               </div>
@@ -218,7 +233,7 @@
   <script src="/js/admin.js?v=2"></script>
   
   <script>
-    // --- Data Management (LocalStorage) ---
+    // --- Data Management (LocalStorage with API Sync) ---
     const STORAGE_KEY_ASSETS = 'mamagan_assets';
     const STORAGE_KEY_MAINT = 'mamagan_maintenance';
 
@@ -238,13 +253,13 @@
       // 2. Load Assets from LocalStorage
       try {
         const storedAssets = localStorage.getItem(STORAGE_KEY_ASSETS);
-        if (storedAssets) {
+        if (storedAssets && JSON.parse(storedAssets).length > 0) {
           assets = JSON.parse(storedAssets);
         } else {
           // 3. Fallback: Load from API if localStorage is empty
-          console.log('LocalStorage empty, syncing from server...');
+          console.log('LocalStorage empty or empty array, syncing from server...');
           const res = await api.get('/facilities');
-          if (res.success && res.data) {
+          if (res.success && res.data && res.data.length > 0) {
             assets = res.data.map(f => ({
               id: f.id.toString(),
               name: f.name,
@@ -256,7 +271,7 @@
             }));
             saveData();
           } else {
-            // Static defaults if API fails
+            // Static defaults if API fails or also empty
             assets = [
               { id: '1', name: 'Royal Villa', category: 'Accommodation', status: 'Available', rate: 15000, description: 'Private pool, ocean view, 2 bedrooms.', image: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=800&q=80' },
               { id: '2', name: 'Zen Garden Spa', category: 'Wellness', status: 'Maintenance', rate: 5000, description: 'Traditional massage and aromatherapy center.', image: 'https://images.unsplash.com/photo-1544161515-4ae6ce6be87e?auto=format&fit=crop&w=800&q=80' }
@@ -308,21 +323,27 @@
       const query = document.getElementById('asset-search').value.toLowerCase();
       const filtered = assets.filter(a => 
         (a.name && a.name.toLowerCase().includes(query)) || 
-        (a.category && a.category.toLowerCase().includes(query))
+        (a.category && a.category.toLowerCase().includes(query)) ||
+        (a.id && a.id.toLowerCase().includes(query))
       );
       
       if(filtered.length === 0) {
-        container.innerHTML = '<div class="col-span-full py-20 text-center opacity-20 font-black uppercase tracking-[0.5em]">No Assets Found</div>';
+        container.innerHTML = `
+            <div class="col-span-full py-20 text-center flex flex-col items-center gap-4 opacity-20">
+                <i class="fas fa-box-open text-6xl"></i>
+                <span class="font-black uppercase tracking-[0.5em]">No Assets Found</span>
+            </div>
+        `;
         return;
       }
 
       container.innerHTML = filtered.map(a => `
-        <div class="bg-white rounded-[2.5rem] overflow-hidden premium-shadow group hover:-translate-y-2 transition-all duration-500 border border-lux-navy/5">
+        <div class="bg-white rounded-[2.5rem] overflow-hidden premium-shadow group hover:-translate-y-2 transition-all duration-500 border border-lux-navy/5 card-hover">
           <div class="h-56 overflow-hidden relative">
             <div class="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-110" style="background-image: url('${a.image || '/images/placeholders/asset-placeholder.jpg'}')"></div>
             <div class="absolute top-6 right-6 flex gap-2">
-              <button onclick="editAsset('${a.id}')" class="w-10 h-10 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-lux-navy hover:text-lux-gold transition-all shadow-lg"><i class="fas fa-pencil-alt text-xs"></i></button>
-              <button onclick="deleteAsset('${a.id}')" class="w-10 h-10 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-lg"><i class="fas fa-trash-alt text-xs"></i></button>
+              <button onclick="editAsset('${a.id}')" title="Edit Asset" class="w-10 h-10 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-lux-navy hover:text-lux-gold transition-all shadow-lg"><i class="fas fa-pencil-alt text-xs"></i></button>
+              <button onclick="deleteAsset('${a.id}')" title="Decommission" class="w-10 h-10 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-lg"><i class="fas fa-trash-alt text-xs"></i></button>
             </div>
             <div class="absolute bottom-6 left-6">
               <span class="px-4 py-1.5 bg-lux-navy/90 backdrop-blur text-white text-[8px] font-black uppercase tracking-widest rounded-full">${a.category || 'Asset'}</span>
@@ -330,16 +351,16 @@
           </div>
           <div class="p-8 space-y-4">
             <div class="flex justify-between items-start">
-              <div>
-                <h3 class="luxury-heading text-xl font-bold">${a.name}</h3>
+              <div class="flex-1">
+                <h3 class="luxury-heading text-xl font-bold line-clamp-1">${a.name}</h3>
                 <span class="text-[9px] font-bold ${getStatusColor(a.status)} uppercase tracking-widest">${a.status || 'Available'}</span>
               </div>
-              <p class="text-xl font-black text-lux-gold">₱${Number(a.rate || 0).toLocaleString()}</p>
+              <p class="text-xl font-black text-lux-gold ml-4">₱${Number(a.rate || 0).toLocaleString()}</p>
             </div>
-            <p class="text-xs text-lux-navy/50 leading-relaxed line-clamp-2">${a.description || 'No description provided.'}</p>
+            <p class="text-xs text-lux-navy/50 leading-relaxed line-clamp-2 h-10">${a.description || 'No description provided.'}</p>
             <div class="pt-6 border-t border-lux-navy/5 flex justify-between items-center">
               <span class="text-[8px] font-black text-lux-navy/20 uppercase tracking-widest italic">ID: ${(a.id || '').substring(0,8)}</span>
-              <button onclick="editAsset('${a.id}')" class="text-[9px] font-black text-lux-gold hover:text-lux-navy uppercase tracking-[0.2em] transition-all">Details <i class="fas fa-chevron-right ml-1"></i></button>
+              <button onclick="editAsset('${a.id}')" class="text-[9px] font-black text-lux-gold hover:text-lux-navy uppercase tracking-[0.2em] transition-all">Modify <i class="fas fa-chevron-right ml-1"></i></button>
             </div>
           </div>
         </div>
@@ -369,9 +390,7 @@
       
       form.reset();
       document.getElementById('asset-id').value = '';
-      const preview = document.getElementById('img-preview');
-      preview.style.backgroundImage = 'none';
-      preview.innerHTML = '<i class="fas fa-image text-lux-navy/10 text-xl"></i>';
+      updatePreview('');
 
       if(id) {
         const asset = assets.find(a => a.id === id);
@@ -384,7 +403,7 @@
           document.getElementById('asset-status').value = asset.status;
           document.getElementById('asset-rate').value = asset.rate;
           document.getElementById('asset-description').value = asset.description;
-          document.getElementById('asset-image-url').value = asset.image && !asset.image.startsWith('data:') ? asset.image : '';
+          document.getElementById('asset-image-url').value = (asset.image && !asset.image.startsWith('data:')) ? asset.image : '';
           if(asset.image) updatePreview(asset.image);
         }
       } else {
@@ -476,13 +495,29 @@
 
     window.editAsset = (id) => openAssetModal(id);
     window.deleteAsset = (id) => {
-      if(confirm('Are you sure you want to decommission this asset?')) {
+      if(confirm('Are you sure you want to decommission this asset? This will also affect any associated maintenance schedules.')) {
         assets = assets.filter(a => a.id !== id);
+        // Also remove associated maintenance
+        maintenance = maintenance.filter(m => m.assetId !== id);
         saveData();
         renderAssets();
+        renderMaintenanceList();
+        initCalendar();
         showToast('Asset decommissioned', 'info');
       }
     };
+
+    window.clearAllAssets = () => {
+        if (confirm('DANGER: This will delete ALL assets and maintenance records from LocalStorage. Proceed?')) {
+            assets = [];
+            maintenance = [];
+            saveData();
+            renderAssets();
+            renderMaintenanceList();
+            initCalendar();
+            showToast('All local data cleared', 'info');
+        }
+    }
 
     // --- Calendar & Maintenance Logic ---
     let currentYear = new Date().getFullYear();
@@ -548,23 +583,31 @@
       if (!container) return;
       
       if(maintenance.length === 0) {
-        container.innerHTML = '<p class="text-[10px] font-bold text-lux-navy/20 uppercase tracking-widest text-center py-8">No maintenance scheduled</p>';
+        container.innerHTML = `
+            <div class="flex flex-col items-center gap-2 py-10 opacity-20">
+                <i class="fas fa-calendar-check text-4xl"></i>
+                <p class="text-[10px] font-bold uppercase tracking-widest">No maintenance scheduled</p>
+            </div>
+        `;
         return;
       }
 
       container.innerHTML = maintenance.sort((a,b) => new Date(a.start) - new Date(b.start)).map(m => {
         const asset = assets.find(a => a.id === m.assetId);
         return `
-          <div class="p-4 bg-lux-navy/5 rounded-2xl flex justify-between items-center group">
+          <div class="p-4 bg-lux-navy/5 rounded-2xl flex justify-between items-center group hover:bg-lux-navy/10 transition-all border border-transparent hover:border-lux-gold/20">
             <div class="flex items-center gap-4">
-              <div class="w-2 h-2 rounded-full bg-lux-gold"></div>
+              <div class="w-2 h-2 rounded-full bg-lux-gold shadow-glow"></div>
               <div>
-                <h5 class="text-[10px] font-black uppercase tracking-widest">${asset ? asset.name : 'Unknown Asset'}</h5>
+                <h5 class="text-[10px] font-black uppercase tracking-widest text-lux-navy">${asset ? asset.name : 'Unknown Asset'}</h5>
                 <p class="text-[8px] font-bold text-lux-navy/40 uppercase tracking-widest">${m.start} to ${m.end}</p>
-                <p class="text-[8px] font-medium text-lux-navy/60 italic">${m.reason}</p>
+                <p class="text-[8px] font-medium text-lux-navy/60 italic mt-0.5">${m.reason}</p>
               </div>
             </div>
-            <button onclick="deleteMaintenance('${m.id}')" class="opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:scale-110 transition-transform"><i class="fas fa-times-circle"></i></button>
+            <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button onclick="editMaintenance('${m.id}')" title="Edit Schedule" class="text-lux-navy/40 hover:text-lux-gold transition-colors"><i class="fas fa-edit"></i></button>
+                <button onclick="deleteMaintenance('${m.id}')" title="Cancel Schedule" class="text-red-400 hover:text-red-600 transition-colors"><i class="fas fa-trash"></i></button>
+            </div>
           </div>
         `;
       }).join('');
@@ -572,8 +615,9 @@
 
     document.getElementById('maintenance-form').addEventListener('submit', (e) => {
       e.preventDefault();
+      const mid = document.getElementById('maint-id').value;
       const maintData = {
-        id: Date.now().toString(),
+        id: mid || Date.now().toString(),
         assetId: document.getElementById('maint-asset-id').value,
         start: document.getElementById('maint-start').value,
         end: document.getElementById('maint-end').value,
@@ -584,30 +628,71 @@
         return showToast('Start date cannot be after end date', 'error');
       }
 
-      maintenance.push(maintData);
+      if (mid) {
+          const index = maintenance.findIndex(m => m.id === mid);
+          if (index !== -1) maintenance[index] = maintData;
+          showToast('Schedule updated', 'success');
+      } else {
+          maintenance.push(maintData);
+          showToast('Maintenance scheduled', 'success');
+      }
+
       saveData();
       initCalendar();
       renderMaintenanceList();
-      e.target.reset();
-      showToast('Maintenance scheduled', 'success');
+      resetMaintenanceForm();
     });
 
+    window.editMaintenance = (id) => {
+        const m = maintenance.find(item => item.id === id);
+        if (!m) return;
+        
+        document.getElementById('maint-id').value = m.id;
+        document.getElementById('maint-asset-id').value = m.assetId;
+        document.getElementById('maint-start').value = m.start;
+        document.getElementById('maint-end').value = m.end;
+        document.getElementById('maint-reason').value = m.reason;
+        
+        document.getElementById('maint-form-title').textContent = 'Modify Maintenance';
+        document.getElementById('maint-submit-btn').textContent = 'Update Schedule';
+        document.getElementById('maint-cancel-btn').classList.remove('hidden');
+        
+        // Scroll to form
+        document.getElementById('maintenance-form').scrollIntoView({ behavior: 'smooth' });
+    };
+
+    window.resetMaintenanceForm = () => {
+        document.getElementById('maintenance-form').reset();
+        document.getElementById('maint-id').value = '';
+        document.getElementById('maint-form-title').textContent = 'Schedule Maintenance';
+        document.getElementById('maint-submit-btn').textContent = 'Schedule Blackout';
+        document.getElementById('maint-cancel-btn').classList.add('hidden');
+    }
+
     window.deleteMaintenance = (id) => {
-      maintenance = maintenance.filter(m => m.id !== id);
-      saveData();
-      initCalendar();
-      renderMaintenanceList();
-      showToast('Schedule removed', 'info');
+      if (confirm('Cancel this maintenance schedule?')) {
+        maintenance = maintenance.filter(m => m.id !== id);
+        saveData();
+        initCalendar();
+        renderMaintenanceList();
+        showToast('Schedule removed', 'info');
+      }
     };
 
     // --- Init ---
     document.addEventListener('DOMContentLoaded', async () => {
       try {
         // Essential initialization
-        if (typeof renderAdminNav === 'function') renderAdminNav('facilities');
+        if (typeof renderAdminNav === 'function') {
+            console.log('Rendering Admin Nav');
+            renderAdminNav('facilities');
+        } else {
+            console.warn('renderAdminNav not found');
+        }
         
-        const isAdmin = await loadUser();
-        if (!isAdmin || currentUser.role !== 'admin') {
+        const user = await loadUser();
+        if (!user || user.role !== 'admin') {
+           console.warn('Unauthorized access, redirecting...');
            window.location.replace('/login.html');
            return;
         }
