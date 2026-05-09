@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Asset & Maintenance Management | Mamagan Beach Resort</title>
+  <title>Facility Management | Mamagan Beach Resort</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/tailwind-config.js"></script>
   <link rel="stylesheet" href="/css/style.css">
@@ -20,7 +20,9 @@
     .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0, 35, 75, 0.05); }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #c5a059; border-radius: 10px; }
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
-    .card-hover:hover { transform: translateY(-0.5rem); box-shadow: 0 20px 40px -15px rgba(0, 35, 75, 0.1); }
+    .card-hover { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+    .card-hover:hover { transform: translateY(-10px); box-shadow: 0 25px 50px -12px rgba(0, 35, 75, 0.15); }
+    .modal-backdrop { backdrop-filter: blur(8px); background-color: rgba(0, 35, 75, 0.4); }
   </style>
 </head>
 <body class="bg-lux-cream font-sans text-lux-navy">
@@ -28,7 +30,7 @@
     <!-- Sidebar -->
     <aside class="w-80 bg-white border-r border-lux-navy/5 flex-shrink-0 hidden md:flex flex-col relative z-20">
       <div class="p-10 border-b border-lux-navy/5">
-        <a href="/" class="flex items-center gap-4 group" aria-label="Mamagan Beach Resort Home">
+        <a href="/" class="flex items-center gap-4 group" aria-label="Mamagan Home">
           <img src="/images/logos/LOGO.png" alt="Mamagan Logo" class="h-12 group-hover:scale-110 transition-transform">
           <div class="flex flex-col">
             <span class="luxury-heading font-bold text-xl leading-none">Mamagan</span>
@@ -38,8 +40,8 @@
       </div>
       <nav id="admin-nav" class="flex-1 p-6 space-y-2" aria-label="Admin Navigation"></nav>
       <div class="p-8 border-t border-lux-navy/5">
-        <button id="logout-btn" aria-label="Terminate Session" title="Sign Out" class="w-full flex items-center gap-4 px-6 py-4 text-red-600 hover:bg-red-50 rounded-2xl transition-all group">
-          <i class="fas fa-sign-out-alt w-5 text-center group-hover:-translate-x-1 transition-transform" aria-hidden="true"></i>
+        <button id="logout-btn" aria-label="Sign Out" title="Sign Out" class="w-full flex items-center gap-4 px-6 py-4 text-red-600 hover:bg-red-50 rounded-2xl transition-all group">
+          <i class="fas fa-sign-out-alt w-5 text-center group-hover:-translate-x-1 transition-transform"></i>
           <span class="text-[10px] font-black uppercase tracking-widest">Terminate Session</span>
         </button>
       </div>
@@ -48,52 +50,62 @@
     <!-- Main Content -->
     <div class="flex-1 overflow-y-auto bg-lux-cream/50">
       <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-30">
-        <div class="flex items-center gap-6">
-            <button class="md:hidden text-lux-navy text-xl" aria-label="Toggle Menu"><i class="fas fa-bars" aria-hidden="true"></i></button>
-            <div>
-              <h1 class="luxury-heading text-2xl font-bold text-lux-navy">Facility Management</h1>
-              <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">Assets, Inventory & Maintenance Control</p>
-            </div>
+        <div>
+          <h1 class="luxury-heading text-2xl font-bold text-lux-navy">Facility Management</h1>
+          <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">Manage resort inventory, status, and pricing</p>
         </div>
-        <div class="flex items-center gap-6">
-          <div class="flex bg-lux-navy/5 p-1 rounded-full border border-lux-navy/5" role="tablist">
+        <div class="flex items-center gap-8">
+          <div class="flex bg-lux-navy/5 p-1 rounded-full border border-lux-navy/5" role="tablist" aria-label="Management Tabs">
             <button onclick="switchTab('assets')" id="btn-tab-assets" role="tab" aria-selected="true" aria-controls="tab-content-assets" class="tab-btn px-6 py-2 text-[10px] font-black uppercase tracking-widest rounded-full transition-all bg-white shadow-sm text-lux-navy">Assets</button>
             <button onclick="switchTab('calendar')" id="btn-tab-calendar" role="tab" aria-selected="false" aria-controls="tab-content-calendar" class="tab-btn px-6 py-2 text-[10px] font-black uppercase tracking-widest rounded-full transition-all text-lux-navy/40 hover:text-lux-navy">Maintenance</button>
           </div>
-          <button onclick="openAssetModal()" class="px-8 py-3 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all shadow-xl">
-            <i class="fas fa-plus mr-2" aria-hidden="true"></i>New Asset
+          <button onclick="openAssetModal()" aria-label="Add New Asset" class="px-8 py-3 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all shadow-xl">
+            <i class="fas fa-plus mr-2"></i>New Asset
           </button>
           <div id="auth-nav"></div>
         </div>
       </header>
 
-      <main class="p-10 page-transition">
+      <main class="p-10 page-transition space-y-10">
         <!-- Assets Tab -->
-        <section id="tab-content-assets" class="space-y-8" role="tabpanel" aria-labelledby="btn-tab-assets">
-          <div class="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div>
-              <h3 class="luxury-heading text-xl font-bold">Registered Assets</h3>
-              <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">Total inventory overview</p>
+        <section id="tab-content-assets" class="space-y-10">
+            <!-- Search & Filter Bar -->
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6 bg-white p-6 rounded-[2rem] border border-lux-navy/5 shadow-sm">
+                <div class="relative w-full md:w-96">
+                    <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-lux-navy/20"></i>
+                    <label for="asset-search" class="sr-only">Search assets by name or category</label>
+                    <input type="text" id="asset-search" oninput="handleSearch()" placeholder="Search Name or Category..." class="w-full pl-14 pr-6 py-3 bg-lux-navy/5 border-transparent rounded-full text-[10px] font-bold uppercase tracking-widest outline-none focus:bg-white focus:ring-2 focus:ring-lux-gold/20 transition-all">
+                </div>
+                <div class="flex items-center gap-4 w-full md:w-auto">
+                    <button onclick="clearSearch()" class="px-6 py-3 text-[10px] font-black uppercase tracking-widest text-lux-navy/40 hover:text-lux-navy transition-colors">
+                        Clear Search
+                    </button>
+                    <div class="h-8 w-px bg-lux-navy/10 mx-2"></div>
+                    <p id="asset-count" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30">Showing 0 Assets</p>
+                </div>
             </div>
-            <div class="flex items-center gap-4 w-full md:w-auto">
-              <div class="relative w-full md:w-80">
-                <label for="asset-search" class="sr-only">Search assets</label>
-                <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-lux-navy/20" aria-hidden="true"></i>
-                <input type="text" id="asset-search" oninput="renderAssets()" placeholder="Search assets..." class="w-full pl-14 pr-6 py-3 bg-white rounded-full border border-lux-navy/5 text-[10px] font-bold uppercase tracking-widest outline-none focus:border-lux-gold shadow-sm">
-              </div>
-              <button onclick="clearAllAssets()" aria-label="Clear All Local Data" title="Clear All" class="px-6 py-3 bg-red-50 text-red-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-red-600 hover:text-white transition-all whitespace-nowrap">
-                <i class="fas fa-trash-sweep mr-2" aria-hidden="true"></i>Clear All
-              </button>
+
+            <!-- Asset Cards Grid -->
+            <div id="assets-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                <!-- Dynamic Assets Here -->
             </div>
-          </div>
-          <div id="assets-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-            <!-- Asset Cards injected here -->
-          </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="hidden py-32 text-center flex flex-col items-center gap-6">
+                <div class="w-24 h-24 rounded-full bg-lux-navy/5 flex items-center justify-center text-lux-navy/10 text-4xl">
+                    <i class="fas fa-box-open"></i>
+                </div>
+                <div>
+                    <h3 class="luxury-heading text-xl font-bold opacity-30">No Assets Found</h3>
+                    <p class="text-[10px] font-bold text-lux-navy/20 uppercase tracking-[0.2em] mt-2">Adjust your search or add a new facility</p>
+                </div>
+            </div>
         </section>
 
         <!-- Maintenance Calendar Tab -->
-        <section id="tab-content-calendar" class="hidden space-y-10" role="tabpanel" aria-labelledby="btn-tab-calendar">
+        <section id="tab-content-calendar" class="hidden space-y-10">
           <div class="grid lg:grid-cols-3 gap-10">
+            <!-- Calendar View -->
             <div class="lg:col-span-2 bg-white rounded-[3rem] p-10 premium-shadow">
               <div class="flex justify-between items-center mb-8">
                 <div>
@@ -101,10 +113,11 @@
                   <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">Maintenance Schedule</p>
                 </div>
                 <div class="flex gap-2">
-                  <button onclick="prevMonth()" aria-label="Previous Month" title="Previous" class="w-10 h-10 rounded-full border border-lux-navy/10 flex items-center justify-center hover:bg-lux-navy hover:text-white transition-all"><i class="fas fa-chevron-left text-xs" aria-hidden="true"></i></button>
-                  <button onclick="nextMonth()" aria-label="Next Month" title="Next" class="w-10 h-10 rounded-full border border-lux-navy/10 flex items-center justify-center hover:bg-lux-navy hover:text-white transition-all"><i class="fas fa-chevron-right text-xs" aria-hidden="true"></i></button>
+                  <button onclick="prevMonth()" aria-label="Previous Month" title="Previous" class="w-10 h-10 rounded-full border border-lux-navy/10 flex items-center justify-center hover:bg-lux-navy hover:text-white transition-all"><i class="fas fa-chevron-left text-xs"></i></button>
+                  <button onclick="nextMonth()" aria-label="Next Month" title="Next" class="w-10 h-10 rounded-full border border-lux-navy/10 flex items-center justify-center hover:bg-lux-navy hover:text-white transition-all"><i class="fas fa-chevron-right text-xs"></i></button>
                 </div>
               </div>
+              
               <div class="calendar-grid text-center mb-4" aria-hidden="true">
                 <div class="text-[10px] font-black text-lux-navy/20 uppercase tracking-widest py-4">Sun</div>
                 <div class="text-[10px] font-black text-lux-navy/20 uppercase tracking-widest py-4">Mon</div>
@@ -114,9 +127,12 @@
                 <div class="text-[10px] font-black text-lux-navy/20 uppercase tracking-widest py-4">Fri</div>
                 <div class="text-[10px] font-black text-lux-navy/20 uppercase tracking-widest py-4">Sat</div>
               </div>
-              <div id="calendar-days" class="calendar-grid gap-2"></div>
+              <div id="calendar-days" class="calendar-grid gap-2">
+                <!-- Days injected here -->
+              </div>
             </div>
 
+            <!-- Maintenance Sidebar -->
             <div class="space-y-6">
               <div class="bg-white rounded-[3rem] p-8 premium-shadow">
                 <h4 id="maint-form-title" class="luxury-heading text-lg font-bold mb-6">Schedule Maintenance</h4>
@@ -124,31 +140,34 @@
                   <input type="hidden" id="maint-id">
                   <div class="space-y-1">
                     <label for="maint-asset-id" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Select Asset</label>
-                    <select id="maint-asset-id" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" title="Asset selection"></select>
+                    <select id="maint-asset-id" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" title="Select Asset"></select>
                   </div>
                   <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-1">
                       <label for="maint-start" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Start Date</label>
-                      <input type="date" id="maint-start" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white text-xs" title="Start date">
+                      <input type="date" id="maint-start" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white text-xs">
                     </div>
                     <div class="space-y-1">
                       <label for="maint-end" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">End Date</label>
-                      <input type="date" id="maint-end" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white text-xs" title="End date">
+                      <input type="date" id="maint-end" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white text-xs">
                     </div>
                   </div>
                   <div class="space-y-1">
                     <label for="maint-reason" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Reason</label>
-                    <input type="text" id="maint-reason" placeholder="Describe the task..." required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" title="Maintenance reason">
+                    <input type="text" id="maint-reason" placeholder="Routine check, repair..." required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white">
                   </div>
                   <div class="flex gap-2">
-                    <button type="submit" id="maint-submit-btn" class="premium-button-gold flex-1">Schedule Blackout</button>
-                    <button type="button" id="maint-cancel-btn" onclick="resetMaintenanceForm()" class="hidden px-6 py-3 bg-lux-navy/5 text-lux-navy/40 text-[10px] font-black uppercase tracking-widest rounded-full transition-all">Cancel</button>
+                    <button type="submit" id="maint-submit-btn" class="premium-button-gold flex-1">Schedule</button>
+                    <button type="button" id="maint-cancel-btn" onclick="resetMaintenanceForm()" class="hidden px-6 py-3 bg-lux-navy/5 text-lux-navy/40 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-navy/10 transition-all">Cancel</button>
                   </div>
                 </form>
               </div>
+
               <div class="bg-white rounded-[3rem] p-8 premium-shadow overflow-hidden">
-                <h4 class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 mb-6">Upcoming Blackouts</h4>
-                <div id="maintenance-list" class="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar"></div>
+                <h4 class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 mb-6">Active Schedules</h4>
+                <div id="maintenance-list" class="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                  <!-- List items -->
+                </div>
               </div>
             </div>
           </div>
@@ -157,70 +176,92 @@
     </div>
   </div>
 
-  <!-- Asset Modal -->
-  <div id="asset-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6" role="dialog" aria-modal="true" aria-labelledby="asset-modal-title">
-    <div class="absolute inset-0 bg-lux-navy/40 backdrop-blur-sm" onclick="closeAssetModal()"></div>
+  <!-- Asset Modal (Add/Edit) -->
+  <div id="asset-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6 modal-backdrop">
+    <div class="absolute inset-0" onclick="closeAssetModal()"></div>
     <div class="relative bg-white rounded-[3rem] w-full max-w-2xl overflow-hidden shadow-2xl fade-in">
-      <div class="p-10 border-b border-lux-navy/5 flex justify-between items-center">
-        <h3 id="asset-modal-title" class="luxury-heading text-2xl font-bold">Asset Registration</h3>
-        <button onclick="closeAssetModal()" aria-label="Close Modal" title="Close" class="text-lux-navy/20 hover:text-lux-navy transition-colors"><i class="fas fa-times" aria-hidden="true"></i></button>
-      </div>
-      <form id="asset-form" class="p-10 space-y-6">
-        <input type="hidden" id="asset-id">
-        <div class="grid md:grid-cols-2 gap-6">
-          <div class="space-y-1">
-            <label for="asset-name" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Asset Name</label>
-            <input type="text" id="asset-name" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="e.g. Royal Villa">
-          </div>
-          <div class="space-y-1">
-            <label for="asset-category" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Category</label>
-            <input type="text" id="asset-category" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="e.g. Room">
-          </div>
+        <div class="p-10 border-b border-lux-navy/5 flex justify-between items-center bg-lux-navy/5">
+            <h3 id="modal-title" class="luxury-heading text-2xl font-bold">Register Asset</h3>
+            <button onclick="closeAssetModal()" aria-label="Close modal" title="Close" class="text-lux-navy/20 hover:text-lux-navy transition-colors"><i class="fas fa-times"></i></button>
         </div>
-        <div class="grid md:grid-cols-2 gap-6">
-          <div class="space-y-1">
-            <label for="asset-status" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Status</label>
-            <select id="asset-status" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" title="Status selection">
-              <option value="Available">Available</option>
-              <option value="Maintenance">Maintenance</option>
-              <option value="Occupied">Occupied</option>
-              <option value="Decommissioned">Decommissioned</option>
-            </select>
-          </div>
-          <div class="space-y-1">
-            <label for="asset-rate" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Rate (PHP)</label>
-            <input type="number" id="asset-rate" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="0.00">
-          </div>
-        </div>
-        <div class="space-y-1">
-          <label for="asset-description" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Description</label>
-          <textarea id="asset-description" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white h-24" placeholder="Brief details..."></textarea>
-        </div>
-        <div class="space-y-4">
-          <div class="flex p-1 bg-lux-navy/5 rounded-2xl w-fit" role="tablist">
-            <button type="button" onclick="setImgSrc('url')" id="img-tab-url" role="tab" aria-selected="true" class="px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all bg-lux-navy text-white">URL</button>
-            <button type="button" onclick="setImgSrc('file')" id="img-tab-file" role="tab" aria-selected="false" class="px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all text-lux-navy/40">Upload</button>
-          </div>
-          <div id="img-url-input">
-            <label for="asset-image-url" class="sr-only">Image URL</label>
-            <input type="url" id="asset-image-url" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="https://..." title="Image URL">
-          </div>
-          <div id="img-file-input" class="hidden">
-            <label for="asset-image-file" class="sr-only">Upload File</label>
-            <input type="file" id="asset-image-file" accept="image/*" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" title="File upload">
-          </div>
-          <div class="flex items-center gap-4 p-4 bg-lux-navy/5 rounded-2xl">
-            <div id="img-preview" class="w-16 h-16 rounded-xl bg-lux-navy/10 overflow-hidden bg-cover bg-center flex items-center justify-center">
-              <i class="fas fa-image text-lux-navy/10 text-xl" aria-hidden="true"></i>
+        <form id="asset-form" class="p-10 space-y-6">
+            <input type="hidden" id="edit-id">
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="space-y-1">
+                    <label for="f-name" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Asset Name</label>
+                    <input type="text" id="f-name" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="e.g. Royal Cabana">
+                </div>
+                <div class="space-y-1">
+                    <label for="f-category" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Category</label>
+                    <select id="f-category" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" title="Select Category">
+                        <option value="Cabana">Cabana</option>
+                        <option value="Suite">Suite</option>
+                        <option value="Villas">Villas</option>
+                        <option value="Activities">Activities</option>
+                        <option value="Spa">Spa</option>
+                    </select>
+                </div>
             </div>
-            <span class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-widest">Preview</span>
-          </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="space-y-1">
+                    <label for="f-price" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Rate (PHP)</label>
+                    <input type="number" id="f-price" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="0.00">
+                </div>
+                <div class="space-y-1">
+                    <label for="f-status" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Status</label>
+                    <select id="f-status" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" title="Select Status">
+                        <option value="Available">Available</option>
+                        <option value="Maintenance">Maintenance</option>
+                        <option value="Occupied">Occupied</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <label for="f-description" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Description</label>
+                <textarea id="f-description" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white h-24" placeholder="Describe features..."></textarea>
+            </div>
+
+            <div class="space-y-4">
+                <div class="flex p-1 bg-lux-navy/5 rounded-2xl w-fit">
+                    <button type="button" onclick="setImgSource('url')" id="src-url-btn" class="px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all bg-lux-navy text-white">Image URL</button>
+                    <button type="button" onclick="setImgSource('file')" id="src-file-btn" class="px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all text-lux-navy/40">Upload File</button>
+                </div>
+                <div id="url-container" class="space-y-1">
+                    <label for="f-image-url" class="sr-only">Image URL</label>
+                    <input type="url" id="f-image-url" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="https://...">
+                </div>
+                <div id="file-container" class="hidden space-y-1">
+                    <label for="f-image-file" class="sr-only">Upload File</label>
+                    <input type="file" id="f-image-file" accept="image/*" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white">
+                </div>
+                <div id="image-preview" class="w-full h-32 rounded-2xl bg-lux-navy/5 border-2 border-dashed border-lux-navy/10 overflow-hidden bg-cover bg-center flex items-center justify-center">
+                    <span class="text-[10px] font-bold text-lux-navy/20 uppercase tracking-widest">Image Preview</span>
+                </div>
+            </div>
+
+            <button type="submit" id="submit-btn" class="premium-button-gold w-full flex items-center justify-center gap-4 group shadow-xl">
+                <span id="btn-text">Register Asset</span>
+                <i class="fas fa-save transition-transform group-hover:scale-110"></i>
+            </button>
+        </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="delete-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-6 modal-backdrop">
+    <div class="absolute inset-0" onclick="closeDeleteModal()"></div>
+    <div class="relative bg-white rounded-[3rem] w-full max-w-md p-10 shadow-2xl text-center fade-in">
+        <div class="w-20 h-20 rounded-3xl bg-red-50 text-red-500 text-3xl flex items-center justify-center mx-auto mb-6">
+            <i class="fas fa-trash-alt"></i>
         </div>
-        <button type="submit" class="premium-button-gold w-full flex items-center justify-center gap-4 group">
-          <span id="save-btn-text">Register Asset</span>
-          <i class="fas fa-save" aria-hidden="true"></i>
-        </button>
-      </form>
+        <h3 class="luxury-heading text-xl font-bold text-lux-navy mb-2">Remove Asset?</h3>
+        <p class="text-xs text-lux-navy/50 leading-relaxed mb-8">Are you sure you want to remove this asset from the inventory? This action cannot be undone.</p>
+        <div class="flex gap-4">
+            <button onclick="closeDeleteModal()" class="flex-1 px-8 py-4 bg-lux-navy/5 text-lux-navy text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-navy/10 transition-all">Cancel</button>
+            <button id="confirm-delete-btn" class="flex-1 px-8 py-4 bg-red-500 text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-red-600 hover:shadow-lg transition-all shadow-red-500/20">Delete Asset</button>
+        </div>
     </div>
   </div>
 
@@ -230,57 +271,18 @@
   <script src="/js/admin.js?v=2"></script>
   
   <script>
-    const STORAGE_KEY_ASSETS = 'mamagan_assets';
-    const STORAGE_KEY_MAINT = 'mamagan_maintenance';
-    let assets = [];
-    let maintenance = [];
+    let allAssets = [];
+    let allMaintenance = [];
+    let imageSource = 'url';
+    let base64Image = '';
 
-    async function initData() {
-      try {
-        const storedMaint = localStorage.getItem(STORAGE_KEY_MAINT);
-        maintenance = storedMaint ? JSON.parse(storedMaint) : [];
-      } catch(e) { console.error(e); maintenance = []; }
-
-      try {
-        const storedAssets = localStorage.getItem(STORAGE_KEY_ASSETS);
-        const parsed = storedAssets ? JSON.parse(storedAssets) : [];
-        if (parsed && parsed.length > 0) {
-          assets = parsed;
-        } else {
-          console.log('Syncing assets from API...');
-          const res = await api.get('/facilities');
-          if (res.success && res.data && res.data.length > 0) {
-            assets = res.data.map(f => ({
-              id: f.id.toString(),
-              name: f.name,
-              category: f.type,
-              status: f.status || 'Available',
-              rate: f.base_price,
-              description: f.description,
-              image: (f.images && f.images.length > 0) ? f.images[0] : ''
-            }));
-            saveData();
-          } else {
-            assets = [
-              { id: '1', name: 'Royal Villa', category: 'Accommodation', status: 'Available', rate: 15000, description: 'Private pool, ocean view.', image: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=800&q=80' },
-              { id: '2', name: 'Zen Spa', category: 'Wellness', status: 'Maintenance', rate: 5000, description: 'Massage center.', image: 'https://images.unsplash.com/photo-1544161515-4ae6ce6be87e?auto=format&fit=crop&w=800&q=80' }
-            ];
-          }
-        }
-      } catch(e) { console.error(e); assets = []; }
-      renderAssets();
-    }
-
-    function saveData() {
-      localStorage.setItem(STORAGE_KEY_ASSETS, JSON.stringify(assets));
-      localStorage.setItem(STORAGE_KEY_MAINT, JSON.stringify(maintenance));
-    }
-
+    // --- Tab Management ---
     function switchTab(tab) {
       document.getElementById('tab-content-assets').classList.toggle('hidden', tab !== 'assets');
       document.getElementById('tab-content-calendar').classList.toggle('hidden', tab !== 'calendar');
       const btnAssets = document.getElementById('btn-tab-assets');
       const btnCalendar = document.getElementById('btn-tab-calendar');
+      
       if(tab === 'assets') {
         btnAssets.classList.add('bg-white', 'shadow-sm', 'text-lux-navy');
         btnAssets.setAttribute('aria-selected', 'true');
@@ -288,7 +290,7 @@
         btnAssets.classList.remove('text-lux-navy/40');
         btnCalendar.classList.remove('bg-white', 'shadow-sm', 'text-lux-navy');
         btnCalendar.classList.add('text-lux-navy/40');
-        renderAssets();
+        fetchAssets();
       } else {
         btnCalendar.classList.add('bg-white', 'shadow-sm', 'text-lux-navy');
         btnCalendar.setAttribute('aria-selected', 'true');
@@ -297,204 +299,244 @@
         btnAssets.classList.remove('bg-white', 'shadow-sm', 'text-lux-navy');
         btnAssets.classList.add('text-lux-navy/40');
         initCalendar();
-        renderMaintenanceList();
+        fetchMaintenance();
       }
     }
 
-    function renderAssets() {
-      const container = document.getElementById('assets-container');
-      if (!container) return;
-      const query = document.getElementById('asset-search').value.toLowerCase();
-      const filtered = assets.filter(a => 
-        (a.name && a.name.toLowerCase().includes(query)) || 
-        (a.category && a.category.toLowerCase().includes(query)) ||
-        (a.id && a.id.toLowerCase().includes(query))
-      );
-      if(filtered.length === 0) {
-        container.innerHTML = '<div class="col-span-full py-20 text-center flex flex-col items-center gap-4 opacity-20"><i class="fas fa-box-open text-6xl"></i><span class="font-black uppercase tracking-[0.5em]">No Assets Found</span></div>';
-        return;
-      }
-      container.innerHTML = filtered.map(a => `
-        <div class="bg-white rounded-[2.5rem] overflow-hidden premium-shadow group border border-lux-navy/5 card-hover transition-all">
-          <div class="h-56 overflow-hidden relative">
-            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-110" style="background-image: url('${a.image || '/images/placeholders/asset-placeholder.jpg'}')"></div>
-            <div class="absolute top-6 right-6 flex gap-2">
-              <button onclick="editAsset('${a.id}')" aria-label="Edit ${a.name}" title="Edit" class="w-10 h-10 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-lux-navy hover:text-lux-gold transition-all shadow-lg"><i class="fas fa-pencil-alt text-xs"></i></button>
-              <button onclick="deleteAsset('${a.id}')" aria-label="Delete ${a.name}" title="Delete" class="w-10 h-10 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-lg"><i class="fas fa-trash-alt text-xs"></i></button>
-            </div>
-            <div class="absolute bottom-6 left-6"><span class="px-4 py-1.5 bg-lux-navy/90 backdrop-blur text-white text-[8px] font-black uppercase tracking-widest rounded-full">${a.category || 'Asset'}</span></div>
-          </div>
-          <div class="p-8 space-y-4">
-            <div class="flex justify-between items-start"><div class="flex-1"><h3 class="luxury-heading text-xl font-bold line-clamp-1">${a.name}</h3><span class="text-[9px] font-bold ${getStatusColor(a.status)} uppercase tracking-widest">${a.status}</span></div><p class="text-xl font-black text-lux-gold ml-4">₱${Number(a.rate).toLocaleString()}</p></div>
-            <p class="text-xs text-lux-navy/50 leading-relaxed line-clamp-2 h-10">${a.description || ''}</p>
-            <div class="pt-6 border-t border-lux-navy/5 flex justify-between items-center"><span class="text-[8px] font-black text-lux-navy/20 uppercase tracking-widest italic">ID: ${(a.id || '').substring(0,8)}</span><button onclick="editAsset('${a.id}')" aria-label="Modify" class="text-[9px] font-black text-lux-gold hover:text-lux-navy uppercase tracking-[0.2em]">Modify <i class="fas fa-chevron-right ml-1"></i></button></div>
-          </div>
-        </div>
-      `).join('');
-      const maintSelect = document.getElementById('maint-asset-id');
-      if (maintSelect) maintSelect.innerHTML = assets.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
-    }
-
-    function getStatusColor(s) {
-      if (s === 'Available') return 'text-green-500';
-      if (s === 'Maintenance') return 'text-amber-500';
-      if (s === 'Occupied') return 'text-lux-gold';
-      return 'text-red-500';
-    }
-
-    function openAssetModal(id = null) {
-      const form = document.getElementById('asset-form');
-      form.reset();
-      document.getElementById('asset-id').value = '';
-      updatePreview('');
-      if(id) {
-        const a = assets.find(item => item.id === id);
-        if(a) {
-          document.getElementById('asset-modal-title').textContent = 'Modify Asset';
-          document.getElementById('save-btn-text').textContent = 'Update Asset';
-          document.getElementById('asset-id').value = a.id;
-          document.getElementById('asset-name').value = a.name;
-          document.getElementById('asset-category').value = a.category;
-          document.getElementById('asset-status').value = a.status;
-          document.getElementById('asset-rate').value = a.rate;
-          document.getElementById('asset-description').value = a.description;
-          document.getElementById('asset-image-url').value = (a.image && !a.image.startsWith('data:')) ? a.image : '';
-          if(a.image) updatePreview(a.image);
+    // --- Initialization ---
+    document.addEventListener('DOMContentLoaded', async () => {
+        if (typeof renderAdminNav === 'function') renderAdminNav('facilities');
+        const user = await loadUser();
+        if (!user || user.role !== 'admin') {
+            window.location.replace('/login.html');
+            return;
         }
-      } else {
-        document.getElementById('asset-modal-title').textContent = 'Asset Registration';
-        document.getElementById('save-btn-text').textContent = 'Register Asset';
-      }
-      document.getElementById('asset-modal').classList.remove('hidden');
+        await fetchAssets();
+        await fetchMaintenance();
+    });
+
+    async function fetchAssets() {
+        try {
+            const res = await api.get('/facilities');
+            if (res.success) {
+                allAssets = res.data;
+                renderAssets(allAssets);
+                // Update maintenance dropdown
+                const select = document.getElementById('maint-asset-id');
+                if(select) select.innerHTML = allAssets.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+            }
+        } catch (err) {
+            console.error('Fetch assets failed:', err);
+        }
     }
 
-    function closeAssetModal() { document.getElementById('asset-modal').classList.add('hidden'); }
+    // --- Rendering Assets ---
+    function renderAssets(data) {
+        const grid = document.getElementById('assets-grid');
+        const empty = document.getElementById('empty-state');
+        const count = document.getElementById('asset-count');
+        grid.innerHTML = '';
+        count.textContent = `Showing ${data.length} Assets`;
 
-    function setImgSrc(type) {
-      const urlTab = document.getElementById('img-tab-url');
-      const fileTab = document.getElementById('img-tab-file');
-      document.getElementById('img-url-input').classList.toggle('hidden', type !== 'url');
-      document.getElementById('img-file-input').classList.toggle('hidden', type !== 'file');
-      if(type === 'url') {
-        urlTab.classList.add('bg-lux-navy', 'text-white'); urlTab.setAttribute('aria-selected', 'true');
-        fileTab.classList.remove('bg-lux-navy', 'text-white'); fileTab.setAttribute('aria-selected', 'false');
-      } else {
-        fileTab.classList.add('bg-lux-navy', 'text-white'); fileTab.setAttribute('aria-selected', 'true');
-        urlTab.classList.remove('bg-lux-navy', 'text-white'); urlTab.setAttribute('aria-selected', 'false');
-      }
+        if (data.length === 0) {
+            empty.classList.remove('hidden');
+            grid.classList.add('hidden');
+            return;
+        }
+
+        empty.classList.add('hidden');
+        grid.classList.remove('hidden');
+
+        data.forEach(asset => {
+            const img = (asset.images && asset.images.length > 0) ? asset.images[0] : '/images/placeholders/asset-placeholder.jpg';
+            const card = `
+                <div class="bg-white rounded-[2.5rem] overflow-hidden border border-lux-navy/5 card-hover shadow-sm group">
+                    <div class="h-60 overflow-hidden relative">
+                        <div class="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-110" style="background-image: url('${img}')"></div>
+                        <div class="absolute top-6 right-6 flex gap-2">
+                            <button onclick="openAssetModal('${asset.id}')" aria-label="Edit" title="Edit" class="w-10 h-10 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-lux-navy hover:text-lux-gold transition-all shadow-lg"><i class="fas fa-pencil-alt text-xs"></i></button>
+                            <button onclick="confirmDelete('${asset.id}')" aria-label="Delete" title="Delete" class="w-10 h-10 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-lg"><i class="fas fa-trash-alt text-xs"></i></button>
+                        </div>
+                        <div class="absolute bottom-6 left-6">
+                            <span class="px-4 py-1.5 bg-lux-navy text-white text-[8px] font-black uppercase tracking-widest rounded-full">${asset.type}</span>
+                        </div>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="luxury-heading text-xl font-bold text-lux-navy truncate" title="${asset.name}">${asset.name}</h3>
+                            <span class="text-xl font-black text-lux-gold">₱${Number(asset.base_price).toLocaleString()}</span>
+                        </div>
+                        <div class="flex items-center gap-2 mb-4">
+                            <div class="w-1.5 h-1.5 rounded-full ${asset.status === 'Available' ? 'bg-green-500' : asset.status === 'Maintenance' ? 'bg-amber-500' : 'bg-red-500'}"></div>
+                            <span class="text-[9px] font-black uppercase tracking-widest text-lux-navy/40">${asset.status}</span>
+                        </div>
+                        <p class="text-xs text-lux-navy/60 leading-relaxed line-clamp-2 h-10 mb-6">${asset.description || 'No description provided.'}</p>
+                        <div class="pt-6 border-t border-lux-navy/5 flex justify-between items-center">
+                            <span class="text-[8px] font-black text-lux-navy/20 uppercase tracking-widest italic">ID: ${asset.id.substring(0,8)}</span>
+                            <button onclick="openAssetModal('${asset.id}')" class="text-[9px] font-black text-lux-gold hover:text-lux-navy uppercase tracking-[0.2em] transition-all">Modify <i class="fas fa-chevron-right ml-1"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            grid.insertAdjacentHTML('beforeend', card);
+        });
+    }
+
+    // --- Search & Filter ---
+    function handleSearch() {
+        const query = document.getElementById('asset-search').value.toLowerCase();
+        const filtered = allAssets.filter(a => 
+            a.name.toLowerCase().includes(query) || 
+            a.type.toLowerCase().includes(query)
+        );
+        renderAssets(filtered);
+    }
+
+    function clearSearch() {
+        document.getElementById('asset-search').value = '';
+        renderAssets(allAssets);
+    }
+
+    // --- Asset CRUD: Modal ---
+    function openAssetModal(id = null) {
+        const modal = document.getElementById('asset-modal');
+        const form = document.getElementById('asset-form');
+        const title = document.getElementById('modal-title');
+        const btn = document.getElementById('btn-text');
+
+        form.reset();
+        document.getElementById('edit-id').value = '';
+        updatePreview('');
+        setImgSource('url');
+
+        if (id) {
+            const asset = allAssets.find(a => a.id === id);
+            if (asset) {
+                title.textContent = 'Modify Facility';
+                btn.textContent = 'Update Asset';
+                document.getElementById('edit-id').value = asset.id;
+                document.getElementById('f-name').value = asset.name;
+                document.getElementById('f-category').value = asset.type;
+                document.getElementById('f-price').value = asset.base_price;
+                document.getElementById('f-status').value = asset.status;
+                document.getElementById('f-description').value = asset.description || '';
+                const img = (asset.images && asset.images.length > 0) ? asset.images[0] : '';
+                if(img) {
+                    if(img.startsWith('http')) {
+                        document.getElementById('f-image-url').value = img;
+                        setImgSource('url');
+                    } else {
+                        setImgSource('file');
+                    }
+                    updatePreview(img);
+                }
+            }
+        } else {
+            title.textContent = 'Register Facility';
+            btn.textContent = 'Register Asset';
+        }
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeAssetModal() {
+        document.getElementById('asset-modal').classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+    function setImgSource(src) {
+        imageSource = src;
+        const urlBtn = document.getElementById('src-url-btn');
+        const fileBtn = document.getElementById('src-file-btn');
+        document.getElementById('url-container').classList.toggle('hidden', src !== 'url');
+        document.getElementById('file-container').classList.toggle('hidden', src !== 'file');
+        urlBtn.className = src === 'url' ? 'px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all bg-lux-navy text-white' : 'px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all text-lux-navy/40';
+        fileBtn.className = src === 'file' ? 'px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all bg-lux-navy text-white' : 'px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all text-lux-navy/40';
     }
 
     function updatePreview(src) {
-      const p = document.getElementById('img-preview');
-      if (src) { p.style.backgroundImage = `url('${src}')`; p.innerHTML = ''; }
-      else { p.style.backgroundImage = 'none'; p.innerHTML = '<i class="fas fa-image text-lux-navy/10 text-xl"></i>'; }
+        const preview = document.getElementById('image-preview');
+        if (src) { preview.style.backgroundImage = `url('${src}')`; preview.innerHTML = ''; }
+        else { preview.style.backgroundImage = 'none'; preview.innerHTML = '<span class="text-[10px] font-bold text-lux-navy/20 uppercase tracking-widest">Image Preview</span>'; }
     }
 
-    document.getElementById('asset-image-url').addEventListener('input', (e) => updatePreview(e.target.value));
-    document.getElementById('asset-image-file').addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if(file) {
-        const reader = new FileReader();
-        reader.onload = (ev) => updatePreview(ev.target.result);
-        reader.readAsDataURL(file);
-      }
+    document.getElementById('f-image-url').addEventListener('input', (e) => imageSource === 'url' && updatePreview(e.target.value));
+    document.getElementById('f-image-file').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (ev) => { base64Image = ev.target.result; updatePreview(base64Image); };
+            reader.readAsDataURL(file);
+        }
     });
 
-    document.getElementById('asset-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const id = document.getElementById('asset-id').value;
-      const preview = document.getElementById('img-preview').style.backgroundImage;
-      const imageStr = preview && preview !== 'none' ? preview.replace(/^url\(["']?/, '').replace(/["']?\)$/, '') : '';
-      const data = {
-        id: id || Date.now().toString(),
-        name: document.getElementById('asset-name').value,
-        category: document.getElementById('asset-category').value,
-        status: document.getElementById('asset-status').value,
-        rate: document.getElementById('asset-rate').value,
-        description: document.getElementById('asset-description').value,
-        image: imageStr
-      };
-      if(id) {
-        const idx = assets.findIndex(a => a.id === id);
-        if (idx !== -1) assets[idx] = data;
-        showToast('Asset updated', 'success');
-      } else {
-        assets.push(data);
-        showToast('Asset registered', 'success');
-      }
-      saveData(); renderAssets(); closeAssetModal();
+    document.getElementById('asset-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('edit-id').value;
+        const data = {
+            name: document.getElementById('f-name').value,
+            type: document.getElementById('f-category').value,
+            base_price: document.getElementById('f-price').value,
+            status: document.getElementById('f-status').value,
+            description: document.getElementById('f-description').value,
+            images_link: imageSource === 'url' ? document.getElementById('f-image-url').value : base64Image
+        };
+        try {
+            const res = id ? await api.put(`/facilities/${id}`, data) : await api.post('/facilities', data);
+            if (res.success) {
+                showToast(id ? 'Facility updated' : 'New facility registered', 'success');
+                closeAssetModal();
+                fetchAssets();
+            } else showToast(res.message, 'error');
+        } catch (err) { showToast('System error', 'error'); }
     });
 
-    window.editAsset = (id) => openAssetModal(id);
-    window.deleteAsset = (id) => {
-      if(confirm('Decommission this asset?')) {
-        assets = assets.filter(a => a.id !== id);
-        maintenance = maintenance.filter(m => m.assetId !== id);
-        saveData(); renderAssets(); renderMaintenanceList(); initCalendar();
-        showToast('Asset removed', 'info');
-      }
-    };
-
-    window.clearAllAssets = () => {
-      if (confirm('Delete ALL local assets?')) {
-        assets = []; maintenance = []; saveData();
-        renderAssets(); renderMaintenanceList(); initCalendar();
-        showToast('Data cleared', 'info');
-      }
+    // --- Asset CRUD: Delete ---
+    let pendingDeleteId = null;
+    function confirmDelete(id) {
+        pendingDeleteId = id;
+        document.getElementById('delete-modal').classList.remove('hidden');
     }
-
-    let currentYear = new Date().getFullYear();
-    let currentMonth = new Date().getMonth();
-
-    function initCalendar() {
-      const daysContainer = document.getElementById('calendar-days');
-      if (!daysContainer) return;
-      const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-      document.getElementById('calendar-month-year').textContent = `${["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][currentMonth]} ${currentYear}`;
-      daysContainer.innerHTML = '';
-      for(let i = 0; i < firstDay; i++) {
-        const emptyDiv = document.createElement('div');
-        emptyDiv.className = 'calendar-day empty';
-        daysContainer.appendChild(emptyDiv);
-      }
-      const today = new Date();
-      for(let d = 1; d <= daysInMonth; d++) {
-        const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-        const dayDiv = document.createElement('div');
-        dayDiv.className = 'calendar-day text-[10px] font-bold';
-        dayDiv.textContent = d;
-        if(today.getFullYear() === currentYear && today.getMonth() === currentMonth && today.getDate() === d) dayDiv.classList.add('today');
-        if(maintenance.some(m => {
-          const s = new Date(m.start); const e = new Date(m.end); const c = new Date(dateStr);
-          return c >= s && c <= e;
-        })) dayDiv.classList.add('maintenance');
-        daysContainer.appendChild(dayDiv);
-      }
+    function closeDeleteModal() {
+        document.getElementById('delete-modal').classList.add('hidden');
+        pendingDeleteId = null;
     }
+    document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
+        if (!pendingDeleteId) return;
+        try {
+            const res = await api.delete(`/facilities/${pendingDeleteId}`);
+            if (res.success) { showToast('Asset removed', 'success'); closeDeleteModal(); fetchAssets(); }
+            else showToast(res.message, 'error');
+        } catch (err) { showToast('Error', 'error'); }
+    });
 
-    function prevMonth() { currentMonth--; if(currentMonth < 0) { currentMonth = 11; currentYear--; } initCalendar(); }
-    function nextMonth() { currentMonth++; if(currentMonth > 11) { currentMonth = 0; currentYear++; } initCalendar(); }
+    // --- Maintenance CRUD ---
+    async function fetchMaintenance() {
+        try {
+            // Assuming endpoint for maintenance exists, using localStorage as requested for maintenance logic if API not ready
+            const stored = localStorage.getItem('mamagan_maintenance');
+            allMaintenance = stored ? JSON.parse(stored) : [];
+            renderMaintenanceList();
+            initCalendar();
+        } catch (err) { console.error(err); }
+    }
 
     function renderMaintenanceList() {
       const container = document.getElementById('maintenance-list');
-      if (!container) return;
-      if(maintenance.length === 0) {
-        container.innerHTML = '<div class="py-10 opacity-20 text-center"><i class="fas fa-calendar-check text-4xl"></i><p class="text-[10px] font-bold uppercase mt-2">No schedules</p></div>';
-        return;
-      }
-      container.innerHTML = maintenance.sort((a,b) => new Date(a.start) - new Date(b.start)).map(m => {
-        const a = assets.find(item => item.id === m.assetId);
+      if(!container) return;
+      if(allMaintenance.length === 0) { container.innerHTML = '<p class="text-[8px] font-bold text-lux-navy/20 uppercase tracking-widest text-center py-10">No active schedules</p>'; return; }
+      container.innerHTML = allMaintenance.sort((a,b) => new Date(a.start) - new Date(b.start)).map(m => {
+        const asset = allAssets.find(a => a.id === m.assetId);
         return `
-          <div class="p-4 bg-lux-navy/5 rounded-2xl flex justify-between items-center group border border-transparent hover:border-lux-gold/20">
+          <div class="p-4 bg-lux-navy/5 rounded-2xl flex justify-between items-center group border border-transparent hover:border-lux-gold/20 transition-all">
             <div>
-              <h5 class="text-[10px] font-black uppercase text-lux-navy">${a ? a.name : 'Unknown'}</h5>
-              <p class="text-[8px] font-bold text-lux-navy/40">${m.start} to ${m.end}</p>
-              <p class="text-[8px] font-medium text-lux-navy/60 italic">${m.reason}</p>
+              <h5 class="text-[10px] font-black uppercase tracking-widest text-lux-navy">${asset ? asset.name : 'Unknown Asset'}</h5>
+              <p class="text-[8px] font-bold text-lux-navy/40 uppercase tracking-widest">${m.start} to ${m.end}</p>
+              <p class="text-[8px] font-medium text-lux-navy/60 italic mt-1">${m.reason}</p>
             </div>
             <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button onclick="editMaintenance('${m.id}')" aria-label="Edit"><i class="fas fa-edit"></i></button>
-                <button onclick="deleteMaintenance('${m.id}')" aria-label="Delete" class="text-red-400"><i class="fas fa-trash"></i></button>
+                <button onclick="editMaintenance('${m.id}')" class="text-lux-navy/40 hover:text-lux-gold transition-colors"><i class="fas fa-edit"></i></button>
+                <button onclick="deleteMaintenance('${m.id}')" class="text-red-400 hover:text-red-600 transition-colors"><i class="fas fa-trash"></i></button>
             </div>
           </div>
         `;
@@ -511,56 +553,65 @@
         end: document.getElementById('maint-end').value,
         reason: document.getElementById('maint-reason').value
       };
-      if(new Date(data.start) > new Date(data.end)) return showToast('Invalid dates', 'error');
-      if (mid) {
-        const idx = maintenance.findIndex(m => m.id === mid);
-        if (idx !== -1) maintenance[idx] = data;
-        showToast('Schedule updated', 'success');
-      } else {
-        maintenance.push(data);
-        showToast('Maintenance scheduled', 'success');
-      }
-      saveData(); initCalendar(); renderMaintenanceList(); resetMaintenanceForm();
+      if(mid) {
+          const idx = allMaintenance.findIndex(m => m.id === mid);
+          if(idx !== -1) allMaintenance[idx] = data;
+      } else allMaintenance.push(data);
+      localStorage.setItem('mamagan_maintenance', JSON.stringify(allMaintenance));
+      showToast('Schedule saved', 'success');
+      resetMaintenanceForm(); fetchMaintenance();
     });
 
-    window.editMaintenance = (id) => {
-      const m = maintenance.find(item => item.id === id);
-      if (!m) return;
-      document.getElementById('maint-id').value = m.id;
-      document.getElementById('maint-asset-id').value = m.assetId;
-      document.getElementById('maint-start').value = m.start;
-      document.getElementById('maint-end').value = m.end;
-      document.getElementById('maint-reason').value = m.reason;
-      document.getElementById('maint-form-title').textContent = 'Modify Maintenance';
-      document.getElementById('maint-submit-btn').textContent = 'Update Schedule';
-      document.getElementById('maint-cancel-btn').classList.remove('hidden');
-    };
-
-    window.resetMaintenanceForm = () => {
-      document.getElementById('maintenance-form').reset();
-      document.getElementById('maint-id').value = '';
-      document.getElementById('maint-form-title').textContent = 'Schedule Maintenance';
-      document.getElementById('maint-submit-btn').textContent = 'Schedule Blackout';
-      document.getElementById('maint-cancel-btn').classList.add('hidden');
+    function editMaintenance(id) {
+        const m = allMaintenance.find(item => item.id === id);
+        if(!m) return;
+        document.getElementById('maint-id').value = m.id;
+        document.getElementById('maint-asset-id').value = m.assetId;
+        document.getElementById('maint-start').value = m.start;
+        document.getElementById('maint-end').value = m.end;
+        document.getElementById('maint-reason').value = m.reason;
+        document.getElementById('maint-form-title').textContent = 'Modify Schedule';
+        document.getElementById('maint-submit-btn').textContent = 'Update';
+        document.getElementById('maint-cancel-btn').classList.remove('hidden');
     }
 
-    window.deleteMaintenance = (id) => {
-      if (confirm('Cancel schedule?')) {
-        maintenance = maintenance.filter(m => m.id !== id);
-        saveData(); initCalendar(); renderMaintenanceList();
-        showToast('Schedule removed', 'info');
-      }
-    };
+    function resetMaintenanceForm() {
+        document.getElementById('maintenance-form').reset();
+        document.getElementById('maint-id').value = '';
+        document.getElementById('maint-form-title').textContent = 'Schedule Maintenance';
+        document.getElementById('maint-submit-btn').textContent = 'Schedule';
+        document.getElementById('maint-cancel-btn').classList.add('hidden');
+    }
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      try {
-        if (typeof renderAdminNav === 'function') renderAdminNav('facilities');
-        const user = await loadUser();
-        if (!user || user.role !== 'admin') { window.location.replace('/login.html'); return; }
-        await initData();
-        document.getElementById('logout-btn').addEventListener('click', () => { logout(); });
-      } catch(err) { console.error(err); }
-    });
+    function deleteMaintenance(id) {
+        if(confirm('Cancel schedule?')) {
+            allMaintenance = allMaintenance.filter(m => m.id !== id);
+            localStorage.setItem('mamagan_maintenance', JSON.stringify(allMaintenance));
+            fetchMaintenance();
+        }
+    }
+
+    // --- Calendar Logic ---
+    let currentYear = new Date().getFullYear();
+    let currentMonth = new Date().getMonth();
+    function initCalendar() {
+      const daysContainer = document.getElementById('calendar-days');
+      if(!daysContainer) return;
+      const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+      document.getElementById('calendar-month-year').textContent = `${["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][currentMonth]} ${currentYear}`;
+      daysContainer.innerHTML = '';
+      for(let i = 0; i < firstDay; i++) daysContainer.appendChild(Object.assign(document.createElement('div'), {className:'calendar-day empty'}));
+      for(let d = 1; d <= daysInMonth; d++) {
+        const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        const dayDiv = Object.assign(document.createElement('div'), {className:'calendar-day text-[10px] font-bold', textContent:d});
+        if(new Date().toISOString().split('T')[0] === dateStr) dayDiv.classList.add('today');
+        if(allMaintenance.some(m => dateStr >= m.start && dateStr <= m.end)) dayDiv.classList.add('maintenance');
+        daysContainer.appendChild(dayDiv);
+      }
+    }
+    function prevMonth() { currentMonth--; if(currentMonth < 0) { currentMonth = 11; currentYear--; } initCalendar(); }
+    function nextMonth() { currentMonth++; if(currentMonth > 11) { currentMonth = 0; currentYear++; } initCalendar(); }
   </script>
 </body>
 </html>
