@@ -513,23 +513,102 @@
 
     document.getElementById('asset-form').addEventListener('submit', async (e) => {
         e.preventDefault();
+
         const id = document.getElementById('edit-id').value;
-        const data = {
+        const token = localStorage.getItem('token');
+        const imageFileEl = document.getElementById('f-image-file');
+        const imageFile = imageFileEl && imageFileEl.files && imageFileEl.files.length ? imageFileEl.files[0] : null;
+
+        // Backend expects: facilitySchema.validate(req.body)
+        // and multer field name: image_file
+        const payload = {
+            resort_id: '', // filled below for create (required by schema)
             name: document.getElementById('f-name').value,
+            // UI dropdown is called "Category" but backend schema uses `category`
+            // while SQL insert uses `type`. Current backend expects `type`.
             type: document.getElementById('f-category').value,
-            base_price: document.getElementById('f-price').value,
-            status: document.getElementById('f-status').value,
+            category: document.getElementById('f-category').value,
             description: document.getElementById('f-description').value,
-            images_link: imageSource === 'url' ? document.getElementById('f-image-url').value : base64Image
+            base_price: Number(document.getElementById('f-price').value),
+            capacity: 1,
+            total_units: 1,
+            // legacy status mapping
+            status: document.getElementById('f-status').value,
+
+            // URL images are sent as images_link. Local uploads are sent via multipart + image_file.
+            images_link: (imageSource === 'url') ? document.getElementById('f-image-url').value.trim() : ''
         };
+
+        // If editing, we can omit resort_id because schema requires it; to keep it safe,
+        // we fetch resort_id from existing asset first.
+        if (id) {
+            const existing = allAssets.find(a => a.id === id);
+            if (existing && existing.resort_id) payload.resort_id = existing.resort_id;
+        }
+
+        // Create requires resort_id; it can be provided by the backend session/resort.
+        // Current admin UI doesn’t have resort selector, so we try to reuse existing resort_id if present.
+        // If none found, backend will reject with schema validation error.
+        if (!id && !payload.resort_id) {
+            const any = allAssets && allAssets.length ? allAssets[0] : null;
+            if (any && any.resort_id) payload.resort_id = any.resort_id;
+        }
+
+        const isImageUrl = imageSource === 'url' && payload.images_link;
+        const isImageUpload = imageSource === 'file' && imageFile;
+
         try {
-            const res = id ? await api.put(`/facilities/${id}`, data) : await api.post('/facilities', data);
+            let res;
+
+            if (isImageUpload) {
+                // multipart upload: must use field name `image_file`
+                const fd = new FormData();
+                Object.entries(payload).forEach(([k, v]) => {
+                    if (v === undefined || v === null || v === '') return;
+                    fd.append(k, v);
+                });
+                fd.delete('images_link');
+                fd.append('image_file', imageFile);
+
+                const endpoint = id ? `/facilities/${id}` : '/facilities';
+                const method = id ? 'PUT' : 'POST';
+
+                res = await fetch(`/api${endpoint}`, {
+                    method,
+                    headers: token ? { Authorization: `Bearer ${token}` } : {},
+                    body: fd,
+                }).then(r => r.json());
+            } else {
+                // JSON submit (URL only)
+                const data = {
+                    resort_id: payload.resort_id,
+                    name: payload.name,
+                    type: payload.type,
+                    category: payload.category,
+                    description: payload.description || null,
+                    base_price: payload.base_price,
+                    capacity: payload.capacity,
+                    total_units: payload.total_units,
+                    images_link: isImageUrl ? payload.images_link : null,
+                    // backend update route ignores status; keep for UI consistency
+                    is_active: true,
+                    status: payload.status,
+                };
+
+                res = id ? await api.put(`/facilities/${id}`, data) : await api.post('/facilities', data);
+            }
+
             if (res.success) {
                 showToast(id ? 'Facility updated' : 'New facility registered', 'success');
                 closeAssetModal();
                 fetchAssets();
-            } else showToast(res.message, 'error');
-        } catch (err) { showToast('System error', 'error'); }
+            } else {
+                showToast(res.message || 'Action failed', 'error');
+            }
+        } catch (err) {
+            console.error('Submit error:', err);
+            showToast('System error', 'error');
+        }
     });
 
     // --- Asset CRUD: Delete ---
