@@ -11,232 +11,87 @@
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <style>
-    /* --- Mamagan Luxury Calendar Theme --- */
-    
-    /* 1. Container & Global Reset */
-    .flatpickr-calendar { 
-      width: 100% !important; 
-      border: none !important; 
-      box-shadow: none !important; 
-      background: #ffffff !important; 
+    /* --- Asset Calendar Section Isolation --- */
+    .calendar-wrapper {
+      position: relative;
+      max-width: 400px;
+      margin: 0 auto;
+      overflow: hidden;
+      background: #ffffff;
+      border-radius: 2rem;
+    }
+
+    /* Target ONLY the inline calendar to prevent body-level leakage */
+    #inline-calendar-container .flatpickr-calendar {
+      width: 100% !important;
+      max-width: 350px !important;
+      border: none !important;
+      box-shadow: none !important;
+      background: transparent !important;
       font-family: inherit !important;
-      padding: 10px !important;
-    }
-    .flatpickr-innerContainer { width: 100% !important; }
-    .flatpickr-rContainer { width: 100% !important; }
-
-    /* 2. Header: Month & Year (Fixed Arrows & Input) */
-    .flatpickr-months {
-      position: relative !important;
-      padding: 20px 0 !important;
-      margin-bottom: 20px !important;
-      border-bottom: 1px solid rgba(0, 35, 75, 0.05) !important;
-    }
-    .flatpickr-months .flatpickr-month {
-      height: 60px !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-    }
-    .flatpickr-current-month {
-      position: static !important;
-      width: auto !important;
-      font-family: 'luxury-heading', serif !important;
-      font-size: 1.5rem !important;
-      font-weight: 800 !important;
-      text-transform: uppercase !important;
-      letter-spacing: 0.1em !important;
-      color: #00234b !important;
-      display: flex !important;
-      align-items: center !important;
-      gap: 10px !important;
       padding: 0 !important;
-    }
-    
-    /* Elegant Year Input Styling */
-    .flatpickr-current-month .numInputWrapper {
-        width: 70px !important;
-        background: transparent !important;
-    }
-    .flatpickr-current-month input.cur-year {
-        background: transparent !important;
-        border: none !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        font-family: inherit !important;
-        font-weight: 800 !important;
-        color: #00234b !important;
-        font-size: 1.5rem !important;
-        cursor: text !important;
-    }
-    /* Remove default spinners */
-    input::-webkit-outer-spin-button,
-    input::-webkit-inner-spin-button {
-        -webkit-appearance: none !important;
-        margin: 0 !important;
-    }
-    input[type=number] {
-        -moz-appearance: textfield !important;
-    }
-    .flatpickr-current-month .numInputWrapper span {
-        display: none !important; /* Hide small arrows */
+      margin: 0 auto !important;
     }
 
-    .flatpickr-monthDropdown-months {
-        font-family: inherit !important;
-        font-weight: 800 !important;
-        color: #00234b !important;
-        background: transparent !important;
-        border: none !important;
-        padding: 0 !important;
-        cursor: pointer !important;
-        -webkit-appearance: none !important;
-        -moz-appearance: none !important;
-    }
-    .flatpickr-monthDropdown-months:hover {
-        background: transparent !important;
+    #inline-calendar-container .flatpickr-innerContainer { width: 100% !important; }
+    #inline-calendar-container .flatpickr-rContainer { width: 100% !important; }
+    #inline-calendar-container .flatpickr-days { 
+      display: grid !important; 
+      grid-template-columns: repeat(7, 1fr) !important; 
+      width: 100% !important;
     }
 
-    /* Navigation Arrows Polishing */
-    .flatpickr-prev-month, .flatpickr-next-month {
-      position: absolute !important;
-      top: 50% !important;
-      transform: translateY(-50%) !important;
-      width: 40px !important;
-      height: 40px !important;
-      background: rgba(0, 35, 75, 0.03) !important;
-      border-radius: 50% !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-      color: #00234b !important;
-      padding: 0 !important;
-      z-index: 5 !important;
-    }
-    .flatpickr-prev-month { left: 10px !important; }
-    .flatpickr-next-month { right: 10px !important; }
-    
-    .flatpickr-prev-month:hover, .flatpickr-next-month:hover {
-      background: #c5a059 !important;
-      color: white !important;
-      transform: translateY(-50%) scale(1.1) !important;
-      box-shadow: 0 10px 20px -5px rgba(197, 160, 89, 0.3) !important;
-    }
-    .flatpickr-prev-month svg, .flatpickr-next-month svg {
-        width: 14px !important;
-        height: 14px !important;
-        fill: currentColor !important;
-    }
-
-    /* 3. Weekday Headers */
-    .flatpickr-weekdaycontainer {
-      display: grid !important;
-      grid-template-columns: repeat(7, 1fr) !important;
+    /* Luxury Theme Styling (Scoped) */
+    #inline-calendar-container .flatpickr-months {
+      padding: 10px 0 !important;
+      border-bottom: 1px solid rgba(12, 27, 51, 0.05) !important;
       margin-bottom: 15px !important;
     }
-    span.flatpickr-weekday {
-      color: rgba(0, 35, 75, 0.3) !important;
-      font-weight: 900 !important;
+
+    #inline-calendar-container .flatpickr-current-month {
+      font-family: 'Playfair Display', serif !important;
+      font-weight: 800 !important;
+      color: #0c1b33 !important;
       text-transform: uppercase !important;
-      font-size: 10px !important;
-      letter-spacing: 0.2em !important;
-      text-align: center !important;
+      letter-spacing: 0.1em !important;
     }
 
-    /* 4. Days Grid & Circular Numbers */
-    .flatpickr-days {
-      display: grid !important;
-      grid-template-columns: repeat(7, 1fr) !important;
-      width: 100% !important;
-      min-width: 100% !important;
-      border: none !important;
-    }
-    .dayContainer {
-        display: contents !important;
-    }
-    .flatpickr-day {
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      width: 100% !important;
-      max-width: none !important;
-      height: auto !important;
-      aspect-ratio: 1/1 !important;
-      border-radius: 50% !important;
-      margin: 4px !important;
-      border: 2px solid transparent !important;
-      font-size: 13px !important;
-      font-weight: 600 !important;
-      color: #00234b !important;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    }
-
-    /* States */
-    .flatpickr-day:hover {
-      background: #fdfcf8 !important;
-      border-color: #c5a059 !important;
+    #inline-calendar-container .flatpickr-prev-month, 
+    #inline-calendar-container .flatpickr-next-month {
       color: #c5a059 !important;
-      transform: scale(1.05);
+      fill: #c5a059 !important;
+      padding: 10px !important;
     }
-    .flatpickr-day.today {
-      border-color: #c5a059 !important;
-      background: transparent !important;
-      position: relative;
+
+    #inline-calendar-container .flatpickr-day {
+      border-radius: 50% !important;
+      font-weight: 600 !important;
+      color: #0c1b33 !important;
+      margin: 2px !important;
+      border: 1px solid transparent !important;
     }
-    .flatpickr-day.today::after {
-        content: '';
-        position: absolute;
-        bottom: 8px;
-        width: 4px;
-        height: 4px;
-        background: #c5a059;
-        border-radius: 50%;
-    }
-    
-    /* Blocked/Selected Style */
-    .flatpickr-day.selected, 
-    .flatpickr-day.selected:hover,
-    .flatpickr-day.is-blocked {
-      background: #00234b !important;
+
+    #inline-calendar-container .flatpickr-day.selected,
+    #inline-calendar-container .flatpickr-day.is-blocked {
+      background: #0c1b33 !important;
       color: #ffffff !important;
-      border-color: #00234b !important;
-      box-shadow: 0 8px 15px -5px rgba(0, 35, 75, 0.3) !important;
-    }
-    
-    /* Visual distinction for blocked dates specifically */
-    .flatpickr-day.is-blocked {
-        background: rgba(0, 35, 75, 0.05) !important;
-        color: rgba(0, 35, 75, 0.15) !important;
-        text-decoration: line-through !important;
-        cursor: not-allowed !important;
-        box-shadow: none !important;
-        border-color: transparent !important;
+      border-color: #0c1b33 !important;
     }
 
-    .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay {
-        opacity: 0.15 !important;
+    #inline-calendar-container .flatpickr-day.is-blocked {
+      background: rgba(12, 27, 51, 0.05) !important;
+      color: rgba(12, 27, 51, 0.2) !important;
+      text-decoration: line-through !important;
+      cursor: not-allowed !important;
     }
 
-    /* Legend Component Styling */
-    .legend-circle {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        display: inline-block;
-    }
-    .legend-text {
-        font-size: 9px;
-        font-weight: 900;
-        text-transform: uppercase;
-        letter-spacing: 0.15em;
-        color: rgba(0, 35, 75, 0.3);
+    #inline-calendar-container .flatpickr-day.today {
+      border-color: #c5a059 !important;
     }
 
-    /* Modal/Card Polishing */
-    .premium-shadow {
-        box-shadow: 0 40px 100px -20px rgba(0, 35, 75, 0.08) !important;
-    }
+    /* Legend Styling */
+    .legend-circle { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .legend-text { font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(12, 27, 51, 0.4); }
   </style>
 </head>
 <body class="bg-lux-cream font-sans text-lux-navy">
@@ -244,7 +99,7 @@
     <!-- Sidebar -->
     <aside class="w-80 bg-white border-r border-lux-navy/5 flex-shrink-0 hidden md:flex flex-col relative z-20">
       <div class="p-10 border-b border-lux-navy/5">
-        <a href="/" class="flex items-center gap-4 group" aria-label="Mamagan Beach Resort Home">
+        <a href="/" class="flex items-center gap-4 group">
           <img src="/images/logos/LOGO.png" alt="Mamagan Logo" class="h-12 group-hover:scale-110 transition-transform">
           <div class="flex flex-col">
             <span class="luxury-heading font-bold text-xl leading-none">Mamagan</span>
@@ -252,78 +107,79 @@
           </div>
         </a>
       </div>
-      <nav id="admin-nav" class="flex-1 p-6 space-y-2" aria-label="Admin Sidebar Navigation"></nav>
+      <nav id="admin-nav" class="flex-1 p-6 space-y-2"></nav>
       <div class="p-8 border-t border-lux-navy/5">
-        <button id="logout-btn" title="Sign Out" aria-label="Sign Out" class="w-full flex items-center gap-4 px-6 py-4 text-red-600 hover:bg-red-50 rounded-2xl transition-all group">
-          <i class="fas fa-sign-out-alt w-5 text-center group-hover:-translate-x-1 transition-transform"></i>
-          <span class="text-[10px] font-black uppercase tracking-widest">Terminate Session</span>
+        <button id="logout-btn" class="w-full flex items-center gap-4 px-6 py-4 text-red-600 hover:bg-red-50 rounded-2xl transition-all">
+          <i class="fas fa-sign-out-alt"></i>
+          <span class="text-[10px] font-black uppercase tracking-widest">Logout</span>
         </button>
       </div>
     </aside>
 
     <!-- Main Content -->
-    <div class="flex-1 overflow-y-auto bg-lux-cream/50">
+    <div class="flex-1 overflow-y-auto">
       <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-30">
         <div>
           <h1 class="luxury-heading text-2xl font-bold text-lux-navy">Inventory Control</h1>
-          <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">Manage blackouts and maintenance windows</p>
+          <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-widest">Global Asset Blackout Protocol</p>
         </div>
-        <div id="auth-nav" class="flex items-center gap-3"></div>
+        <div id="auth-nav"></div>
       </header>
 
-      <main class="p-10 page-transition">
+      <main class="p-10">
         <div class="grid lg:grid-cols-2 gap-10">
-            <!-- Calendar Card -->
-            <div class="bg-white rounded-[3rem] p-12 border border-lux-navy/5 premium-shadow">
-                <div class="flex justify-between items-center mb-12">
-                    <h3 class="luxury-heading text-xl font-bold text-lux-navy">Asset Calendar</h3>
-                    <div class="flex items-center gap-6">
-                        <div class="flex items-center gap-2">
-                            <div class="legend-circle bg-lux-navy/10 border border-lux-navy/5"></div>
-                            <span class="legend-text">Blocked</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="legend-circle border-2 border-lux-gold"></div>
-                            <span class="legend-text">Today</span>
-                        </div>
-                    </div>
+          
+          <!-- Column 1: Asset Calendar -->
+          <div class="bg-white rounded-[3rem] p-12 border border-lux-navy/5 shadow-2xl shadow-lux-navy/5">
+            <div class="flex justify-between items-center mb-10">
+              <h3 class="luxury-heading text-xl font-bold">Asset Calendar</h3>
+              <div class="flex gap-4">
+                <div class="flex items-center gap-2">
+                  <div class="legend-circle bg-lux-navy/10"></div>
+                  <span class="legend-text">Blocked</span>
                 </div>
-                <div id="calendar-container" class="relative overflow-hidden w-full flex justify-center">
-                    <div class="w-full max-w-md mx-auto">
-                        <div id="inline-calendar" class="w-full"></div>
-                    </div>
+                <div class="flex items-center gap-2">
+                  <div class="legend-circle border border-lux-gold"></div>
+                  <span class="legend-text">Today</span>
                 </div>
+              </div>
             </div>
+            
+            <!-- Blueprint Container -->
+            <div class="calendar-wrapper">
+              <div id="inline-calendar-container">
+                <div id="inline-calendar"></div>
+              </div>
+            </div>
+          </div>
 
-            <!-- Blackout Form Card -->
-            <div class="space-y-8">
-                <div class="glass-card p-12 rounded-[3rem] premium-shadow border border-lux-navy/5 bg-white/40 backdrop-blur-md">
-                    <div class="mb-10">
-                        <h3 class="luxury-heading text-xl font-bold text-lux-navy">Blackout Protocol</h3>
-                        <p class="text-[9px] font-bold text-lux-navy/30 uppercase tracking-widest mt-1">Initialize maintenance window</p>
-                    </div>
-                    <form id="block-form" class="space-y-6">
-                        <div class="space-y-1">
-                            <label for="facility-select" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Target Asset</label>
-                            <select id="facility-select" required title="Select facility" aria-label="Target asset for blackout" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white shadow-sm">
-                                <option value="all">Global (All Assets)</option>
-                            </select>
-                        </div>
-                        <div class="space-y-1">
-                            <label for="block-dates" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Temporal Window</label>
-                            <input type="text" id="block-dates" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white shadow-sm text-xs font-bold" placeholder="Select start and end date...">
-                        </div>
-                        <div class="space-y-1">
-                            <label for="reason" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Justification</label>
-                            <textarea id="reason" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white focus:ring-2 focus:ring-lux-gold/20 focus:border-lux-gold/50 h-24 shadow-sm" placeholder="Reason for inventory blockage..."></textarea>
-                        </div>
-                        <button type="submit" class="premium-button-navy w-full flex items-center justify-center gap-4 group py-5 rounded-2xl shadow-xl shadow-lux-navy/10">
-                            <span class="text-[11px] font-black uppercase tracking-widest">Activate Blackout</span>
-                            <i class="fas fa-lock group-hover:scale-110 transition-transform"></i>
-                        </button>
-                    </form>
+          <!-- Column 2: Form -->
+          <div class="space-y-8">
+            <div class="bg-white/50 backdrop-blur-md p-12 rounded-[3rem] border border-lux-navy/5 shadow-xl">
+              <h3 class="luxury-heading text-xl font-bold mb-8">Blackout Protocol</h3>
+              <form id="block-form" class="space-y-6">
+                <div>
+                  <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 ml-2">Target Asset</label>
+                  <select id="facility-select" class="premium-input mt-1">
+                    <option value="all">Global (All Assets)</option>
+                  </select>
                 </div>
+                <div>
+                  <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 ml-2">Temporal Window</label>
+                  <input type="text" id="block-dates" class="premium-input mt-1" placeholder="Select date range...">
+                </div>
+                <div>
+                  <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 ml-2">Justification</label>
+                  <textarea id="reason" class="premium-input mt-1 h-32 focus:ring-2 focus:ring-lux-gold/20" placeholder="State reason for blockage..."></textarea>
+                </div>
+                <button type="submit" class="premium-button-navy w-full py-5 rounded-2xl flex items-center justify-center gap-3">
+                  <span class="text-[11px] font-black uppercase tracking-widest">Activate Blackout</span>
+                  <i class="fas fa-lock text-[10px]"></i>
+                </button>
+              </form>
             </div>
+          </div>
+
         </div>
       </main>
     </div>
@@ -334,99 +190,102 @@
   <script src="/js/toast.js?v=2"></script>
   <script src="/js/admin.js?v=2"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-        if (typeof renderAdminNav === 'function') renderAdminNav('calendar');
-        const user = await loadUser();
-        if (!user || user.role !== 'admin') {
-            window.location.replace('/login.html');
-            return;
-        }
-        await loadFacilities();
-    });
-
+    let calendar;
     let currentBlockedDates = [];
 
-    const calendar = flatpickr("#inline-calendar", {
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (typeof renderAdminNav === 'function') renderAdminNav('calendar');
+      const user = await loadUser();
+      if (!user || user.role !== 'admin') {
+        window.location.replace('/login.html');
+        return;
+      }
+
+      // 1. Initialize SINGLE Inline Calendar
+      calendar = flatpickr("#inline-calendar", {
         inline: true,
         mode: "multiple",
         minDate: "today",
         dateFormat: "Y-m-d",
         onDayCreate: function(dObj, dStr, fp, dayElem) {
-            const dateStr = dayElem.dateObj.toISOString().split('T')[0];
-            if (currentBlockedDates.includes(dateStr)) {
-                dayElem.classList.add("is-blocked");
-            }
+          const dateStr = dayElem.dateObj.toISOString().split('T')[0];
+          if (currentBlockedDates.includes(dateStr)) {
+            dayElem.classList.add("is-blocked");
+          }
         }
-    });
+      });
 
-    const dateRangePicker = flatpickr("#block-dates", {
+      // 2. Initialize Range Picker
+      flatpickr("#block-dates", {
         mode: "range",
         minDate: "today",
-        dateFormat: "Y-m-d",
+        dateFormat: "Y-m-d"
+      });
+
+      await loadFacilities();
     });
 
     async function loadBlockedDates() {
-        try {
-            const facilityId = document.getElementById('facility-select').value;
-            const res = await api.get(`/admin/block-dates${facilityId !== 'all' ? '?facility_id=' + facilityId : ''}`);
-            if (res.success) {
-                currentBlockedDates = res.data.map(d => d.block_date.split('T')[0]);
-                calendar.redraw(); // Trigger onDayCreate and re-render blocked styles
-            }
-        } catch (err) {
-            console.error('Failed to load blocked dates:', err);
+      try {
+        const facilityId = document.getElementById('facility-select').value;
+        const res = await api.get(`/admin/block-dates${facilityId !== 'all' ? '?facility_id=' + facilityId : ''}`);
+        if (res.success) {
+          currentBlockedDates = res.data.map(d => d.block_date.split('T')[0]);
+          if (calendar) calendar.redraw();
         }
+      } catch (err) {
+        console.error('Blocked dates error:', err);
+      }
     }
 
     async function loadFacilities() {
-        try {
-            const res = await api.get('/facilities');
-            if (res.success) {
-                const select = document.getElementById('facility-select');
-                res.data.forEach(f => {
-                    const opt = document.createElement('option');
-                    opt.value = f.id;
-                    opt.textContent = f.name;
-                    select.appendChild(opt);
-                });
-            }
-            await loadBlockedDates();
-        } catch (err) {
-            console.error('Failed to load facilities:', err);
+      try {
+        const res = await api.get('/facilities');
+        if (res.success) {
+          const select = document.getElementById('facility-select');
+          res.data.forEach(f => {
+            const opt = document.createElement('option');
+            opt.value = f.id;
+            opt.textContent = f.name;
+            select.appendChild(opt);
+          });
         }
+        await loadBlockedDates();
+      } catch (err) {
+        console.error('Facilities error:', err);
+      }
     }
 
     document.getElementById('block-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const facilityId = document.getElementById('facility-select').value;
-        const dateStr = document.getElementById('block-dates').value;
-        const reason = document.getElementById('reason').value;
+      e.preventDefault();
+      const facilityId = document.getElementById('facility-select').value;
+      const dateStr = document.getElementById('block-dates').value;
+      const reason = document.getElementById('reason').value;
 
-        if (!dateStr) return showToast('Temporal window is required.', 'error');
+      if (!dateStr) return showToast('Temporal window is required.', 'error');
 
-        const parts = dateStr.split(' to ');
-        const start = parts[0];
-        const end = parts[1] || start;
-        
-        try {
-            const res = await api.post('/admin/block-dates', {
-                facility_id: facilityId === 'all' ? null : facilityId,
-                start_date: start,
-                end_date: end,
-                reason: reason
-            });
+      const parts = dateStr.split(' to ');
+      const start = parts[0];
+      const end = parts[1] || start;
+      
+      try {
+        const res = await api.post('/admin/block-dates', {
+          facility_id: facilityId === 'all' ? null : facilityId,
+          start_date: start,
+          end_date: end,
+          reason: reason
+        });
 
-            if (res.success) {
-                showToast('Blackout protocol activated.', 'success');
-                document.getElementById('block-form').reset();
-                dateRangePicker.clear();
-                await loadBlockedDates();
-            } else {
-                showToast(res.message || 'Protocol failure.', 'error');
-            }
-        } catch (err) {
-            showToast('Communication failure with authority server.', 'error');
+        if (res.success) {
+          showToast('Blackout activated.', 'success');
+          document.getElementById('block-form').reset();
+          await loadBlockedDates();
+        } else {
+          showToast(res.message || 'Error.', 'error');
         }
+      } catch (err) {
+        showToast('Communication failure.', 'error');
+      }
     });
 
     document.getElementById('facility-select').addEventListener('change', loadBlockedDates);
