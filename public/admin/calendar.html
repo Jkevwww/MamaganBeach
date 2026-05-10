@@ -25,7 +25,7 @@
     .flatpickr-innerContainer { width: 100% !important; }
     .flatpickr-rContainer { width: 100% !important; }
 
-    /* 2. Header: Month & Year (Fixed Arrows) */
+    /* 2. Header: Month & Year (Fixed Arrows & Input) */
     .flatpickr-months {
       position: relative !important;
       padding: 20px 0 !important;
@@ -49,22 +49,61 @@
       color: #00234b !important;
       display: flex !important;
       align-items: center !important;
-      gap: 15px !important;
+      gap: 10px !important;
+      padding: 0 !important;
     }
-    .flatpickr-monthDropdown-months {
-        font-weight: 900 !important;
+    
+    /* Elegant Year Input Styling */
+    .flatpickr-current-month .numInputWrapper {
+        width: 70px !important;
+        background: transparent !important;
     }
-    .numInputWrapper {
-        width: 100px !important;
+    .flatpickr-current-month input.cur-year {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        font-family: inherit !important;
+        font-weight: 800 !important;
+        color: #00234b !important;
+        font-size: 1.5rem !important;
+        cursor: text !important;
+    }
+    /* Remove default spinners */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none !important;
+        margin: 0 !important;
+    }
+    input[type=number] {
+        -moz-appearance: textfield !important;
+    }
+    .flatpickr-current-month .numInputWrapper span {
+        display: none !important; /* Hide small arrows */
     }
 
-    /* Arrow Placement Fix */
+    .flatpickr-monthDropdown-months {
+        font-family: inherit !important;
+        font-weight: 800 !important;
+        color: #00234b !important;
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        cursor: pointer !important;
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+    }
+    .flatpickr-monthDropdown-months:hover {
+        background: transparent !important;
+    }
+
+    /* Navigation Arrows Polishing */
     .flatpickr-prev-month, .flatpickr-next-month {
       position: absolute !important;
       top: 50% !important;
       transform: translateY(-50%) !important;
-      width: 44px !important;
-      height: 44px !important;
+      width: 40px !important;
+      height: 40px !important;
       background: rgba(0, 35, 75, 0.03) !important;
       border-radius: 50% !important;
       display: flex !important;
@@ -73,23 +112,31 @@
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
       color: #00234b !important;
       padding: 0 !important;
+      z-index: 5 !important;
     }
-    .flatpickr-prev-month { left: 20px !important; }
-    .flatpickr-next-month { right: 20px !important; }
+    .flatpickr-prev-month { left: 10px !important; }
+    .flatpickr-next-month { right: 10px !important; }
+    
     .flatpickr-prev-month:hover, .flatpickr-next-month:hover {
       background: #c5a059 !important;
       color: white !important;
+      transform: translateY(-50%) scale(1.1) !important;
       box-shadow: 0 10px 20px -5px rgba(197, 160, 89, 0.3) !important;
+    }
+    .flatpickr-prev-month svg, .flatpickr-next-month svg {
+        width: 14px !important;
+        height: 14px !important;
+        fill: currentColor !important;
     }
 
     /* 3. Weekday Headers */
     .flatpickr-weekdaycontainer {
       display: grid !important;
       grid-template-columns: repeat(7, 1fr) !important;
-      margin-bottom: 10px !important;
+      margin-bottom: 15px !important;
     }
     span.flatpickr-weekday {
-      color: rgba(0, 35, 75, 0.4) !important;
+      color: rgba(0, 35, 75, 0.3) !important;
       font-weight: 900 !important;
       text-transform: uppercase !important;
       font-size: 10px !important;
@@ -130,6 +177,7 @@
       background: #fdfcf8 !important;
       border-color: #c5a059 !important;
       color: #c5a059 !important;
+      transform: scale(1.05);
     }
     .flatpickr-day.today {
       border-color: #c5a059 !important;
@@ -139,7 +187,7 @@
     .flatpickr-day.today::after {
         content: '';
         position: absolute;
-        bottom: 6px;
+        bottom: 8px;
         width: 4px;
         height: 4px;
         background: #c5a059;
@@ -159,7 +207,7 @@
     /* Visual distinction for blocked dates specifically */
     .flatpickr-day.is-blocked {
         background: rgba(0, 35, 75, 0.05) !important;
-        color: rgba(0, 35, 75, 0.2) !important;
+        color: rgba(0, 35, 75, 0.15) !important;
         text-decoration: line-through !important;
         cursor: not-allowed !important;
         box-shadow: none !important;
@@ -167,7 +215,22 @@
     }
 
     .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay {
-        opacity: 0.2 !important;
+        opacity: 0.15 !important;
+    }
+
+    /* Legend Component Styling */
+    .legend-circle {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+    .legend-text {
+        font-size: 9px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: rgba(0, 35, 75, 0.3);
     }
 
     /* Modal/Card Polishing */
@@ -200,7 +263,7 @@
 
     <!-- Main Content -->
     <div class="flex-1 overflow-y-auto bg-lux-cream/50">
-      <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-10">
+      <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-30">
         <div>
           <h1 class="luxury-heading text-2xl font-bold text-lux-navy">Inventory Control</h1>
           <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">Manage blackouts and maintenance windows</p>
@@ -210,29 +273,31 @@
 
       <main class="p-10 page-transition">
         <div class="grid lg:grid-cols-2 gap-10">
+            <!-- Calendar Card -->
             <div class="bg-white rounded-[3rem] p-12 border border-lux-navy/5 premium-shadow">
-                <div class="flex justify-between items-center mb-10">
-                    <h3 class="luxury-heading text-xl font-bold">Asset Calendar</h3>
-                    <div class="flex items-center gap-4">
+                <div class="flex justify-between items-center mb-12">
+                    <h3 class="luxury-heading text-xl font-bold text-lux-navy">Asset Calendar</h3>
+                    <div class="flex items-center gap-6">
                         <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-lux-navy/10 border border-lux-navy/5"></div>
-                            <span class="text-[8px] font-black uppercase tracking-widest text-lux-navy/30">Blocked</span>
+                            <div class="legend-circle bg-lux-navy/10 border border-lux-navy/5"></div>
+                            <span class="legend-text">Blocked</span>
                         </div>
                         <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full border-2 border-lux-gold"></div>
-                            <span class="text-[8px] font-black uppercase tracking-widest text-lux-navy/30">Today</span>
+                            <div class="legend-circle border-2 border-lux-gold"></div>
+                            <span class="legend-text">Today</span>
                         </div>
                     </div>
                 </div>
                 <div id="calendar-container" class="w-full flex justify-center">
-                    <div id="inline-calendar"></div>
+                    <div id="inline-calendar" class="w-full"></div>
                 </div>
             </div>
 
+            <!-- Blackout Form Card -->
             <div class="space-y-8">
                 <div class="glass-card p-12 rounded-[3rem] premium-shadow border border-lux-navy/5 bg-white/40 backdrop-blur-md">
                     <div class="mb-10">
-                        <h3 class="luxury-heading text-xl font-bold">Blackout Protocol</h3>
+                        <h3 class="luxury-heading text-xl font-bold text-lux-navy">Blackout Protocol</h3>
                         <p class="text-[9px] font-bold text-lux-navy/30 uppercase tracking-widest mt-1">Initialize maintenance window</p>
                     </div>
                     <form id="block-form" class="space-y-6">
@@ -244,14 +309,14 @@
                         </div>
                         <div class="space-y-1">
                             <label for="block-dates" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Temporal Window</label>
-                            <input type="text" id="block-dates" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white shadow-sm" placeholder="Select start and end date...">
+                            <input type="text" id="block-dates" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white shadow-sm text-xs font-bold" placeholder="Select start and end date...">
                         </div>
                         <div class="space-y-1">
                             <label for="reason" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Justification</label>
                             <textarea id="reason" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white h-24 shadow-sm" placeholder="Reason for inventory blockage..."></textarea>
                         </div>
                         <button type="submit" class="premium-button-navy w-full flex items-center justify-center gap-4 group py-5 rounded-2xl shadow-xl shadow-lux-navy/10">
-                            <span class="text-[11px]">Activate Blackout</span>
+                            <span class="text-[11px] font-black uppercase tracking-widest">Activate Blackout</span>
                             <i class="fas fa-lock group-hover:scale-110 transition-transform"></i>
                         </button>
                     </form>
@@ -267,8 +332,15 @@
   <script src="/js/toast.js?v=2"></script>
   <script src="/js/admin.js?v=2"></script>
   <script>
-    if (!requireAdmin()) throw new Error('Admin required');
-    renderAdminNav('calendar');
+    document.addEventListener('DOMContentLoaded', async () => {
+        if (typeof renderAdminNav === 'function') renderAdminNav('calendar');
+        const user = await loadUser();
+        if (!user || user.role !== 'admin') {
+            window.location.replace('/login.html');
+            return;
+        }
+        await loadFacilities();
+    });
 
     let currentBlockedDates = [];
 
@@ -292,26 +364,34 @@
     });
 
     async function loadBlockedDates() {
-        const facilityId = document.getElementById('facility-select').value;
-        const res = await api.get(`/admin/block-dates${facilityId !== 'all' ? '?facility_id=' + facilityId : ''}`);
-        if (res.success) {
-            currentBlockedDates = res.data.map(d => d.block_date.split('T')[0]);
-            calendar.redraw(); // Trigger onDayCreate
+        try {
+            const facilityId = document.getElementById('facility-select').value;
+            const res = await api.get(`/admin/block-dates${facilityId !== 'all' ? '?facility_id=' + facilityId : ''}`);
+            if (res.success) {
+                currentBlockedDates = res.data.map(d => d.block_date.split('T')[0]);
+                calendar.redraw(); // Trigger onDayCreate and re-render blocked styles
+            }
+        } catch (err) {
+            console.error('Failed to load blocked dates:', err);
         }
     }
 
     async function loadFacilities() {
-        const res = await api.get('/facilities');
-        if (res.success) {
-            const select = document.getElementById('facility-select');
-            res.data.forEach(f => {
-                const opt = document.createElement('option');
-                opt.value = f.id;
-                opt.textContent = f.name;
-                select.appendChild(opt);
-            });
+        try {
+            const res = await api.get('/facilities');
+            if (res.success) {
+                const select = document.getElementById('facility-select');
+                res.data.forEach(f => {
+                    const opt = document.createElement('option');
+                    opt.value = f.id;
+                    opt.textContent = f.name;
+                    select.appendChild(opt);
+                });
+            }
+            await loadBlockedDates();
+        } catch (err) {
+            console.error('Failed to load facilities:', err);
         }
-        await loadBlockedDates();
     }
 
     document.getElementById('block-form').addEventListener('submit', async (e) => {
@@ -322,28 +402,32 @@
 
         if (!dateStr) return showToast('Temporal window is required.', 'error');
 
-        const [start, end] = dateStr.split(' to ');
+        const parts = dateStr.split(' to ');
+        const start = parts[0];
+        const end = parts[1] || start;
         
-        const res = await api.post('/admin/block-dates', {
-            facility_id: facilityId === 'all' ? null : facilityId,
-            start_date: start,
-            end_date: end || start,
-            reason: reason
-        });
+        try {
+            const res = await api.post('/admin/block-dates', {
+                facility_id: facilityId === 'all' ? null : facilityId,
+                start_date: start,
+                end_date: end,
+                reason: reason
+            });
 
-        if (res.success) {
-            showToast('Blackout protocol activated.', 'success');
-            document.getElementById('block-form').reset();
-            dateRangePicker.clear();
-            await loadBlockedDates();
-        } else {
-            showToast(res.message || 'Protocol failure.', 'error');
+            if (res.success) {
+                showToast('Blackout protocol activated.', 'success');
+                document.getElementById('block-form').reset();
+                dateRangePicker.clear();
+                await loadBlockedDates();
+            } else {
+                showToast(res.message || 'Protocol failure.', 'error');
+            }
+        } catch (err) {
+            showToast('Communication failure with authority server.', 'error');
         }
     });
 
     document.getElementById('facility-select').addEventListener('change', loadBlockedDates);
-
-    loadFacilities();
   </script>
 </body>
 </html>
