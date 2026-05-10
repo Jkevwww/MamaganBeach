@@ -47,6 +47,7 @@
                 <h2 class="luxury-heading font-bold text-xl text-lux-navy" id="facility-name">Loading...</h2>
                 <p class="text-[10px] font-black uppercase tracking-widest text-lux-gold" id="facility-type"></p>
                 <p class="text-xl font-bold text-lux-navy mt-1" id="facility-price"></p>
+                <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-widest mt-2 hidden" id="facility-size-badge"></p>
               </div>
             </div>
 
@@ -117,6 +118,8 @@
     let currentPrice = 0;
     let maxQty = 10; // Default max guests
     let minQty = 1;
+    let isNight = false;
+
 
     async function loadFacility() {
       if (!facilityId) { window.location.href = '/resorts.html'; return; }
@@ -126,10 +129,26 @@
       maxQty = Math.min(facility.capacity || 10, 10);
       document.getElementById('facility-name').textContent = facility.name;
       document.getElementById('facility-type').textContent = facility.type.replace('_', ' ').toUpperCase();
-      document.getElementById('facility-price').textContent = `PHP ${Number(facility.base_price).toLocaleString()}`;
+      const priceMin = Number(facility.price_day_min ?? facility.base_price ?? 0);
+      const priceMax = Number(facility.price_day_max ?? facility.base_price ?? 0);
+      const showRange = priceMin > 0 && priceMax > 0 && priceMin !== priceMax;
+
+      document.getElementById('facility-price').textContent = showRange
+        ? `PHP ${priceMin.toLocaleString()} - ${priceMax.toLocaleString()}`
+        : `PHP ${Math.max(priceMin, priceMax).toLocaleString()}`;
+
+      const sizeBadge = document.getElementById('facility-size-badge');
+      if (sizeBadge) {
+        const size = facility.size ? facility.size.replace('_', ' ') : '';
+        sizeBadge.textContent = size ? `Size: ${size.toUpperCase()}` : '';
+        sizeBadge.classList.toggle('hidden', !size);
+      }
+
       document.getElementById('facility-img').style.backgroundImage = `url('${facility.images?.[0] || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=200'}')`;
       document.getElementById('summary-facility').textContent = facility.name;
-      currentPrice = parseFloat(facility.base_price);
+
+      // Use max day price as unit base for total computation (night add-ons handled server-side)
+      currentPrice = Number(facility.price_day_max ?? facility.price_day_min ?? facility.base_price ?? 0);
       updateTotal();
       updateQtyButtons();
       
@@ -181,6 +200,8 @@
     function selectSlot(slot, available, blocked) {
       if (blocked || available < 1) return;
       selectedSlot = slot;
+      isNight = /^\d{2}:\d{2}-\d{2}:\d{2}$/.test(slot) ? (slot.startsWith('16') || slot.startsWith('18') || slot.startsWith('20')) : false;
+
       // Update max based on actual slot availability if lower than capacity
       const slotMax = Math.min(available, facility.capacity || 10);
       maxQty = slotMax;
@@ -224,8 +245,9 @@
 
     function updateTotal() {
       const qty = parseInt(document.getElementById('quantity').value);
+      // Display-only estimate (final pricing computed server-side in /bookings)
       const total = currentPrice * qty;
-      document.getElementById('summary-total').textContent = `PHP ${total.toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+      document.getElementById('summary-total').textContent = `PHP ${total.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
 
     document.getElementById('booking-form').addEventListener('submit', async (e) => {

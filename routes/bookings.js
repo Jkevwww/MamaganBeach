@@ -37,13 +37,65 @@ router.post('/', authenticateToken, async (req, res) => {
       return res.status(400).json({ success: false, message: `Only ${avail.available} units available.` });
     }
 
-    // Get facility price
-    const facResult = await query('SELECT base_price, name, type FROM facilities WHERE id = ?', [facility_id]);
+    // Get facility pricing metadata
+    const facResult = await query(
+      `SELECT 
+        base_price,
+        category,
+        size,
+        price_day_min,
+        price_day_max,
+        night_add_threshold_pax,
+        night_add_value,
+        night_add_value_high,
+        hourly_rate,
+        daily_rate,
+        allow_time_slots,
+        type,
+        name
+       FROM facilities WHERE id = ?`,
+      [facility_id]
+    );
     if (facResult.rows.length === 0) {
       return res.status(404).json({ success: false, message: 'Facility not found.' });
     }
 
-    let total_amount = facResult.rows[0].base_price * quantity;
+    const fac = facResult.rows[0];
+
+    // Pricing rules:
+    // - room_cabana/cottage: day-range uses MAX (price_day_max) and night add-on adds based on pax quantity.
+    //   NOTE: booking UI currently doesn't send a 'is_night' flag; we treat night add-on as 0 unless time_slot implies night.
+    //   For now: if time_slot starts with '20:' then treat as night. If you add an explicit night flag later, wire it here.
+    // - beach_equipment: hourly_rate if time_slot is hour-based else daily_rate.
+    //   Current system uses fixed time_slot strings; we map any slot to hourly for simplicity.
+
+    let total_amount = 0;
+
+    if (fac.category === 'beach_equipment') {
+      // Interpret each available time_slot as a 1-hour block group for pricing purposes.
+      // If you want exact hour counting, update availability model.
+      const hourly = Number(fac.hourly_rate) || 0;
+      const daily = Number(fac.daily_rate) || 0;
+      // if slot label contains a full-day indicator, use daily; otherwise hourly
+      const usesDaily = /day|full/i.test(time_slot);
+      const unitPrice = usesDaily ? daily : hourly;
+      total_amount = unitPrice * quantity;
+    } else {
+      // cottages/rooms: day price max is used
+      const dayUnitPrice = Number(fac.price_day_max) || Number(fac.price_day_min) || Number(fac.base_price) || 0;
+
+      // Determine night: heuristic based on time_slot ending
+      const isNight = /^\d{2}:\d{2}-\d{2}:\d{2}$/.test(time_slot) ? time_slot.startsWith('16') || time_slot.startsWith('18') || time_slot.startsWith('20') : false;
+
+      const nightThreshold = Number(fac.night_add_threshold_pax) || 6;
+      const nightLowAdd = Number(fac.night_add_value) || 0;
+      const nightHighAdd = Number(fac.night_add_value_high) || 0;
+
+      const nightAdd = isNight ? (quantity <= nightThreshold ? nightLowAdd : nightHighAdd) : 0;
+
+      // quantity represents pax count for rooms/cottages
+      total_amount = dayUnitPrice * quantity + nightAdd;
+    };
 
     // Apply promo if provided
     let promo_id = null;

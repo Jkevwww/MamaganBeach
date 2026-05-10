@@ -113,7 +113,7 @@ router.post('/', upload.single('image_file'), authenticateToken, requireRole(['a
     const { error, value } = facilitySchema.validate(req.body);
     if (error) return res.status(400).json({ success: false, message: error.details[0].message });
 
-    const { resort_id, name, type, description, base_price, capacity, total_units } = value;
+    const { resort_id, name, category, size, type, description, price_day_min, price_day_max, night_add_threshold_pax, night_add_value, night_add_value_high, hourly_rate, daily_rate, capacity, total_units } = value;
     const id = uuidv4();
 
     const images = [];

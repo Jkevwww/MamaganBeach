@@ -11,16 +11,24 @@ INSERT INTO resorts (id, name, description, location, images, amenities) VALUES
     '["Free WiFi","Beachfront","Restaurant","Bar","Water Sports","Parking","Shower Rooms","Safety Deposit"]'
 );
 
--- Insert sample facilities
-INSERT INTO facilities (id, resort_id, name, type, description, images, base_price, capacity, total_units) VALUES
+-- Insert facilities (using new v2 fields)
+INSERT INTO facilities (id, resort_id, name, category, size, type, description, images, price_day_min, price_day_max, night_add_threshold_pax, night_add_value, night_add_value_high, hourly_rate, daily_rate, capacity, total_units) VALUES
 (
     'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb1',
     'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',
     'Premium Beach Cabana',
+    'room_cabana',
+    'large',
     'cabana',
     'Spacious private cabana with comfortable lounge seating, mini fridge, and dedicated beachfront space. Includes 4 beach towels and a welcome drink.',
     '["https://images.unsplash.com/photo-1596178060671-7a80dc8059ea?w=800"]',
     2500.00,
+    2500.00,
+    6,
+    200.00,
+    500.00,
+    0.00,
+    0.00,
     4,
     8
 ),
@@ -28,10 +36,18 @@ INSERT INTO facilities (id, resort_id, name, type, description, images, base_pri
     'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2',
     'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',
     'Deluxe Day Bed',
+    'beach_equipment',
+    null,
     'day_bed',
     'Relax in style on our plush day beds with canopy shade. Perfect for sunbathing and enjoying the ocean breeze.',
     '["https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800"]',
-    1200.00,
+    0.00,
+    0.00,
+    6,
+    0.00,
+    0.00,
+    100.00,
+    500.00,
     2,
     12
 ),
@@ -39,10 +55,18 @@ INSERT INTO facilities (id, resort_id, name, type, description, images, base_pri
     'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb3',
     'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',
     'Jet Ski Rental (30 mins)',
+    'beach_equipment',
+    null,
     'jet_ski',
     'Feel the adrenaline rush on our high-performance jet skis. Safety briefing and life vest included. Valid license required.',
     '["https://images.unsplash.com/photo-1584998316204-3b1e405e2e11?w=800"]',
-    1800.00,
+    0.00,
+    0.00,
+    6,
+    0.00,
+    0.00,
+    100.00,
+    500.00,
     2,
     6
 ),
@@ -50,10 +74,18 @@ INSERT INTO facilities (id, resort_id, name, type, description, images, base_pri
     'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb4',
     'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',
     'Island Hopping Tour',
+    'beach_equipment',
+    null,
     'island_tour',
     'Explore hidden lagoons, snorkel in coral gardens, and visit 3 nearby islands. Includes lunch, snorkel gear, and boat transfers. Duration: 6 hours.',
     '["https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800"]',
-    3500.00,
+    0.00,
+    0.00,
+    6,
+    0.00,
+    0.00,
+    100.00,
+    500.00,
     10,
     4
 ),
@@ -61,13 +93,22 @@ INSERT INTO facilities (id, resort_id, name, type, description, images, base_pri
     'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb5',
     'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',
     'Family Cabana Suite',
+    'room_cabana',
+    'large',
     'cabana',
     'Large family cabana with dining area, private shower, and premium amenities. Fits up to 8 guests. Includes fruit platter and unlimited iced tea.',
     '["https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800"]',
     4500.00,
+    4500.00,
+    6,
+    200.00,
+    500.00,
+    0.00,
+    0.00,
     8,
     4
 );
+
 
 -- Insert sample promos
 INSERT INTO promos (id, code, discount_type, discount_value, valid_from, valid_until, applicable_facility_types) VALUES
@@ -100,14 +141,16 @@ INSERT INTO promos (id, code, discount_type, discount_value, valid_from, valid_u
 );
 
 -- Seed availability for next 30 days
--- We'll insert a basic set; the init script can generate more if needed
-INSERT INTO availability (id, facility_id, date, time_slot, available)
+-- Keep same 3 time slots for time-slot-capable facilities
+INSERT INTO availability (id, facility_id, date, time_slot, available, is_blocked, blocked_reason)
 SELECT 
     UUID(),
     f.id,
     d.date_val,
     s.slot,
-    f.total_units
+    f.total_units,
+    0,
+    NULL
 FROM facilities f
 CROSS JOIN (
     SELECT DATE_ADD(CURDATE(), INTERVAL n DAY) AS date_val
@@ -126,4 +169,5 @@ CROSS JOIN (
     UNION SELECT '12:00-16:00'
     UNION SELECT '16:00-20:00'
 ) s;
+
 
