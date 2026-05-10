@@ -65,7 +65,15 @@
           <button onclick="openAssetModal()" class="px-8 py-3 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all shadow-xl">
             <i class="fas fa-plus mr-2"></i>New Asset
           </button>
-          <div id="auth-nav"></div>
+          
+          <!-- Hardcoded Executive Admin Badge -->
+          <div class="flex items-center gap-4 pl-8 border-l border-lux-navy/5">
+            <div class="text-right">
+              <div class="text-[10px] font-black uppercase tracking-widest text-lux-navy">Resort Admin</div>
+              <div class="text-[8px] font-bold uppercase tracking-widest text-lux-gold">Executive Access</div>
+            </div>
+            <div class="w-10 h-10 rounded-full bg-lux-navy flex items-center justify-center text-white text-[10px] font-black border-2 border-lux-gold/20 shadow-inner">RA</div>
+          </div>
         </div>
       </header>
 
@@ -233,13 +241,26 @@
         if (stored) {
             allAssets = JSON.parse(stored);
         } else {
+            // Strict Hardcoded 8-Character Initial Inventory
             allAssets = [
-                { id: '1', name: "Premium Beach Cabana", price: 2500, status: 'AVAILABLE', tag: 'CABANA', description: "Luxury seaside cabana with plush seating and personalized service.", image: "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&w=800&q=80" },
-                { id: '2', name: "Deluxe Day Bed", price: 1200, status: 'AVAILABLE', tag: 'DAY_BED', description: "Ultra-comfortable day bed located steps from the crystal clear water.", image: "https://images.unsplash.com/photo-1544148103-0773bf10d330?auto=format&fit=crop&w=800&q=80" },
-                { id: '3', name: "Jet Ski Rental", price: 1800, status: 'AVAILABLE', tag: 'JET_SKI', description: "High-performance jet skis for an exhilarating ocean adventure.", image: "https://images.unsplash.com/photo-1517036660161-aa6122557ecb?auto=format&fit=crop&w=800&q=80" }
+                { id: 'BBBBBB01', name: "Premium Beach Cabana", price: 2500, status: 'AVAILABLE', tag: 'CABANA', description: "Luxury seaside cabana with plush seating and personalized service.", image: "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&w=800&q=80" },
+                { id: 'BBBBBB02', name: "Deluxe Day Bed", price: 1200, status: 'AVAILABLE', tag: 'DAY_BED', description: "Ultra-comfortable day bed located steps from the crystal clear water.", image: "https://images.unsplash.com/photo-1544148103-0773bf10d330?auto=format&fit=crop&w=800&q=80" },
+                { id: 'BBBBBB03', name: "Jet Ski Rental", price: 1800, status: 'AVAILABLE', tag: 'JET_SKI', description: "High-performance jet skis for an exhilarating ocean adventure.", image: "https://images.unsplash.com/photo-1517036660161-aa6122557ecb?auto=format&fit=crop&w=800&q=80" }
             ];
             saveToStorage();
         }
+
+        // Emergency Fallback Mapping Loop: Enforce 8-Character Convention
+        let needsUpdate = false;
+        allAssets = allAssets.map(asset => {
+            const currentId = String(asset.id);
+            if (currentId.length < 8 && !isNaN(currentId)) {
+                needsUpdate = true;
+                return { ...asset, id: `BBBBBB${currentId.padStart(2, '0')}` };
+            }
+            return asset;
+        });
+        if (needsUpdate) saveToStorage();
     }
 
     function saveToStorage() {
@@ -323,7 +344,7 @@
 
     function handleSearch() {
         const query = document.getElementById('search-input').value.toLowerCase();
-        const filtered = allAssets.filter(a => a.name.toLowerCase().includes(query) || a.tag.toLowerCase().includes(query));
+        const filtered = allAssets.filter(a => a.name.toLowerCase().includes(query) || a.tag.toLowerCase().includes(query) || String(a.id).toLowerCase().includes(query));
         renderAssets(filtered);
     }
 
@@ -352,12 +373,12 @@
             document.getElementById('f-price').value = asset.price;
             document.getElementById('f-status').value = asset.status;
             document.getElementById('f-description').value = asset.description;
-            if (asset.image.startsWith('data:')) {
+            if (asset.image && asset.image.startsWith('data:')) {
                 setImgSource('file');
                 currentImageBase64 = asset.image;
             } else {
                 setImgSource('url');
-                document.getElementById('f-image-url').value = asset.image;
+                document.getElementById('f-image-url').value = asset.image || '';
             }
             updatePreview(asset.image);
         } else {
@@ -381,8 +402,8 @@
         document.getElementById('src-file-btn').className = src === 'file' ? 'px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all bg-lux-navy text-white' : 'px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all text-lux-navy/40';
     }
 
-    function handleFileUpload(e) {
-        const file = e.target.files[0];
+    function handleFileUpload(event) {
+        const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = (ev) => { currentImageBase64 = ev.target.result; updatePreview(currentImageBase64); };
@@ -400,7 +421,7 @@
         e.preventDefault();
         const id = document.getElementById('edit-id').value;
         const assetData = {
-            id: id || Date.now().toString(),
+            id: id || `MGN-${Math.random().toString(36).substr(2, 4).toUpperCase()}`, // Ensures 8-character ID for new assets
             name: document.getElementById('f-name').value,
             tag: document.getElementById('f-category').value,
             price: Number(document.getElementById('f-price').value),
