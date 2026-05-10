@@ -8,21 +8,62 @@
   <script src="/js/tailwind-config.js"></script>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Flatpickr CSS for potential date picking needs -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <style>
     .tab-active { border-bottom-color: var(--lux-gold) !important; color: #00234b !important; opacity: 1 !important; }
-    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
-    .calendar-day { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; border-radius: 1rem; transition: all 0.3s; }
+    
+    /* Calendar Grid Fixes */
+    .calendar-grid { 
+      display: grid !important; 
+      grid-template-columns: repeat(7, 1fr) !important; 
+      width: 100%;
+    }
+    
+    .calendar-day { 
+      aspect-ratio: 1/1; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      position: relative; 
+      cursor: pointer; 
+      border-radius: 1rem; 
+      transition: all 0.3s;
+      width: 100%;
+    }
+    
     .calendar-day:hover:not(.empty) { background-color: rgba(0, 35, 75, 0.05); }
     .calendar-day.active { background-color: #00234b; color: white; }
     .calendar-day.maintenance { background-color: #c5a059; color: white; }
     .calendar-day.today { border: 2px solid #c5a059; font-weight: 800; }
+    
     .custom-scrollbar::-webkit-scrollbar { width: 4px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0, 35, 75, 0.05); }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #c5a059; border-radius: 10px; }
+    
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
     .card-hover { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
     .card-hover:hover { transform: translateY(-10px); box-shadow: 0 25px 50px -12px rgba(0, 35, 75, 0.15); }
     .modal-backdrop { backdrop-filter: blur(8px); background-color: rgba(0, 35, 75, 0.4); }
+
+    /* Flatpickr Override for Grid behavior if used */
+    .flatpickr-days {
+      display: grid !important;
+      grid-template-columns: repeat(7, 1fr) !important;
+      gap: 2px !important;
+    }
+    .flatpickr-day {
+      display: flex !important;
+      width: 100% !important;
+      max-width: none !important;
+      justify-content: center !important;
+      align-items: center !important;
+    }
+    .flatpickr-weekday {
+      display: block !important;
+      width: 100% !important;
+      text-align: center !important;
+    }
   </style>
 </head>
 <body class="bg-lux-cream font-sans text-lux-navy">
@@ -106,7 +147,7 @@
         <section id="tab-content-calendar" class="hidden space-y-10">
           <div class="grid lg:grid-cols-3 gap-10">
             <!-- Calendar View -->
-            <div class="lg:col-span-2 bg-white rounded-[3rem] p-10 premium-shadow">
+            <div class="lg:col-span-2 bg-white rounded-[3rem] p-10 premium-shadow overflow-hidden">
               <div class="flex justify-between items-center mb-8">
                 <div>
                   <h3 id="calendar-month-year" class="luxury-heading text-2xl font-bold">Month Year</h3>
