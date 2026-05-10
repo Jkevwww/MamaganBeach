@@ -288,8 +288,10 @@
                         </div>
                     </div>
                 </div>
-                <div id="calendar-container" class="w-full flex justify-center">
-                    <div id="inline-calendar" class="w-full"></div>
+                <div id="calendar-container" class="relative overflow-hidden w-full flex justify-center">
+                    <div class="w-full max-w-md mx-auto">
+                        <div id="inline-calendar" class="w-full"></div>
+                    </div>
                 </div>
             </div>
 
@@ -313,7 +315,7 @@
                         </div>
                         <div class="space-y-1">
                             <label for="reason" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Justification</label>
-                            <textarea id="reason" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white h-24 shadow-sm" placeholder="Reason for inventory blockage..."></textarea>
+                            <textarea id="reason" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white focus:ring-2 focus:ring-lux-gold/20 focus:border-lux-gold/50 h-24 shadow-sm" placeholder="Reason for inventory blockage..."></textarea>
                         </div>
                         <button type="submit" class="premium-button-navy w-full flex items-center justify-center gap-4 group py-5 rounded-2xl shadow-xl shadow-lux-navy/10">
                             <span class="text-[11px] font-black uppercase tracking-widest">Activate Blackout</span>
