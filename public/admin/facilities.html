@@ -8,62 +8,25 @@
   <script src="/js/tailwind-config.js"></script>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <!-- Flatpickr CSS for potential date picking needs -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <style>
     .tab-active { border-bottom-color: var(--lux-gold) !important; color: #00234b !important; opacity: 1 !important; }
-    
-    /* Calendar Grid Fixes */
-    .calendar-grid { 
-      display: grid !important; 
-      grid-template-columns: repeat(7, 1fr) !important; 
-      width: 100%;
-    }
-    
-    .calendar-day { 
-      aspect-ratio: 1/1; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      position: relative; 
-      cursor: pointer; 
-      border-radius: 1rem; 
-      transition: all 0.3s;
-      width: 100%;
-    }
-    
+    .calendar-grid { display: grid !important; grid-template-columns: repeat(7, 1fr) !important; width: 100%; }
+    .calendar-day { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; border-radius: 1rem; transition: all 0.3s; width: 100%; }
     .calendar-day:hover:not(.empty) { background-color: rgba(0, 35, 75, 0.05); }
     .calendar-day.active { background-color: #00234b; color: white; }
     .calendar-day.maintenance { background-color: #c5a059; color: white; }
     .calendar-day.today { border: 2px solid #c5a059; font-weight: 800; }
-    
     .custom-scrollbar::-webkit-scrollbar { width: 4px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0, 35, 75, 0.05); }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #c5a059; border-radius: 10px; }
-    
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
     .card-hover { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
     .card-hover:hover { transform: translateY(-10px); box-shadow: 0 25px 50px -12px rgba(0, 35, 75, 0.15); }
     .modal-backdrop { backdrop-filter: blur(8px); background-color: rgba(0, 35, 75, 0.4); }
-
-    /* Flatpickr Override for Grid behavior if used */
-    .flatpickr-days {
-      display: grid !important;
-      grid-template-columns: repeat(7, 1fr) !important;
-      gap: 2px !important;
-    }
-    .flatpickr-day {
-      display: flex !important;
-      width: 100% !important;
-      max-width: none !important;
-      justify-content: center !important;
-      align-items: center !important;
-    }
-    .flatpickr-weekday {
-      display: block !important;
-      width: 100% !important;
-      text-align: center !important;
-    }
+    .flatpickr-days { display: grid !important; grid-template-columns: repeat(7, 1fr) !important; gap: 2px !important; }
+    .flatpickr-day { display: flex !important; width: 100% !important; max-width: none !important; justify-content: center !important; align-items: center !important; }
+    .flatpickr-weekday { display: block !important; width: 100% !important; text-align: center !important; }
   </style>
 </head>
 <body class="bg-lux-cream font-sans text-lux-navy">
@@ -90,7 +53,7 @@
 
     <!-- Main Content -->
     <div class="flex-1 overflow-y-auto bg-lux-cream/50">
-      <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-30">
+      <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-30" style="-webkit-backdrop-filter: blur(24px);">
         <div>
           <h1 class="luxury-heading text-2xl font-bold text-lux-navy">Facility Management</h1>
           <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">Manage resort inventory, status, and pricing</p>
@@ -100,7 +63,7 @@
             <button onclick="switchTab('assets')" id="btn-tab-assets" role="tab" aria-selected="true" aria-controls="tab-content-assets" class="tab-btn px-6 py-2 text-[10px] font-black uppercase tracking-widest rounded-full transition-all bg-white shadow-sm text-lux-navy">Assets</button>
             <button onclick="switchTab('calendar')" id="btn-tab-calendar" role="tab" aria-selected="false" aria-controls="tab-content-calendar" class="tab-btn px-6 py-2 text-[10px] font-black uppercase tracking-widest rounded-full transition-all text-lux-navy/40 hover:text-lux-navy">Maintenance</button>
           </div>
-          <button onclick="openAssetModal()" aria-label="Add New Asset" class="px-8 py-3 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all shadow-xl">
+          <button onclick="openAssetModal()" aria-label="Add New Asset" title="Add New Asset" class="px-8 py-3 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all shadow-xl">
             <i class="fas fa-plus mr-2"></i>New Asset
           </button>
           <div id="auth-nav"></div>
@@ -110,32 +73,21 @@
       <main class="p-10 page-transition space-y-10">
         <!-- Assets Tab -->
         <section id="tab-content-assets" class="space-y-10">
-            <!-- Search & Filter Bar -->
             <div class="flex flex-col md:flex-row justify-between items-center gap-6 bg-white p-6 rounded-[2rem] border border-lux-navy/5 shadow-sm">
                 <div class="relative w-full md:w-96">
                     <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-lux-navy/20"></i>
                     <label for="asset-search" class="sr-only">Search assets by name or category</label>
-                    <input type="text" id="asset-search" oninput="handleSearch()" placeholder="Search Name or Category..." class="w-full pl-14 pr-6 py-3 bg-lux-navy/5 border-transparent rounded-full text-[10px] font-bold uppercase tracking-widest outline-none focus:bg-white focus:ring-2 focus:ring-lux-gold/20 transition-all">
+                    <input type="text" id="asset-search" oninput="handleSearch()" placeholder="Search Name or Category..." class="w-full pl-14 pr-6 py-3 bg-lux-navy/5 border-transparent rounded-full text-[10px] font-bold uppercase tracking-widest outline-none focus:bg-white focus:ring-2 focus:ring-lux-gold/20 transition-all" title="Search assets" aria-label="Search assets">
                 </div>
                 <div class="flex items-center gap-4 w-full md:w-auto">
-                    <button onclick="clearSearch()" class="px-6 py-3 text-[10px] font-black uppercase tracking-widest text-lux-navy/40 hover:text-lux-navy transition-colors">
-                        Clear Search
-                    </button>
+                    <button onclick="clearSearch()" class="px-6 py-3 text-[10px] font-black uppercase tracking-widest text-lux-navy/40 hover:text-lux-navy transition-colors">Clear Search</button>
                     <div class="h-8 w-px bg-lux-navy/10 mx-2"></div>
                     <p id="asset-count" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30">Showing 0 Assets</p>
                 </div>
             </div>
-
-            <!-- Asset Cards Grid -->
-            <div id="assets-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                <!-- Dynamic Assets Here -->
-            </div>
-
-            <!-- Empty State -->
+            <div id="assets-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"></div>
             <div id="empty-state" class="hidden py-32 text-center flex flex-col items-center gap-6">
-                <div class="w-24 h-24 rounded-full bg-lux-navy/5 flex items-center justify-center text-lux-navy/10 text-4xl">
-                    <i class="fas fa-box-open"></i>
-                </div>
+                <div class="w-24 h-24 rounded-full bg-lux-navy/5 flex items-center justify-center text-lux-navy/10 text-4xl"><i class="fas fa-box-open"></i></div>
                 <div>
                     <h3 class="luxury-heading text-xl font-bold opacity-30">No Assets Found</h3>
                     <p class="text-[10px] font-bold text-lux-navy/20 uppercase tracking-[0.2em] mt-2">Adjust your search or add a new facility</p>
@@ -146,7 +98,6 @@
         <!-- Maintenance Calendar Tab -->
         <section id="tab-content-calendar" class="hidden space-y-10">
           <div class="grid lg:grid-cols-3 gap-10">
-            <!-- Calendar View -->
             <div class="lg:col-span-2 bg-white rounded-[3rem] p-10 premium-shadow overflow-hidden">
               <div class="flex justify-between items-center mb-8">
                 <div>
@@ -158,7 +109,6 @@
                   <button onclick="nextMonth()" aria-label="Next Month" title="Next" class="w-10 h-10 rounded-full border border-lux-navy/10 flex items-center justify-center hover:bg-lux-navy hover:text-white transition-all"><i class="fas fa-chevron-right text-xs"></i></button>
                 </div>
               </div>
-              
               <div class="calendar-grid text-center mb-4" aria-hidden="true">
                 <div class="text-[10px] font-black text-lux-navy/20 uppercase tracking-widest py-4">Sun</div>
                 <div class="text-[10px] font-black text-lux-navy/20 uppercase tracking-widest py-4">Mon</div>
@@ -168,12 +118,8 @@
                 <div class="text-[10px] font-black text-lux-navy/20 uppercase tracking-widest py-4">Fri</div>
                 <div class="text-[10px] font-black text-lux-navy/20 uppercase tracking-widest py-4">Sat</div>
               </div>
-              <div id="calendar-days" class="calendar-grid gap-2">
-                <!-- Days injected here -->
-              </div>
+              <div id="calendar-days" class="calendar-grid gap-2"></div>
             </div>
-
-            <!-- Maintenance Sidebar -->
             <div class="space-y-6">
               <div class="bg-white rounded-[3rem] p-8 premium-shadow">
                 <h4 id="maint-form-title" class="luxury-heading text-lg font-bold mb-6">Schedule Maintenance</h4>
@@ -181,21 +127,21 @@
                   <input type="hidden" id="maint-id">
                   <div class="space-y-1">
                     <label for="maint-asset-id" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Select Asset</label>
-                    <select id="maint-asset-id" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" title="Select Asset"></select>
+                    <select id="maint-asset-id" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" title="Select Asset" aria-label="Select Asset"></select>
                   </div>
                   <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-1">
                       <label for="maint-start" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Start Date</label>
-                      <input type="date" id="maint-start" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white text-xs">
+                      <input type="date" id="maint-start" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white text-xs" title="Start Date" aria-label="Start Date">
                     </div>
                     <div class="space-y-1">
                       <label for="maint-end" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">End Date</label>
-                      <input type="date" id="maint-end" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white text-xs">
+                      <input type="date" id="maint-end" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white text-xs" title="End Date" aria-label="End Date">
                     </div>
                   </div>
                   <div class="space-y-1">
                     <label for="maint-reason" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Reason</label>
-                    <input type="text" id="maint-reason" placeholder="Routine check, repair..." required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white">
+                    <input type="text" id="maint-reason" placeholder="Routine check, repair..." required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" title="Reason" aria-label="Reason">
                   </div>
                   <div class="flex gap-2">
                     <button type="submit" id="maint-submit-btn" class="premium-button-gold flex-1">Schedule</button>
@@ -203,12 +149,9 @@
                   </div>
                 </form>
               </div>
-
               <div class="bg-white rounded-[3rem] p-8 premium-shadow overflow-hidden">
                 <h4 class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 mb-6">Active Schedules</h4>
-                <div id="maintenance-list" class="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                  <!-- List items -->
-                </div>
+                <div id="maintenance-list" class="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar"></div>
               </div>
             </div>
           </div>
@@ -217,7 +160,6 @@
     </div>
   </div>
 
-  <!-- Asset Modal (Add/Edit) -->
   <div id="asset-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6 modal-backdrop">
     <div class="absolute inset-0" onclick="closeAssetModal()"></div>
     <div class="relative bg-white rounded-[3rem] w-full max-w-2xl overflow-hidden shadow-2xl fade-in">
@@ -230,11 +172,11 @@
             <div class="grid md:grid-cols-2 gap-6">
                 <div class="space-y-1">
                     <label for="f-name" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Asset Name</label>
-                    <input type="text" id="f-name" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="e.g. Royal Cabana">
+                    <input type="text" id="f-name" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="e.g. Royal Cabana" title="Asset Name" aria-label="Asset Name">
                 </div>
                 <div class="space-y-1">
                     <label for="f-category" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Category</label>
-                    <select id="f-category" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" title="Select Category">
+                    <select id="f-category" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" title="Select Category" aria-label="Select Category">
                         <option value="Cabana">Cabana</option>
                         <option value="Suite">Suite</option>
                         <option value="Villas">Villas</option>
@@ -243,27 +185,24 @@
                     </select>
                 </div>
             </div>
-
             <div class="grid md:grid-cols-2 gap-6">
                 <div class="space-y-1">
                     <label for="f-price" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Rate (PHP)</label>
-                    <input type="number" id="f-price" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="0.00">
+                    <input type="number" id="f-price" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="0.00" title="Rate" aria-label="Rate">
                 </div>
                 <div class="space-y-1">
                     <label for="f-status" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Status</label>
-                    <select id="f-status" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" title="Select Status">
+                    <select id="f-status" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" title="Select Status" aria-label="Select Status">
                         <option value="Available">Available</option>
                         <option value="Maintenance">Maintenance</option>
                         <option value="Occupied">Occupied</option>
                     </select>
                 </div>
             </div>
-
             <div class="space-y-1">
                 <label for="f-description" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Description</label>
-                <textarea id="f-description" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white h-24" placeholder="Describe features..."></textarea>
+                <textarea id="f-description" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white h-24" placeholder="Describe features..." title="Description" aria-label="Description"></textarea>
             </div>
-
             <div class="space-y-4">
                 <div class="flex p-1 bg-lux-navy/5 rounded-2xl w-fit">
                     <button type="button" onclick="setImgSource('url')" id="src-url-btn" class="px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all bg-lux-navy text-white">Image URL</button>
@@ -271,17 +210,16 @@
                 </div>
                 <div id="url-container" class="space-y-1">
                     <label for="f-image-url" class="sr-only">Image URL</label>
-                    <input type="url" id="f-image-url" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="https://...">
+                    <input type="url" id="f-image-url" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="https://..." title="Image URL" aria-label="Image URL">
                 </div>
                 <div id="file-container" class="hidden space-y-1">
                     <label for="f-image-file" class="sr-only">Upload File</label>
-                    <input type="file" id="f-image-file" accept="image/*" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white">
+                    <input type="file" id="f-image-file" accept="image/*" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" title="Upload File" aria-label="Upload File">
                 </div>
                 <div id="image-preview" class="w-full h-32 rounded-2xl bg-lux-navy/5 border-2 border-dashed border-lux-navy/10 overflow-hidden bg-cover bg-center flex items-center justify-center">
                     <span class="text-[10px] font-bold text-lux-navy/20 uppercase tracking-widest">Image Preview</span>
                 </div>
             </div>
-
             <button type="submit" id="submit-btn" class="premium-button-gold w-full flex items-center justify-center gap-4 group shadow-xl">
                 <span id="btn-text">Register Asset</span>
                 <i class="fas fa-save transition-transform group-hover:scale-110"></i>
@@ -290,13 +228,10 @@
     </div>
   </div>
 
-  <!-- Delete Confirmation Modal -->
   <div id="delete-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-6 modal-backdrop">
     <div class="absolute inset-0" onclick="closeDeleteModal()"></div>
     <div class="relative bg-white rounded-[3rem] w-full max-w-md p-10 shadow-2xl text-center fade-in">
-        <div class="w-20 h-20 rounded-3xl bg-red-50 text-red-500 text-3xl flex items-center justify-center mx-auto mb-6">
-            <i class="fas fa-trash-alt"></i>
-        </div>
+        <div class="w-20 h-20 rounded-3xl bg-red-50 text-red-500 text-3xl flex items-center justify-center mx-auto mb-6"><i class="fas fa-trash-alt"></i></div>
         <h3 class="luxury-heading text-xl font-bold text-lux-navy mb-2">Remove Asset?</h3>
         <p class="text-xs text-lux-navy/50 leading-relaxed mb-8">Are you sure you want to remove this asset from the inventory? This action cannot be undone.</p>
         <div class="flex gap-4">
@@ -310,20 +245,16 @@
   <script src="/js/auth.js?v=2"></script>
   <script src="/js/toast.js?v=2"></script>
   <script src="/js/admin.js?v=2"></script>
-  
   <script>
     let allAssets = [];
     let allMaintenance = [];
     let imageSource = 'url';
     let base64Image = '';
-
-    // --- Tab Management ---
     function switchTab(tab) {
       document.getElementById('tab-content-assets').classList.toggle('hidden', tab !== 'assets');
       document.getElementById('tab-content-calendar').classList.toggle('hidden', tab !== 'calendar');
       const btnAssets = document.getElementById('btn-tab-assets');
       const btnCalendar = document.getElementById('btn-tab-calendar');
-      
       if(tab === 'assets') {
         btnAssets.classList.add('bg-white', 'shadow-sm', 'text-lux-navy');
         btnAssets.setAttribute('aria-selected', 'true');
@@ -343,55 +274,36 @@
         fetchMaintenance();
       }
     }
-
-    // --- Initialization ---
     document.addEventListener('DOMContentLoaded', async () => {
         if (typeof renderAdminNav === 'function') renderAdminNav('facilities');
         const user = await loadUser();
-        if (!user || user.role !== 'admin') {
-            window.location.replace('/login.html');
-            return;
-        }
+        if (!user || user.role !== 'admin') { window.location.replace('/login.html'); return; }
         await fetchAssets();
         await fetchMaintenance();
     });
-
     async function fetchAssets() {
         try {
             const res = await api.get('/facilities');
             if (res.success) {
                 allAssets = res.data;
                 renderAssets(allAssets);
-                // Update maintenance dropdown
                 const select = document.getElementById('maint-asset-id');
                 if(select) select.innerHTML = allAssets.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
             }
-        } catch (err) {
-            console.error('Fetch assets failed:', err);
-        }
+        } catch (err) { console.error('Fetch assets failed:', err); }
     }
-
-    // --- Rendering Assets ---
     function renderAssets(data) {
         const grid = document.getElementById('assets-grid');
         const empty = document.getElementById('empty-state');
         const count = document.getElementById('asset-count');
         grid.innerHTML = '';
         count.textContent = `Showing ${data.length} Assets`;
-
-        if (data.length === 0) {
-            empty.classList.remove('hidden');
-            grid.classList.add('hidden');
-            return;
-        }
-
+        if (data.length === 0) { empty.classList.remove('hidden'); grid.classList.add('hidden'); return; }
         empty.classList.add('hidden');
         grid.classList.remove('hidden');
-
         data.forEach(asset => {
             const img = (asset.images && asset.images.length > 0) ? asset.images[0] : '/images/placeholders/asset-placeholder.jpg';
-            const card = `
-                <div class="bg-white rounded-[2.5rem] overflow-hidden border border-lux-navy/5 card-hover shadow-sm group">
+            const card = `<div class="bg-white rounded-[2.5rem] overflow-hidden border border-lux-navy/5 card-hover shadow-sm group">
                     <div class="h-60 overflow-hidden relative">
                         <div class="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-110" style="background-image: url('${img}')"></div>
                         <div class="absolute top-6 right-6 flex gap-2">
@@ -417,39 +329,25 @@
                             <button onclick="openAssetModal('${asset.id}')" class="text-[9px] font-black text-lux-gold hover:text-lux-navy uppercase tracking-[0.2em] transition-all">Modify <i class="fas fa-chevron-right ml-1"></i></button>
                         </div>
                     </div>
-                </div>
-            `;
+                </div>`;
             grid.insertAdjacentHTML('beforeend', card);
         });
     }
-
-    // --- Search & Filter ---
     function handleSearch() {
         const query = document.getElementById('asset-search').value.toLowerCase();
-        const filtered = allAssets.filter(a => 
-            a.name.toLowerCase().includes(query) || 
-            a.type.toLowerCase().includes(query)
-        );
+        const filtered = allAssets.filter(a => a.name.toLowerCase().includes(query) || a.type.toLowerCase().includes(query));
         renderAssets(filtered);
     }
-
-    function clearSearch() {
-        document.getElementById('asset-search').value = '';
-        renderAssets(allAssets);
-    }
-
-    // --- Asset CRUD: Modal ---
+    function clearSearch() { document.getElementById('asset-search').value = ''; renderAssets(allAssets); }
     function openAssetModal(id = null) {
         const modal = document.getElementById('asset-modal');
         const form = document.getElementById('asset-form');
         const title = document.getElementById('modal-title');
         const btn = document.getElementById('btn-text');
-
         form.reset();
         document.getElementById('edit-id').value = '';
         updatePreview('');
         setImgSource('url');
-
         if (id) {
             const asset = allAssets.find(a => a.id === id);
             if (asset) {
@@ -463,28 +361,16 @@
                 document.getElementById('f-description').value = asset.description || '';
                 const img = (asset.images && asset.images.length > 0) ? asset.images[0] : '';
                 if(img) {
-                    if(img.startsWith('http')) {
-                        document.getElementById('f-image-url').value = img;
-                        setImgSource('url');
-                    } else {
-                        setImgSource('file');
-                    }
+                    if(img.startsWith('http')) { document.getElementById('f-image-url').value = img; setImgSource('url'); }
+                    else { setImgSource('file'); }
                     updatePreview(img);
                 }
             }
-        } else {
-            title.textContent = 'Register Facility';
-            btn.textContent = 'Register Asset';
-        }
+        } else { title.textContent = 'Register Facility'; btn.textContent = 'Register Asset'; }
         modal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
     }
-
-    function closeAssetModal() {
-        document.getElementById('asset-modal').classList.add('hidden');
-        document.body.style.overflow = '';
-    }
-
+    function closeAssetModal() { document.getElementById('asset-modal').classList.add('hidden'); document.body.style.overflow = ''; }
     function setImgSource(src) {
         imageSource = src;
         const urlBtn = document.getElementById('src-url-btn');
@@ -494,13 +380,11 @@
         urlBtn.className = src === 'url' ? 'px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all bg-lux-navy text-white' : 'px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all text-lux-navy/40';
         fileBtn.className = src === 'file' ? 'px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all bg-lux-navy text-white' : 'px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all text-lux-navy/40';
     }
-
     function updatePreview(src) {
         const preview = document.getElementById('image-preview');
         if (src) { preview.style.backgroundImage = `url('${src}')`; preview.innerHTML = ''; }
         else { preview.style.backgroundImage = 'none'; preview.innerHTML = '<span class="text-[10px] font-bold text-lux-navy/20 uppercase tracking-widest">Image Preview</span>'; }
     }
-
     document.getElementById('f-image-url').addEventListener('input', (e) => imageSource === 'url' && updatePreview(e.target.value));
     document.getElementById('f-image-file').addEventListener('change', function(e) {
         const file = e.target.files[0];
@@ -510,117 +394,49 @@
             reader.readAsDataURL(file);
         }
     });
-
     document.getElementById('asset-form').addEventListener('submit', async (e) => {
         e.preventDefault();
-
         const id = document.getElementById('edit-id').value;
         const token = localStorage.getItem('token');
         const imageFileEl = document.getElementById('f-image-file');
         const imageFile = imageFileEl && imageFileEl.files && imageFileEl.files.length ? imageFileEl.files[0] : null;
-
-        // Backend expects: facilitySchema.validate(req.body)
-        // and multer field name: image_file
         const payload = {
-            resort_id: '', // filled below for create (required by schema)
+            resort_id: '',
             name: document.getElementById('f-name').value,
-            // UI dropdown is called "Category" but backend schema uses `category`
-            // while SQL insert uses `type`. Current backend expects `type`.
             type: document.getElementById('f-category').value,
             category: document.getElementById('f-category').value,
             description: document.getElementById('f-description').value,
             base_price: Number(document.getElementById('f-price').value),
             capacity: 1,
             total_units: 1,
-            // legacy status mapping
             status: document.getElementById('f-status').value,
-
-            // URL images are sent as images_link. Local uploads are sent via multipart + image_file.
             images_link: (imageSource === 'url') ? document.getElementById('f-image-url').value.trim() : ''
         };
-
-        // If editing, we can omit resort_id because schema requires it; to keep it safe,
-        // we fetch resort_id from existing asset first.
-        if (id) {
-            const existing = allAssets.find(a => a.id === id);
-            if (existing && existing.resort_id) payload.resort_id = existing.resort_id;
-        }
-
-        // Create requires resort_id; it can be provided by the backend session/resort.
-        // Current admin UI doesn’t have resort selector, so we try to reuse existing resort_id if present.
-        // If none found, backend will reject with schema validation error.
-        if (!id && !payload.resort_id) {
-            const any = allAssets && allAssets.length ? allAssets[0] : null;
-            if (any && any.resort_id) payload.resort_id = any.resort_id;
-        }
-
+        if (id) { const existing = allAssets.find(a => a.id === id); if (existing && existing.resort_id) payload.resort_id = existing.resort_id; }
+        if (!id && !payload.resort_id) { const any = allAssets && allAssets.length ? allAssets[0] : null; if (any && any.resort_id) payload.resort_id = any.resort_id; }
         const isImageUrl = imageSource === 'url' && payload.images_link;
         const isImageUpload = imageSource === 'file' && imageFile;
-
         try {
             let res;
-
             if (isImageUpload) {
-                // multipart upload: must use field name `image_file`
                 const fd = new FormData();
-                Object.entries(payload).forEach(([k, v]) => {
-                    if (v === undefined || v === null || v === '') return;
-                    fd.append(k, v);
-                });
+                Object.entries(payload).forEach(([k, v]) => { if (v === undefined || v === null || v === '') return; fd.append(k, v); });
                 fd.delete('images_link');
                 fd.append('image_file', imageFile);
-
                 const endpoint = id ? `/facilities/${id}` : '/facilities';
                 const method = id ? 'PUT' : 'POST';
-
-                res = await fetch(`/api${endpoint}`, {
-                    method,
-                    headers: token ? { Authorization: `Bearer ${token}` } : {},
-                    body: fd,
-                }).then(r => r.json());
+                res = await fetch(`/api${endpoint}`, { method, headers: token ? { Authorization: `Bearer ${token}` } : {}, body: fd, }).then(r => r.json());
             } else {
-                // JSON submit (URL only)
-                const data = {
-                    resort_id: payload.resort_id,
-                    name: payload.name,
-                    type: payload.type,
-                    category: payload.category,
-                    description: payload.description || null,
-                    base_price: payload.base_price,
-                    capacity: payload.capacity,
-                    total_units: payload.total_units,
-                    images_link: isImageUrl ? payload.images_link : null,
-                    // backend update route ignores status; keep for UI consistency
-                    is_active: true,
-                    status: payload.status,
-                };
-
+                const data = { resort_id: payload.resort_id, name: payload.name, type: payload.type, category: payload.category, description: payload.description || null, base_price: payload.base_price, capacity: payload.capacity, total_units: payload.total_units, images_link: isImageUrl ? payload.images_link : null, is_active: true, status: payload.status, };
                 res = id ? await api.put(`/facilities/${id}`, data) : await api.post('/facilities', data);
             }
-
-            if (res.success) {
-                showToast(id ? 'Facility updated' : 'New facility registered', 'success');
-                closeAssetModal();
-                fetchAssets();
-            } else {
-                showToast(res.message || 'Action failed', 'error');
-            }
-        } catch (err) {
-            console.error('Submit error:', err);
-            showToast('System error', 'error');
-        }
+            if (res.success) { showToast(id ? 'Facility updated' : 'New facility registered', 'success'); closeAssetModal(); fetchAssets(); }
+            else { showToast(res.message || 'Action failed', 'error'); }
+        } catch (err) { console.error('Submit error:', err); showToast('System error', 'error'); }
     });
-
-    // --- Asset CRUD: Delete ---
     let pendingDeleteId = null;
-    function confirmDelete(id) {
-        pendingDeleteId = id;
-        document.getElementById('delete-modal').classList.remove('hidden');
-    }
-    function closeDeleteModal() {
-        document.getElementById('delete-modal').classList.add('hidden');
-        pendingDeleteId = null;
-    }
+    function confirmDelete(id) { pendingDeleteId = id; document.getElementById('delete-modal').classList.remove('hidden'); }
+    function closeDeleteModal() { document.getElementById('delete-modal').classList.add('hidden'); pendingDeleteId = null; }
     document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
         if (!pendingDeleteId) return;
         try {
@@ -629,59 +445,39 @@
             else showToast(res.message, 'error');
         } catch (err) { showToast('Error', 'error'); }
     });
-
-    // --- Maintenance CRUD ---
     async function fetchMaintenance() {
-        try {
-            // Assuming endpoint for maintenance exists, using localStorage as requested for maintenance logic if API not ready
-            const stored = localStorage.getItem('mamagan_maintenance');
-            allMaintenance = stored ? JSON.parse(stored) : [];
-            renderMaintenanceList();
-            initCalendar();
-        } catch (err) { console.error(err); }
+        try { const stored = localStorage.getItem('mamagan_maintenance'); allMaintenance = stored ? JSON.parse(stored) : []; renderMaintenanceList(); initCalendar(); }
+        catch (err) { console.error(err); }
     }
-
     function renderMaintenanceList() {
       const container = document.getElementById('maintenance-list');
       if(!container) return;
       if(allMaintenance.length === 0) { container.innerHTML = '<p class="text-[8px] font-bold text-lux-navy/20 uppercase tracking-widest text-center py-10">No active schedules</p>'; return; }
       container.innerHTML = allMaintenance.sort((a,b) => new Date(a.start) - new Date(b.start)).map(m => {
         const asset = allAssets.find(a => a.id === m.assetId);
-        return `
-          <div class="p-4 bg-lux-navy/5 rounded-2xl flex justify-between items-center group border border-transparent hover:border-lux-gold/20 transition-all">
+        return `<div class="p-4 bg-lux-navy/5 rounded-2xl flex justify-between items-center group border border-transparent hover:border-lux-gold/20 transition-all">
             <div>
               <h5 class="text-[10px] font-black uppercase tracking-widest text-lux-navy">${asset ? asset.name : 'Unknown Asset'}</h5>
               <p class="text-[8px] font-bold text-lux-navy/40 uppercase tracking-widest">${m.start} to ${m.end}</p>
               <p class="text-[8px] font-medium text-lux-navy/60 italic mt-1">${m.reason}</p>
             </div>
             <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button onclick="editMaintenance('${m.id}')" class="text-lux-navy/40 hover:text-lux-gold transition-colors"><i class="fas fa-edit"></i></button>
-                <button onclick="deleteMaintenance('${m.id}')" class="text-red-400 hover:text-red-600 transition-colors"><i class="fas fa-trash"></i></button>
+                <button onclick="editMaintenance('${m.id}')" class="text-lux-navy/40 hover:text-lux-gold transition-colors" aria-label="Edit Schedule" title="Edit Schedule"><i class="fas fa-edit"></i></button>
+                <button onclick="deleteMaintenance('${m.id}')" class="text-red-400 hover:text-red-600 transition-colors" aria-label="Delete Schedule" title="Delete Schedule"><i class="fas fa-trash"></i></button>
             </div>
-          </div>
-        `;
+          </div>`;
       }).join('');
     }
-
     document.getElementById('maintenance-form').addEventListener('submit', (e) => {
       e.preventDefault();
       const mid = document.getElementById('maint-id').value;
-      const data = {
-        id: mid || Date.now().toString(),
-        assetId: document.getElementById('maint-asset-id').value,
-        start: document.getElementById('maint-start').value,
-        end: document.getElementById('maint-end').value,
-        reason: document.getElementById('maint-reason').value
-      };
-      if(mid) {
-          const idx = allMaintenance.findIndex(m => m.id === mid);
-          if(idx !== -1) allMaintenance[idx] = data;
-      } else allMaintenance.push(data);
+      const data = { id: mid || Date.now().toString(), assetId: document.getElementById('maint-asset-id').value, start: document.getElementById('maint-start').value, end: document.getElementById('maint-end').value, reason: document.getElementById('maint-reason').value };
+      if(mid) { const idx = allMaintenance.findIndex(m => m.id === mid); if(idx !== -1) allMaintenance[idx] = data; }
+      else allMaintenance.push(data);
       localStorage.setItem('mamagan_maintenance', JSON.stringify(allMaintenance));
       showToast('Schedule saved', 'success');
       resetMaintenanceForm(); fetchMaintenance();
     });
-
     function editMaintenance(id) {
         const m = allMaintenance.find(item => item.id === id);
         if(!m) return;
@@ -694,7 +490,6 @@
         document.getElementById('maint-submit-btn').textContent = 'Update';
         document.getElementById('maint-cancel-btn').classList.remove('hidden');
     }
-
     function resetMaintenanceForm() {
         document.getElementById('maintenance-form').reset();
         document.getElementById('maint-id').value = '';
@@ -702,16 +497,7 @@
         document.getElementById('maint-submit-btn').textContent = 'Schedule';
         document.getElementById('maint-cancel-btn').classList.add('hidden');
     }
-
-    function deleteMaintenance(id) {
-        if(confirm('Cancel schedule?')) {
-            allMaintenance = allMaintenance.filter(m => m.id !== id);
-            localStorage.setItem('mamagan_maintenance', JSON.stringify(allMaintenance));
-            fetchMaintenance();
-        }
-    }
-
-    // --- Calendar Logic ---
+    function deleteMaintenance(id) { if(confirm('Cancel schedule?')) { allMaintenance = allMaintenance.filter(m => m.id !== id); localStorage.setItem('mamagan_maintenance', JSON.stringify(allMaintenance)); fetchMaintenance(); } }
     let currentYear = new Date().getFullYear();
     let currentMonth = new Date().getMonth();
     function initCalendar() {

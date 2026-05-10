@@ -1,8 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Patron Records | Mamagan Beach Resort</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/tailwind-config.js"></script>
@@ -15,7 +15,7 @@
     <aside class="w-80 bg-white border-r border-lux-navy/5 flex-shrink-0 hidden md:flex flex-col relative z-20">
       <div class="p-10 border-b border-lux-navy/5">
         <a href="/" class="flex items-center gap-4 group">
-          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12 group-hover:scale-110 transition-transform">
+          <img src="/images/logos/LOGO.png" alt="Mamagan Logo" class="h-12 group-hover:scale-110 transition-transform">
           <div class="flex flex-col">
             <span class="luxury-heading font-bold text-xl leading-none">Mamagan</span>
             <span class="text-[8px] font-black uppercase tracking-[0.4em] text-lux-gold mt-1">Beach Resort</span>
@@ -33,7 +33,7 @@
 
     <!-- Main Content -->
     <div class="flex-1 overflow-y-auto bg-lux-cream/50">
-      <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-10">
+      <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-10" style="-webkit-backdrop-filter: blur(24px);">
         <div>
           <h1 class="luxury-heading text-2xl font-bold text-lux-navy">Patron Records</h1>
           <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">Manage member registrations and profiles</p>
@@ -46,7 +46,8 @@
           <div class="px-10 py-8 border-b border-lux-navy/5 flex justify-between items-center">
             <div class="relative w-full max-w-md group">
                 <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-lux-navy/20 group-focus-within:text-lux-gold transition-colors"></i>
-                <input type="text" id="client-search" oninput="searchClients(this.value)" class="w-full pl-14 pr-6 py-4 rounded-2xl bg-lux-cream/30 border border-transparent focus:bg-white focus:border-lux-gold outline-none transition-all text-xs" placeholder="Search by name or email...">
+                <label for="client-search" class="sr-only">Search Patrons</label>
+                <input type="text" id="client-search" oninput="searchClients(this.value)" class="w-full pl-14 pr-6 py-4 rounded-2xl bg-lux-cream/30 border border-transparent focus:bg-white focus:border-lux-gold outline-none transition-all text-xs" placeholder="Search by name or email..." title="Search by name or email" aria-label="Search by name or email">
             </div>
             <span class="text-[8px] font-black uppercase tracking-widest text-lux-navy/30" id="total-clients">Synchronizing Records...</span>
           </div>
@@ -96,7 +97,7 @@
         <tr class="hover:bg-lux-cream/50 transition-colors">
           <td class="px-10 py-6">
             <div class="flex items-center gap-4">
-              <img src="${u.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(u.full_name) + '&background=0c1b33&color=c5a059'}" class="w-10 h-10 rounded-xl object-cover border border-lux-navy/5">
+              <img src="${u.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(u.full_name) + '&background=0c1b33&color=c5a059'}" class="w-10 h-10 rounded-xl object-cover border border-lux-navy/5" alt="Avatar">
               <div>
                 <div class="text-sm font-bold text-lux-navy">${u.full_name}</div>
                 <div class="text-[9px] font-mono text-lux-navy/30 uppercase tracking-widest mt-1">${u.id.substring(0,8)}</div>
@@ -114,7 +115,7 @@
           </td>
           <td class="px-10 py-6 text-xs text-lux-navy/40">${new Date(u.created_at).toLocaleDateString()}</td>
           <td class="px-10 py-6">
-            <button class="text-lux-navy/20 hover:text-lux-gold transition-colors"><i class="fas fa-ellipsis-v"></i></button>
+            <button class="text-lux-navy/20 hover:text-lux-gold transition-colors" aria-label="Manage Patron" title="Manage Patron"><i class="fas fa-ellipsis-v"></i></button>
           </td>
         </tr>
       `).join('');

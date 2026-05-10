@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Global Reservations | Mamagan Beach Resort</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/tailwind-config.js"></script>
@@ -14,7 +15,7 @@
     <aside class="w-80 bg-white border-r border-lux-navy/5 flex-shrink-0 hidden md:flex flex-col relative z-20">
       <div class="p-10 border-b border-lux-navy/5">
         <a href="/" class="flex items-center gap-4 group">
-          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12 group-hover:scale-110 transition-transform">
+          <img src="/images/logos/LOGO.png" alt="Mamagan Logo" class="h-12 group-hover:scale-110 transition-transform">
           <div class="flex flex-col">
             <span class="luxury-heading font-bold text-xl leading-none">Mamagan</span>
             <span class="text-[8px] font-black uppercase tracking-[0.4em] text-lux-gold mt-1">Beach Resort</span>
@@ -32,7 +33,7 @@
 
     <!-- Main Content -->
     <div class="flex-1 overflow-y-auto bg-lux-cream/50">
-      <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-10">
+      <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-10" style="-webkit-backdrop-filter: blur(24px);">
         <div>
           <h1 class="luxury-heading text-2xl font-bold text-lux-navy">Global Reservations</h1>
           <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">Manage all guest itineraries and settlement statuses</p>
@@ -45,7 +46,8 @@
           <div class="px-10 py-8 border-b border-lux-navy/5 flex justify-between items-center gap-8">
             <div class="relative flex-1 max-w-md group">
                 <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-lux-navy/20 group-focus-within:text-lux-gold transition-colors"></i>
-                <input type="text" id="booking-search" oninput="searchBookings(this.value)" class="w-full pl-14 pr-6 py-4 rounded-2xl bg-lux-cream/30 border border-transparent focus:bg-white focus:border-lux-gold outline-none transition-all text-xs" placeholder="Search by Guest or ID...">
+                <label for="booking-search" class="sr-only">Search Bookings</label>
+                <input type="text" id="booking-search" oninput="searchBookings(this.value)" class="w-full pl-14 pr-6 py-4 rounded-2xl bg-lux-cream/30 border border-transparent focus:bg-white focus:border-lux-gold outline-none transition-all text-xs" placeholder="Search by Guest or ID..." title="Search by Guest or ID" aria-label="Search by Guest or ID">
             </div>
             <div class="flex gap-4 items-center">
                 <label for="status-filter" class="text-[8px] font-black uppercase tracking-widest text-lux-navy/30">Filter</label>
@@ -127,8 +129,8 @@
             <td class="px-10 py-6"><span class="px-3 py-1 text-[8px] font-black uppercase tracking-widest rounded-full border ${statusColors[b.status]||''}">${b.status}</span></td>
             <td class="px-10 py-6">
                 <div class="flex gap-2">
-                    <button class="text-lux-navy/20 hover:text-lux-gold transition-colors"><i class="fas fa-eye"></i></button>
-                    <button class="text-lux-navy/20 hover:text-red-500 transition-colors"><i class="fas fa-ban"></i></button>
+                    <button class="text-lux-navy/20 hover:text-lux-gold transition-colors" aria-label="View Details" title="View Details"><i class="fas fa-eye"></i></button>
+                    <button class="text-lux-navy/20 hover:text-red-500 transition-colors" aria-label="Cancel Booking" title="Cancel Booking"><i class="fas fa-ban"></i></button>
                 </div>
             </td>
           </tr>

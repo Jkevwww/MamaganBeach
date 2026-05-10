@@ -54,7 +54,7 @@ body > .flatpickr-calendar:not(.inline) .flatpickr-day { width: 2rem !important;
       </div>
       <nav id="admin-nav" class="flex-1 p-6 space-y-2"></nav>
       <div class="p-8 border-t border-lux-navy/5">
-        <button id="logout-btn" class="w-full flex items-center gap-4 px-6 py-4 text-red-600 hover:bg-red-50 rounded-2xl transition-all">
+        <button id="logout-btn" title="Sign Out" aria-label="Sign Out" class="w-full flex items-center gap-4 px-6 py-4 text-red-600 hover:bg-red-50 rounded-2xl transition-all">
           <i class="fas fa-sign-out-alt"></i>
           <span class="text-[10px] font-black uppercase tracking-widest">TERMINATE SESSION</span>
         </button>
@@ -63,7 +63,7 @@ body > .flatpickr-calendar:not(.inline) .flatpickr-day { width: 2rem !important;
 
     <!-- Main Content -->
     <div class="flex-1 overflow-y-auto">
-      <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-30">
+      <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-30" style="-webkit-backdrop-filter: blur(24px);">
         <div>
           <h1 class="luxury-heading text-2xl font-bold text-lux-navy">Inventory Control</h1>
           <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-widest">Global Asset Blackout Protocol</p>
@@ -102,18 +102,18 @@ body > .flatpickr-calendar:not(.inline) .flatpickr-day { width: 2rem !important;
               <h3 class="luxury-heading text-xl font-bold mb-8">Blackout Protocol</h3>
               <form id="block-form" class="space-y-6">
                 <div>
-                  <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 ml-2">Target Asset</label>
-                  <select id="facility-select" class="premium-input mt-1">
+                  <label for="facility-select" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 ml-2">Target Asset</label>
+                  <select id="facility-select" class="premium-input mt-1" title="Select facility" aria-label="Select facility">
                     <option value="all">Global (All Assets)</option>
                   </select>
                 </div>
                 <div>
-                  <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 ml-2">Temporal Window</label>
-                  <input type="text" id="block-dates" class="premium-input mt-1" placeholder="Select date range...">
+                  <label for="block-dates" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 ml-2">Temporal Window</label>
+                  <input type="text" id="block-dates" class="premium-input mt-1" placeholder="Select date range..." title="Temporal Window" aria-label="Temporal Window">
                 </div>
                 <div>
-                  <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 ml-2">Justification</label>
-                  <textarea id="reason" class="premium-input mt-1 h-32 focus:ring-2 focus:ring-lux-gold/20" placeholder="State reason for blockage..."></textarea>
+                  <label for="reason" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 ml-2">Justification</label>
+                  <textarea id="reason" class="premium-input mt-1 h-32 focus:ring-2 focus:ring-lux-gold/20" placeholder="State reason for blockage..." title="Justification" aria-label="Justification"></textarea>
                 </div>
                 <button type="submit" class="premium-button-navy w-full py-5 rounded-2xl flex items-center justify-center gap-3">
                   <span class="text-[11px] font-black uppercase tracking-widest">Activate Blackout</span>

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Financial Intelligence | Mamagan Beach Resort</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/tailwind-config.js"></script>
@@ -15,7 +16,7 @@
     <aside class="w-80 bg-white border-r border-lux-navy/5 flex-shrink-0 hidden md:flex flex-col relative z-20">
       <div class="p-10 border-b border-lux-navy/5">
         <a href="/" class="flex items-center gap-4 group">
-          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12 group-hover:scale-110 transition-transform">
+          <img src="/images/logos/LOGO.png" alt="Mamagan Logo" class="h-12 group-hover:scale-110 transition-transform">
           <div class="flex flex-col">
             <span class="luxury-heading font-bold text-xl leading-none">Mamagan Fun & Adventure</span>
             <span class="text-[8px] font-black uppercase tracking-[0.4em] text-lux-gold mt-1"> Beach Resort</span>
@@ -33,7 +34,7 @@
 
     <!-- Main Content -->
     <div class="flex-1 overflow-y-auto bg-lux-cream/50">
-      <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-10">
+      <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-10" style="-webkit-backdrop-filter: blur(24px);">
         <div>
           <h1 class="luxury-heading text-2xl font-bold text-lux-navy">Financial Intelligence</h1>
           <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">In-depth revenue and occupancy analysis</p>
@@ -42,7 +43,6 @@
       </header>
 
       <main class="p-10 space-y-10 page-transition">
-        <!-- Revenue Report -->
         <div class="bg-white rounded-[3rem] p-10 border border-lux-navy/5 premium-shadow">
           <div class="flex flex-wrap justify-between items-center mb-10 gap-6">
             <h3 class="luxury-heading text-xl font-bold">Revenue Stream</h3>
@@ -55,13 +55,14 @@
           <canvas id="revenueChart" height="100"></canvas>
         </div>
 
-        <!-- Occupancy Report -->
         <div class="bg-white rounded-[3rem] border border-lux-navy/5 premium-shadow overflow-hidden">
           <div class="px-10 py-8 border-b border-lux-navy/5 flex justify-between items-center gap-8">
             <h3 class="luxury-heading text-xl font-bold">Asset Occupancy Index</h3>
             <div class="flex gap-4">
-              <input type="date" id="occ-from" onchange="loadOccupancy()" class="px-6 py-3 rounded-2xl bg-lux-cream/30 border-transparent text-[8px] font-black uppercase tracking-widest text-lux-navy outline-none focus:bg-white focus:border-lux-gold transition-all">
-              <input type="date" id="occ-to" onchange="loadOccupancy()" class="px-6 py-3 rounded-2xl bg-lux-cream/30 border-transparent text-[8px] font-black uppercase tracking-widest text-lux-navy outline-none focus:bg-white focus:border-lux-gold transition-all">
+              <label for="occ-from" class="sr-only">Date From</label>
+              <input type="date" id="occ-from" onchange="loadOccupancy()" class="px-6 py-3 rounded-2xl bg-lux-cream/30 border-transparent text-[8px] font-black uppercase tracking-widest text-lux-navy outline-none focus:bg-white focus:border-lux-gold transition-all" title="Date From" aria-label="Date From">
+              <label for="occ-to" class="sr-only">Date To</label>
+              <input type="date" id="occ-to" onchange="loadOccupancy()" class="px-6 py-3 rounded-2xl bg-lux-cream/30 border-transparent text-[8px] font-black uppercase tracking-widest text-lux-navy outline-none focus:bg-white focus:border-lux-gold transition-all" title="Date To" aria-label="Date To">
             </div>
           </div>
           <div class="overflow-x-auto">
@@ -91,9 +92,7 @@
   <script>
     if (!requireAdmin()) throw new Error('Admin required');
     renderAdminNav('reports');
-
     let revenueChart = null;
-
     async function loadRevenue(period) {
       document.querySelectorAll('.rev-filter').forEach(btn => {
         btn.classList.remove('bg-lux-navy', 'text-lux-gold');
@@ -101,52 +100,34 @@
       });
       event.target.classList.remove('text-lux-navy/40');
       event.target.classList.add('bg-lux-navy', 'text-lux-gold');
-
       const res = await api.get(`/admin/reports/revenue?period=${period}`);
       if (!res.success) return;
-
       const labels = res.data.map(d => d.period).reverse();
       const data = res.data.map(d => parseFloat(d.revenue)).reverse();
-
       const ctx = document.getElementById('revenueChart').getContext('2d');
       if (revenueChart) revenueChart.destroy();
-
       revenueChart = new Chart(ctx, {
         type: 'bar',
-        data: {
-          labels,
-          datasets: [{ label: 'Revenue (PHP)', data, backgroundColor: '#c5a059', borderRadius: 12 }]
-        },
-        options: {
-          responsive: true,
-          plugins: { legend: { display: false } },
-          scales: {
-            y: { beginAtZero: true, grid: { color: 'rgba(12,27,51,0.05)' } },
-            x: { grid: { display: false } }
-          }
-        }
+        data: { labels, datasets: [{ label: 'Revenue (PHP)', data, backgroundColor: '#c5a059', borderRadius: 12 }] },
+        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(12,27,51,0.05)' } }, x: { grid: { display: false } } } }
       });
     }
-
     async function loadOccupancy() {
       const from = document.getElementById('occ-from').value;
       const to = document.getElementById('occ-to').value;
       let url = '/admin/reports/occupancy?';
       if (from) url += `date_from=${from}&`;
       if (to) url += `date_to=${to}&`;
-
       const res = await api.get(url);
       const tbody = document.getElementById('occupancy-table');
       if (!res.success || !res.data.length) {
         tbody.innerHTML = '<tr><td colspan="5" class="px-10 py-20 text-center text-lux-navy/20 text-[10px] font-bold uppercase tracking-widest">No matching data in current window.</td></tr>';
         return;
       }
-
       tbody.innerHTML = res.data.map(row => {
         const rate = parseFloat(row.occupancy_rate) || 0;
         const rateColor = rate >= 80 ? 'bg-green-500' : rate >= 50 ? 'bg-lux-gold' : 'bg-red-400';
-        return `
-          <tr class="hover:bg-lux-cream/50 transition-colors">
+        return `<tr class="hover:bg-lux-cream/50 transition-colors">
             <td class="px-10 py-6">
                 <div class="text-sm font-bold text-lux-navy">${row.facility_name}</div>
                 <div class="text-[8px] font-black uppercase tracking-widest text-lux-navy/30 mt-1">${row.type.replace('_',' ')}</div>
@@ -162,11 +143,9 @@
                 <span class="text-xs font-black text-lux-navy">${rate.toFixed(1)}%</span>
               </div>
             </td>
-          </tr>
-        `;
+          </tr>`;
       }).join('');
     }
-
     loadRevenue('daily');
   </script>
 </body>
