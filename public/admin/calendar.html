@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inventory Control | Mamagan Beach Resort</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/tailwind-config.js"></script>
@@ -9,21 +10,122 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <style>
+    /* Force the calendar to behave like a grid */
+    .flatpickr-calendar { 
+      width: 100% !important; 
+      border: none !important; 
+      box-shadow: none !important; 
+      background: transparent !important; 
+      font-family: inherit !important;
+    }
+    .flatpickr-innerContainer { width: 100% !important; }
+    .flatpickr-rContainer { width: 100% !important; }
+    
+    .flatpickr-months .flatpickr-month {
+      background: transparent !important;
+      color: #00234b !important;
+      fill: #00234b !important;
+      height: 60px !important;
+    }
+    .flatpickr-current-month {
+      padding-top: 10px !important;
+    }
+    .flatpickr-current-month .flatpickr-monthDropdown-months {
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.1em !important;
+    }
+    
+    .flatpickr-weekdays {
+      background: transparent !important;
+      width: 100% !important;
+    }
+    .flatpickr-weekdaycontainer {
+      display: grid !important;
+      grid-template-columns: repeat(7, 1fr) !important;
+      width: 100% !important;
+    }
+    span.flatpickr-weekday {
+      color: rgba(0, 35, 75, 0.3) !important;
+      font-weight: 900 !important;
+      text-transform: uppercase !important;
+      font-size: 10px !important;
+      letter-spacing: 0.1em !important;
+      display: block !important;
+      text-align: center !important;
+    }
+    
+    .flatpickr-days {
+      display: grid !important;
+      grid-template-columns: repeat(7, 1fr) !important;
+      border: none !important;
+      width: 100% !important;
+      min-width: 100% !important;
+    }
+    
+    .dayContainer {
+        display: contents !important;
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: none !important;
+    }
+
+    .flatpickr-day {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      max-width: none !important;
+      height: auto !important;
+      aspect-ratio: 1/1 !important;
+      border-radius: 1rem !important;
+      margin: 2px !important;
+      border: 1px solid transparent !important;
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      width: auto !important;
+      line-height: normal !important;
+    }
+    
+    .flatpickr-day.selected, 
+    .flatpickr-day.startRange, 
+    .flatpickr-day.endRange,
+    .flatpickr-day.selected:hover,
+    .flatpickr-day.startRange:hover,
+    .flatpickr-day.endRange:hover {
+      background: #00234b !important;
+      border-color: #00234b !important;
+      color: white !important;
+    }
+    
+    .flatpickr-day:hover {
+      background: rgba(0, 35, 75, 0.05) !important;
+    }
+    
+    .flatpickr-day.today {
+      border-color: #c5a059 !important;
+      color: #c5a059 !important;
+    }
+
+    .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay {
+        opacity: 0.3 !important;
+    }
+  </style>
 </head>
 <body class="bg-lux-cream font-sans text-lux-navy">
   <div class="flex h-screen overflow-hidden">
     <!-- Sidebar -->
     <aside class="w-80 bg-white border-r border-lux-navy/5 flex-shrink-0 hidden md:flex flex-col relative z-20">
       <div class="p-10 border-b border-lux-navy/5">
-        <a href="/" class="flex items-center gap-4 group">
-          <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12 group-hover:scale-110 transition-transform">
+        <a href="/" class="flex items-center gap-4 group" aria-label="Mamagan Beach Resort Home">
+          <img src="/images/logos/LOGO.png" alt="Mamagan Logo" class="h-12 group-hover:scale-110 transition-transform">
           <div class="flex flex-col">
             <span class="luxury-heading font-bold text-xl leading-none">Mamagan</span>
             <span class="text-[8px] font-black uppercase tracking-[0.4em] text-lux-gold mt-1">Beach Resort</span>
           </div>
         </a>
       </div>
-      <nav id="admin-nav" class="flex-1 p-6 space-y-2"></nav>
+      <nav id="admin-nav" class="flex-1 p-6 space-y-2" aria-label="Admin Sidebar Navigation"></nav>
       <div class="p-8 border-t border-lux-navy/5">
         <button id="logout-btn" title="Sign Out" aria-label="Sign Out" class="w-full flex items-center gap-4 px-6 py-4 text-red-600 hover:bg-red-50 rounded-2xl transition-all group">
           <i class="fas fa-sign-out-alt w-5 text-center group-hover:-translate-x-1 transition-transform"></i>
@@ -46,11 +148,13 @@
         <div class="grid lg:grid-cols-2 gap-10">
             <div class="bg-white rounded-[3rem] p-10 border border-lux-navy/5 premium-shadow">
                 <h3 class="luxury-heading text-xl font-bold mb-8">Asset Calendar</h3>
-                <div id="inline-calendar"></div>
+                <div id="calendar-container" class="block w-full">
+                    <div id="inline-calendar"></div>
+                </div>
             </div>
 
             <div class="space-y-8">
-                <div class="glass-card p-10 rounded-[3rem] premium-shadow border border-lux-navy/5">
+                <div class="glass-card p-10 rounded-[3rem] premium-shadow border border-lux-navy/5 bg-white/40 backdrop-blur-md">
                     <h3 class="luxury-heading text-xl font-bold mb-8">Blackout Protocol</h3>
                     <form id="block-form" class="space-y-6">
                         <div class="space-y-1">
@@ -60,11 +164,11 @@
                             </select>
                         </div>
                         <div class="space-y-1">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Temporal Window</label>
+                            <label for="block-dates" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Temporal Window</label>
                             <input type="text" id="block-dates" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="Select dates...">
                         </div>
                         <div class="space-y-1">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Justification</label>
+                            <label for="reason" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Justification</label>
                             <textarea id="reason" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white h-24" placeholder="Maintenance, Private Event, etc..."></textarea>
                         </div>
                         <button type="submit" class="premium-button-navy w-full flex items-center justify-center gap-4 group">
