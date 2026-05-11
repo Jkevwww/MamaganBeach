@@ -41,10 +41,23 @@
     .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0, 35, 75, 0.05); }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #c5a059; border-radius: 10px; }
     
-    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
-    .card-hover { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-    .card-hover:hover { transform: translateY(-10px); box-shadow: 0 25px 50px -12px rgba(0, 35, 75, 0.15); }
-    .modal-backdrop { backdrop-filter: blur(8px); background-color: rgba(0, 35, 75, 0.4); }
+    /* Note: .sr-only and .card-hover are defined in /css/style.css - remove duplicates */
+    .modal-backdrop { -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); background-color: rgba(0, 35, 75, 0.4); }
+    .modal-backdrop.fade-in { animation: fadeIn 0.3s ease forwards; }
+    
+    /* Performance: GPU acceleration for card hover */
+    .card-hover { will-change: transform, box-shadow; }
+    
+    /* Focus visible states for accessibility */
+    .tab-btn:focus-visible { outline: 2px solid var(--lux-gold); outline-offset: 2px; }
+    button:focus-visible, a:focus-visible { outline: 2px solid var(--lux-gold); outline-offset: 2px; }
+    
+    /* Loading spinner */
+    .spinner { width: 20px; height: 20px; border: 2px solid transparent; border-top-color: currentColor; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    /* Skeleton loading state */
+    .skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
 
     /* Flatpickr Override for Grid behavior if used */
     .flatpickr-days {
@@ -337,16 +350,29 @@
     let imageSource = 'url';
     let base64Image = '';
 
+    // Category mapping constants
+    const CATEGORY_MAP = {
+      // Beach equipment types
+      jet_ski: 'beach_equipment',
+      stand_paddle_boat: 'beach_equipment',
+      island_tour: 'beach_equipment',
+      boat: 'beach_equipment',
+      // Room/Cabana types
+      cabana: 'room_cabana',
+      // Cottage/Suite types
+      day_bed: 'cottage',
+      suite: 'cottage',
+      cottage: 'cottage'
+    };
+
+    /**
+     * Maps legacy facility type to backend category
+     * @param {string} type - The legacy type string
+     * @returns {string} Backend category (room_cabana | cottage | beach_equipment)
+     */
     function mapTypeToCategory(type) {
-      // Best-effort mapping from legacy `type` to backend `category`
-      // Backend expects: room_cabana | cottage | beach_equipment
-      const t = (type || '').toLowerCase();
-      if (['jet_ski', 'day_bed'].includes(t)) return 'beach_equipment';
-      if (['stand_paddle_boat', 'island_tour', 'boat'].includes(t)) return 'beach_equipment';
-      if (['cabana', 'vest'].includes(t)) return 'room_cabana';
-      // suite-like defaults
-      if (['day_bed', 'vest'].includes(t)) return 'cottage';
-      return 'room_cabana';
+      const t = (type || '').toLowerCase().trim();
+      return CATEGORY_MAP[t] || 'room_cabana';
     }
 
 
@@ -458,14 +484,25 @@ const empty = document.getElementById('empty-state');
         });
     }
 
-    // --- Search & Filter ---
+    // --- Search & Filter with Debounce ---
+    let searchDebounceTimer = null;
+    
     function handleSearch() {
-        const query = document.getElementById('asset-search').value.toLowerCase();
-        const filtered = allAssets.filter(a => 
-            a.name.toLowerCase().includes(query) || 
-            a.type.toLowerCase().includes(query)
-        );
-        renderAssets(filtered);
+        // Debounce search to improve performance on large datasets
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(() => {
+            const query = document.getElementById('asset-search').value.toLowerCase().trim();
+            if (!query) {
+                renderAssets(allAssets);
+                return;
+            }
+            const filtered = allAssets.filter(a => 
+                a.name.toLowerCase().includes(query) || 
+                (a.type && a.type.toLowerCase().includes(query)) ||
+                (a.category && a.category.toLowerCase().includes(query))
+            );
+            renderAssets(filtered);
+        }, 300);
     }
 
     function clearSearch() {
@@ -762,45 +799,164 @@ const empty = document.getElementById('empty-state');
     }
 
     // --- Calendar Logic ---
+    const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 
+                          'July', 'August', 'September', 'October', 'November', 'December'];
+    const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    
     let currentYear = new Date().getFullYear();
     let currentMonth = new Date().getMonth();
+
+    /**
+     * Check if a date falls within any maintenance range
+     * @param {string} dateStr - Date in YYYY-MM-DD format
+     * @returns {object|null} Maintenance object if found, null otherwise
+     */
+    function getMaintenanceForDate(dateStr) {
+      if (!Array.isArray(allMaintenance)) return null;
+      for (const m of allMaintenance) {
+        if (m.start && m.end && dateStr >= m.start && dateStr <= m.end) {
+          return m;
+        }
+      }
+      return null;
+    }
+
+    /**
+     * Initialize or refresh the calendar view
+     */
     function initCalendar() {
       const daysContainer = document.getElementById('calendar-days');
-      if(!daysContainer) return;
+      if (!daysContainer) return;
+      
       const firstDay = new Date(currentYear, currentMonth, 1).getDay();
       const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+      const todayStr = new Date().toISOString().split('T')[0];
 
-      // normalize maintenance dates (they come from <input type="date"> as YYYY-MM-DD)
-      const maintenanceRanges = Array.isArray(allMaintenance)
-        ? allMaintenance
-            .map(m => ({
-              assetId: m.assetId,
-              start: m.start,
-              end: m.end,
-              reason: m.reason,
-              id: m.id,
-            }))
-            .filter(m => m.start && m.end)
-        : [];
-
-      function isInRange(dateStr, startStr, endStr) {
-        // Use lexicographic compare since YYYY-MM-DD
-        if (!startStr || !endStr) return false;
-        return dateStr >= startStr && dateStr <= endStr;
-      }
-      document.getElementById('calendar-month-year').textContent = `${["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][currentMonth]} ${currentYear}`;
+      // Update header
+      document.getElementById('calendar-month-year').textContent = 
+        `${MONTH_NAMES[currentMonth]} ${currentYear}`;
+      
+      // Clear existing days
       daysContainer.innerHTML = '';
-      for(let i = 0; i < firstDay; i++) daysContainer.appendChild(Object.assign(document.createElement('div'), {className:'calendar-day empty'}));
-      for(let d = 1; d <= daysInMonth; d++) {
+      
+      // Add empty cells for days before the first day of the month
+      for (let i = 0; i < firstDay; i++) {
+        const emptyDay = document.createElement('div');
+        emptyDay.className = 'calendar-day empty';
+        emptyDay.setAttribute('aria-hidden', 'true');
+        daysContainer.appendChild(emptyDay);
+      }
+      
+      // Add days of the month
+      for (let d = 1; d <= daysInMonth; d++) {
         const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-        const dayDiv = Object.assign(document.createElement('div'), {className:'calendar-day text-[10px] font-bold', textContent:d});
-        if(new Date().toISOString().split('T')[0] === dateStr) dayDiv.classList.add('today');
-        if(isInRange(dateStr, m.start, m.end)) dayDiv.classList.add('maintenance');
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'calendar-day text-[10px] font-bold';
+        dayDiv.textContent = d;
+        dayDiv.setAttribute('data-date', dateStr);
+        dayDiv.setAttribute('role', 'button');
+        dayDiv.setAttribute('tabindex', '0');
+        dayDiv.setAttribute('aria-label', `${MONTH_NAMES[currentMonth]} ${d}, ${currentYear}`);
+        
+        // Check for today
+        if (todayStr === dateStr) {
+          dayDiv.classList.add('today');
+        }
+        
+        // Check for maintenance
+        const maintenance = getMaintenanceForDate(dateStr);
+        if (maintenance) {
+          dayDiv.classList.add('maintenance');
+          dayDiv.setAttribute('title', `${maintenance.reason} (${maintenance.start} to ${maintenance.end})`);
+          dayDiv.setAttribute('aria-label', `${dayDiv.getAttribute('aria-label')} - Maintenance: ${maintenance.reason}`);
+        }
+        
+        // Add click handler to select date for maintenance form
+        dayDiv.addEventListener('click', () => selectDateForMaintenance(dateStr));
+        dayDiv.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectDateForMaintenance(dateStr);
+          }
+        });
+        
         daysContainer.appendChild(dayDiv);
       }
     }
-    function prevMonth() { currentMonth--; if(currentMonth < 0) { currentMonth = 11; currentYear--; } initCalendar(); }
-    function nextMonth() { currentMonth++; if(currentMonth > 11) { currentMonth = 0; currentYear++; } initCalendar(); }
+    
+    /**
+     * Select a date in the calendar and populate the maintenance form
+     * @param {string} dateStr - Date in YYYY-MM-DD format
+     */
+    function selectDateForMaintenance(dateStr) {
+      // Switch to maintenance tab if not already there
+      const calendarTab = document.getElementById('btn-tab-calendar');
+      if (calendarTab.getAttribute('aria-selected') !== 'true') {
+        switchTab('calendar');
+      }
+      
+      // Set the start date in the form
+      document.getElementById('maint-start').value = dateStr;
+      
+      // Set a default end date (7 days later)
+      const startDate = new Date(dateStr);
+      const endDate = new Date(startDate);
+      endDate.setDate(endDate.getDate() + 7);
+      document.getElementById('maint-end').value = endDate.toISOString().split('T')[0];
+      
+      // Focus on the reason field
+      document.getElementById('maint-reason').focus();
+      
+      showToast(`Selected ${dateStr}`, 'info');
+    }
+    
+    function prevMonth() { 
+      currentMonth--; 
+      if (currentMonth < 0) { 
+        currentMonth = 11; 
+        currentYear--; 
+      } 
+      initCalendar(); 
+    }
+    
+    function nextMonth() { 
+      currentMonth++; 
+      if (currentMonth > 11) { 
+        currentMonth = 0; 
+        currentYear++; 
+      } 
+      initCalendar(); 
+    }
+    
+    // Add keyboard navigation for tabs
+    document.querySelectorAll('[role="tab"]').forEach(tab => {
+      tab.addEventListener('keydown', (e) => {
+        const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+        const currentIndex = tabs.indexOf(e.target);
+        let newIndex;
+        
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          newIndex = (currentIndex + 1) % tabs.length;
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          newIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+        }
+        
+        if (newIndex !== undefined) {
+          tabs[newIndex].focus();
+          tabs[newIndex].click();
+        }
+      });
+    });
+    
+    // Initialize tab click handlers
+    document.querySelectorAll('[data-tab-target]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetTab = btn.id === 'btn-tab-assets' ? 'assets' : 'calendar';
+        switchTab(targetTab);
+      });
+    });
   </script>
 </body>
 </html>
