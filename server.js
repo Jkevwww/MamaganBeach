@@ -114,9 +114,16 @@ app.get('/api/health', (req, res) => {
 });
 
 // Fallback: serve index.html for SPA routes
+// But do NOT override real static files like /admin/create-facility.html
 app.get('*', (req, res) => {
+  // If the request looks like a file (has an extension), don't rewrite it to index.html
+  if (path.extname(req.path)) {
+    return res.status(404).send('Not found');
+  }
+
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
 
 // Error handler
 app.use((err, req, res, next) => {
