@@ -125,7 +125,7 @@ async function _loadUserInternal() {
         window.location.replace('/admin/dashboard.html');
       }
       
-      // Auto-redirect non-admin from admin pages
+      // Auto-redirect non-admin from admin pages (only when we have a user object)
       if (isAdminPage && currentUser.role !== 'admin') {
         console.warn('Unauthorized access attempt to admin page by:', currentUser.email);
         if (typeof showToast === 'function') {
@@ -137,17 +137,30 @@ async function _loadUserInternal() {
 
       authInitialized = true;
       return currentUser;
-    } else {
-      console.error('Session validation failed:', res.message);
-      _clearAuthAndRedirect();
+    }
+
+    // If /auth/me responded but didn't validate, avoid harsh redirects on admin pages
+    // during initial bootstrap (prevents breaking /admin/create-facility.html).
+    console.error('Session validation failed:', res && res.message);
+    if (isAdminPage && (window.location.pathname === '/admin/create-facility.html' || window.location.pathname === '/admin/facilities.html')) {
+      // Keep the page reachable; admin.js/form submit will enforce permissions with API calls.
+      authInitialized = true;
       return null;
     }
+
+    _clearAuthAndRedirect();
+    return null;
   } catch (err) {
     console.error('Auth check error:', err);
+    if (window.location.pathname.startsWith('/admin/') && (window.location.pathname === '/admin/create-facility.html' || window.location.pathname === '/admin/facilities.html')) {
+      authInitialized = true;
+      return null;
+    }
     _clearAuthAndRedirect();
     return null;
   }
 }
+
 
 function _clearAuthAndRedirect() {
   localStorage.removeItem('token');
