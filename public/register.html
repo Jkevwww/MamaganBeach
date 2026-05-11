@@ -110,17 +110,17 @@
       e.preventDefault();
       const btn = document.getElementById('register-btn');
       const spinner = document.getElementById('register-spinner');
-      
+
       const password = document.getElementById('password').value;
       const confirm_password = document.getElementById('confirm_password').value;
-      
+
       if (password !== confirm_password) {
         if (typeof showToast === 'function') {
           showToast('Passwords do not match.', 'error');
         }
         return;
       }
-      
+
       btn.disabled = true;
       spinner.classList.remove('hidden');
 
@@ -138,11 +138,11 @@
           if (typeof showToast === 'function') {
             showToast('Membership granted successfully.', 'success');
           }
-          setTimeout(() => { 
+          setTimeout(() => {
             if (res.user && res.user.role === 'admin') {
               window.location.href = '/admin/dashboard.html';
             } else {
-              window.location.href = '/'; 
+              window.location.href = '/';
             }
           }, 1000);
         } else {
