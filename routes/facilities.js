@@ -113,7 +113,27 @@ router.post('/', upload.single('image_file'), authenticateToken, requireRole(['a
     const { error, value } = facilitySchema.validate(req.body);
     if (error) return res.status(400).json({ success: false, message: error.details[0].message });
 
-    const { resort_id, name, category, size, type, description, price_day_min, price_day_max, night_add_threshold_pax, night_add_value, night_add_value_high, hourly_rate, daily_rate, capacity, total_units } = value;
+    const {
+      resort_id,
+      name,
+      category,
+      size,
+      type,
+      description,
+      // v2 pricing fields
+      price_day_min,
+      price_day_max,
+      // v2 night add-on fields
+      night_add_threshold_pax,
+      night_add_value,
+      night_add_value_high,
+      // v2 beach equipment fields
+      hourly_rate,
+      daily_rate,
+      capacity,
+      total_units,
+      // allow_time_slots defaults
+    } = value;
     const id = uuidv4();
 
     const images = [];
@@ -125,10 +145,54 @@ router.post('/', upload.single('image_file'), authenticateToken, requireRole(['a
       images.push(req.body.images_link);
     }
 
+    // v2 insert: align with schema_v2.sql columns.
+    // Note: backend still uses legacy base_price for pricing screens; v2 schema also supports it.
     await query(
-      `INSERT INTO facilities (id, resort_id, name, type, description, images, base_price, capacity, total_units)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [id, resort_id, name, type, description || null, images.length ? JSON.stringify(images) : JSON.stringify([]), base_price, capacity, total_units]
+      `INSERT INTO facilities (
+         id,
+         resort_id,
+         name,
+         category,
+         size,
+         type,
+         description,
+         images,
+         price_day_min,
+         price_day_max,
+         night_add_threshold_pax,
+         night_add_value,
+         night_add_value_high,
+         hourly_rate,
+         daily_rate,
+         base_price,
+         capacity,
+         total_units,
+         is_active,
+         allow_time_slots
+       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)` ,
+
+      [
+        id,
+        resort_id,
+        name,
+        category,
+        size || null,
+        type,
+        description || null,
+        images.length ? JSON.stringify(images) : JSON.stringify([]),
+        price_day_min ?? 0,
+        price_day_max ?? 0,
+        night_add_threshold_pax ?? 6,
+        night_add_value ?? 0,
+        night_add_value_high ?? 0,
+        hourly_rate ?? 0,
+        daily_rate ?? 0,
+        base_price ?? 0,
+        capacity ?? 1,
+        total_units,
+        true,
+        true
+      ]
     );
 
     const result = await query('SELECT * FROM facilities WHERE id = ?', [id]);
@@ -149,7 +213,30 @@ router.post('/', upload.single('image_file'), authenticateToken, requireRole(['a
 router.put('/:id', upload.single('image_file'), authenticateToken, requireRole(['admin']), async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, base_price, capacity, total_units, is_active, images_link } = req.body;
+
+    // Support both the legacy admin payload (name/description/base_price/status/images)
+    // and v2 payload (category/price_day_min/etc.)
+    const {
+      resort_id,
+      name,
+      description,
+      base_price,
+      capacity,
+      total_units,
+      is_active,
+      images_link,
+      category,
+      size,
+      price_day_min,
+      price_day_max,
+      night_add_threshold_pax,
+      night_add_value,
+      night_add_value_high,
+      hourly_rate,
+      daily_rate,
+      allow_time_slots,
+      type,
+    } = req.body;
 
     const images = [];
     if (req.file) {
@@ -163,32 +250,81 @@ router.put('/:id', upload.single('image_file'), authenticateToken, requireRole([
     // Otherwise keep existing images.
     const shouldUpdateImages = images.length > 0;
 
+    // v2 update: include all v2 columns, but fall back safely for legacy payloads.
+    // Images: overwrite if provided; otherwise keep existing.
+    const updates = {
+      name,
+      description,
+      base_price,
+      capacity,
+      total_units,
+      is_active,
+      category,
+      size,
+      price_day_min,
+      price_day_max,
+      night_add_threshold_pax,
+      night_add_value,
+      night_add_value_high,
+      hourly_rate,
+      daily_rate,
+      allow_time_slots,
+      type,
+    };
+
+    const setParts = [
+      'name = COALESCE(?, name)',
+      'description = COALESCE(?, description)',
+      'base_price = COALESCE(?, base_price)',
+      'capacity = COALESCE(?, capacity)',
+      'total_units = COALESCE(?, total_units)',
+      'is_active = COALESCE(?, is_active)',
+      'category = COALESCE(?, category)',
+      'size = COALESCE(?, size)',
+      'price_day_min = COALESCE(?, price_day_min)',
+      'price_day_max = COALESCE(?, price_day_max)',
+      'night_add_threshold_pax = COALESCE(?, night_add_threshold_pax)',
+      'night_add_value = COALESCE(?, night_add_value)',
+      'night_add_value_high = COALESCE(?, night_add_value_high)',
+      'hourly_rate = COALESCE(?, hourly_rate)',
+      'daily_rate = COALESCE(?, daily_rate)',
+      'allow_time_slots = COALESCE(?, allow_time_slots)',
+      'type = COALESCE(?, type)',
+    ];
+
+    const params = [
+      updates.name,
+      updates.description,
+      updates.base_price,
+      updates.capacity,
+      updates.total_units,
+      updates.is_active,
+      updates.category,
+      updates.size,
+      updates.price_day_min,
+      updates.price_day_max,
+      updates.night_add_threshold_pax,
+      updates.night_add_value,
+      updates.night_add_value_high,
+      updates.hourly_rate,
+      updates.daily_rate,
+      updates.allow_time_slots,
+      updates.type,
+    ];
+
     if (shouldUpdateImages) {
-      await query(
-        `UPDATE facilities SET 
-         name = COALESCE(?, name),
-         description = COALESCE(?, description),
-         base_price = COALESCE(?, base_price),
-         capacity = COALESCE(?, capacity),
-         total_units = COALESCE(?, total_units),
-         is_active = COALESCE(?, is_active),
-         images = ?
-         WHERE id = ?`,
-        [name, description, base_price, capacity, total_units, is_active, JSON.stringify(images), id]
-      );
-    } else {
-      await query(
-        `UPDATE facilities SET 
-         name = COALESCE(?, name),
-         description = COALESCE(?, description),
-         base_price = COALESCE(?, base_price),
-         capacity = COALESCE(?, capacity),
-         total_units = COALESCE(?, total_units),
-         is_active = COALESCE(?, is_active)
-         WHERE id = ?`,
-        [name, description, base_price, capacity, total_units, is_active, id]
-      );
+      setParts.push('images = ?');
+      params.push(JSON.stringify(images));
     }
+
+    const setSql = setParts.join(',\n         ');
+
+    await query(
+      `UPDATE facilities SET 
+         ${setSql}
+         WHERE id = ?`,
+      [...params, id]
+    );
 
     const result = await query('SELECT * FROM facilities WHERE id = ?', [id]);
     if (result.rows.length === 0) {

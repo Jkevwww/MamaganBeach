@@ -7,7 +7,7 @@ async function initDatabase() {
     console.log('Initializing Mamagan Beach Resort database (MySQL)...\n');
 
     // Read schema
-    const schemaPath = path.join(__dirname, '..', 'database', 'schema.sql');
+    const schemaPath = path.join(__dirname, '..', 'database', 'schema_v2.sql');
     const schema = fs.readFileSync(schemaPath, 'utf8');
 
     // Read seed data
