@@ -30,7 +30,9 @@ router.get('/:bookingId', authenticateToken, async (req, res) => {
 });
 
 // Admin/Staff: Verify QR and check in guest
+// 1) Modern endpoint: POST /api/tickets/verify { qr_payload }
 router.post('/verify', authenticateToken, requireRole(['admin', 'staff']), async (req, res) => {
+
   try {
     const { qr_payload } = req.body;
     if (!qr_payload) {
