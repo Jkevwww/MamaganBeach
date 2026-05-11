@@ -100,7 +100,7 @@
             <button onclick="switchTab('assets')" id="btn-tab-assets" role="tab" aria-selected="true" aria-controls="tab-content-assets" class="tab-btn px-6 py-2 text-[10px] font-black uppercase tracking-widest rounded-full transition-all bg-white shadow-sm text-lux-navy">Assets</button>
             <button onclick="switchTab('calendar')" id="btn-tab-calendar" role="tab" aria-selected="false" aria-controls="tab-content-calendar" class="tab-btn px-6 py-2 text-[10px] font-black uppercase tracking-widest rounded-full transition-all text-lux-navy/40 hover:text-lux-navy">Maintenance</button>
           </div>
-          <button onclick="openAssetModal()" aria-label="Add New Asset" class="px-8 py-3 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all shadow-xl">
+          <button onclick="window.location.href='/admin/create-facility.html'" aria-label="Add New Asset" class="px-8 py-3 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all shadow-xl">
             <i class="fas fa-plus mr-2"></i>New Asset
           </button>
           <div id="auth-nav"></div>
@@ -235,11 +235,10 @@
                 <div class="space-y-1">
                     <label for="f-category" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Category</label>
                     <select id="f-category" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" title="Select Category">
-                        <option value="Cabana">Cabana</option>
-                        <option value="Suite">Suite</option>
-                        <option value="Villas">Villas</option>
-                        <option value="Activities">Activities</option>
-                        <option value="Spa">Spa</option>
+                        <!-- Must match backend facilitySchema `category` values -->
+                        <option value="room_cabana">Cabana</option>
+                        <option value="cottage">Suite/Cottage</option>
+                        <option value="beach_equipment">Beach Equipment</option>
                     </select>
                 </div>
             </div>
@@ -316,6 +315,19 @@
     let allMaintenance = [];
     let imageSource = 'url';
     let base64Image = '';
+
+    function mapTypeToCategory(type) {
+      // Best-effort mapping from legacy `type` to backend `category`
+      // Backend expects: room_cabana | cottage | beach_equipment
+      const t = (type || '').toLowerCase();
+      if (['jet_ski', 'day_bed'].includes(t)) return 'beach_equipment';
+      if (['stand_paddle_boat', 'island_tour', 'boat'].includes(t)) return 'beach_equipment';
+      if (['cabana', 'vest'].includes(t)) return 'room_cabana';
+      // suite-like defaults
+      if (['day_bed', 'vest'].includes(t)) return 'cottage';
+      return 'room_cabana';
+    }
+
 
     // --- Tab Management ---
     function switchTab(tab) {
@@ -459,7 +471,10 @@ const empty = document.getElementById('empty-state');
                 btn.textContent = 'Update Asset';
                 document.getElementById('edit-id').value = asset.id;
                 document.getElementById('f-name').value = asset.name;
-                document.getElementById('f-category').value = asset.type;
+                // Backend expects `category` values like: room_cabana | cottage | beach_equipment
+                // This admin modal only has limited category mapping; best-effort mapping from asset.type.
+                document.getElementById('f-category').value = mapTypeToCategory(asset.type);
+                
                 document.getElementById('f-price').value = asset.base_price;
                 document.getElementById('f-status').value = asset.status;
                 document.getElementById('f-description').value = asset.description || '';
@@ -521,25 +536,37 @@ const empty = document.getElementById('empty-state');
         const imageFileEl = document.getElementById('f-image-file');
         const imageFile = imageFileEl && imageFileEl.files && imageFileEl.files.length ? imageFileEl.files[0] : null;
 
-        // Backend expects: facilitySchema.validate(req.body)
-        // and multer field name: image_file
-        const payload = {
-            resort_id: '', // filled below for create (required by schema)
-            name: document.getElementById('f-name').value,
-            // UI dropdown is called "Category" but backend schema uses `category`
-            // while SQL insert uses `type`. Current backend expects `type`.
-            type: document.getElementById('f-category').value,
-            category: document.getElementById('f-category').value,
-            description: document.getElementById('f-description').value,
-            base_price: Number(document.getElementById('f-price').value),
-            capacity: 1,
-            total_units: 1,
-            // legacy status mapping
-            status: document.getElementById('f-status').value,
+            // Backend expects: facilitySchema.validate(req.body)
+            // and multer field name: image_file
+            // Backend facility schema expects:
+            // - category: cottage | room_cabana | beach_equipment
+            // - type: legacy type string (cabana/day_bed/jet_ski/etc)
+            // - total_units (required), capacity (optional), description (optional)
+            const payload = {
+                resort_id: '', // filled below for create (required by schema)
+                name: document.getElementById('f-name').value,
 
-            // URL images are sent as images_link. Local uploads are sent via multipart + image_file.
-            images_link: (imageSource === 'url') ? document.getElementById('f-image-url').value.trim() : ''
-        };
+                category: document.getElementById('f-category').value,
+                // map category -> a representative legacy type (backend schema validates `type`)
+                type: (() => {
+                    const cat = document.getElementById('f-category').value;
+                    if (cat === 'beach_equipment') return 'jet_ski';
+                    if (cat === 'cottage') return 'day_bed';
+                    return 'cabana';
+                })(),
+
+                description: document.getElementById('f-description').value,
+                base_price: Number(document.getElementById('f-price').value),
+                capacity: 1,
+                total_units: 1,
+
+                // status is UI-only in this screen; backend uses is_active.
+                // We'll also send is_active in JSON mode.
+                status: document.getElementById('f-status').value,
+
+                // URL images are sent as images_link.
+                images_link: (imageSource === 'url') ? document.getElementById('f-image-url').value.trim() : ''
+            };
 
         // If editing, we can omit resort_id because schema requires it; to keep it safe,
         // we fetch resort_id from existing asset first.

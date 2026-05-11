@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Facility | Mamagan Beach Resort</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .modal-backdrop { backdrop-filter: blur(8px); background-color: rgba(0, 35, 75, 0.4); }
+  </style>
+</head>
+<body class="bg-lux-cream font-sans text-lux-navy">
+  <div class="flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="w-80 bg-white border-r border-lux-navy/5 flex-shrink-0 hidden md:flex flex-col relative z-20">
+      <div class="p-10 border-b border-lux-navy/5">
+        <a href="/" class="flex items-center gap-4 group" aria-label="Mamagan Home">
+          <img src="/images/logos/LOGO.png" alt="Mamagan Logo" class="h-12 group-hover:scale-110 transition-transform">
+          <div class="flex flex-col">
+            <span class="luxury-heading font-bold text-xl leading-none">Mamagan</span>
+            <span class="text-[8px] font-black uppercase tracking-[0.4em] text-lux-gold mt-1">Beach Resort</span>
+          </div>
+        </a>
+      </div>
+      <nav id="admin-nav" class="flex-1 p-6 space-y-2" aria-label="Admin Navigation"></nav>
+      <div class="p-8 border-t border-lux-navy/5">
+        <button id="logout-btn" aria-label="Sign Out" title="Sign Out" class="w-full flex items-center gap-4 px-6 py-4 text-red-600 hover:bg-red-50 rounded-2xl transition-all group">
+          <i class="fas fa-sign-out-alt w-5 text-center group-hover:-translate-x-1 transition-transform"></i>
+          <span class="text-[10px] font-black uppercase tracking-widest">Terminate Session</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-y-auto bg-lux-cream/50">
+      <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-30">
+        <div>
+          <h1 class="luxury-heading text-2xl font-bold text-lux-navy">Create Facility</h1>
+          <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">Register a new resort asset</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <a href="/admin/facilities.html" class="px-6 py-3 bg-lux-navy/5 text-lux-navy text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-navy/10 transition-all">
+            <i class="fas fa-arrow-left mr-2"></i>Back
+          </a>
+          <div id="auth-nav"></div>
+        </div>
+      </header>
+
+      <main class="p-10 page-transition">
+        <div class="relative bg-white rounded-[3rem] w-full max-w-3xl mx-auto overflow-hidden shadow-2xl">
+          <div class="p-10 border-b border-lux-navy/5 flex justify-between items-center bg-lux-navy/5">
+            <h3 class="luxury-heading text-2xl font-bold">Register Facility</h3>
+            <a href="/admin/facilities.html" aria-label="Close" title="Close" class="text-lux-navy/20 hover:text-lux-navy transition-colors">
+              <i class="fas fa-times"></i>
+            </a>
+          </div>
+
+          <form id="asset-form" class="p-10 space-y-6">
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="space-y-1">
+                <label for="f-name" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Asset Name</label>
+                <input type="text" id="f-name" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="e.g. Royal Cabana">
+              </div>
+              <div class="space-y-1">
+                <label for="f-category" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Category</label>
+                <select id="f-category" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" title="Select Category">
+                  <!-- UI values map to backend `category` -->
+                  <option value="room_cabana">Cabana</option>
+                  <option value="cottage">Suite/Cottage</option>
+                  <option value="beach_equipment">Beach Equipment</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="space-y-1">
+                <label for="f-type" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Type</label>
+                <select id="f-type" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" title="Select Type">
+                  <!-- Must match backend facilitySchema `type` legacy values -->
+                  <option value="cabana">cabana</option>
+                  <option value="day_bed">day_bed</option>
+                  <option value="jet_ski">jet_ski</option>
+                  <option value="island_tour">island_tour</option>
+                  <option value="vest">vest</option>
+                  <option value="boat">boat</option>
+                  <option value="stand_paddle_boat">stand_paddle_boat</option>
+                </select>
+              </div>
+              <div class="space-y-1">
+                <label for="f-status" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Status</label>
+                <select id="f-status" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" title="Select Status">
+                  <option value="Available">Available</option>
+                  <option value="Maintenance">Maintenance</option>
+                  <option value="Occupied">Occupied</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="space-y-1">
+                <label for="f-price" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Base Rate (PHP)</label>
+                <input type="number" id="f-price" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="0.00">
+              </div>
+              <div class="space-y-1">
+                <label for="f-capacity" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Capacity (Pax)</label>
+                <input type="number" id="f-capacity" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="1" min="1" value="1">
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="space-y-1">
+                <label for="f-total-units" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Total Units</label>
+                <input type="number" id="f-total-units" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="1" min="1" value="1">
+              </div>
+              <div class="space-y-1">
+                <label for="f-size" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Size (optional)</label>
+                <select id="f-size" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" title="Select Size">
+                  <option value="">(none)</option>
+                  <option value="small">small</option>
+                  <option value="medium">medium</option>
+                  <option value="large">large</option>
+                  <option value="extra_large">extra_large</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <label for="f-description" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Description</label>
+              <textarea id="f-description" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white h-24" placeholder="Describe features..."></textarea>
+            </div>
+
+            <div class="space-y-4">
+              <div class="flex p-1 bg-lux-navy/5 rounded-2xl w-fit">
+                <button type="button" onclick="setImgSource('url')" id="src-url-btn" class="px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all bg-lux-navy text-white">Image URL</button>
+                <button type="button" onclick="setImgSource('file')" id="src-file-btn" class="px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all text-lux-navy/40">Upload File</button>
+              </div>
+
+              <div id="url-container" class="space-y-1">
+                <label for="f-image-url" class="sr-only">Image URL</label>
+                <input type="url" id="f-image-url" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="https://...">
+              </div>
+
+              <div id="file-container" class="hidden space-y-1">
+                <label for="f-image-file" class="sr-only">Upload File</label>
+                <input type="file" id="f-image-file" accept="image/*" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white">
+              </div>
+
+              <div id="image-preview" class="w-full h-32 rounded-2xl bg-lux-navy/5 border-2 border-dashed border-lux-navy/10 overflow-hidden bg-cover bg-center flex items-center justify-center">
+                <span class="text-[10px] font-bold text-lux-navy/20 uppercase tracking-widest">Image Preview</span>
+              </div>
+            </div>
+
+            <button type="submit" id="submit-btn" class="premium-button-gold w-full flex items-center justify-center gap-4 group shadow-xl">
+              <span id="btn-text">Register Facility</span>
+              <i class="fas fa-save transition-transform group-hover:scale-110"></i>
+            </button>
+
+          </form>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/js/api.js?v=2"></script>
+  <script src="/js/auth.js?v=2"></script>
+  <script src="/js/toast.js?v=2"></script>
+  <script src="/js/admin.js?v=2"></script>
+
+  <script>
+    let imageSource = 'url';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (typeof renderAdminNav === 'function') renderAdminNav('facilities');
+
+      const user = await loadUser();
+      if (!user || user.role !== 'admin') {
+        window.location.replace('/login.html');
+        return;
+      }
+
+      setImgSource('url');
+
+      const urlEl = document.getElementById('f-image-url');
+      const fileEl = document.getElementById('f-image-file');
+
+      urlEl?.addEventListener('input', (e) => imageSource === 'url' && updatePreview(e.target.value));
+
+      fileEl?.addEventListener('change', (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => { updatePreview(ev.target.result); };
+        reader.readAsDataURL(file);
+      });
+
+      // Optional: if user comes from facilities list, we could preselect category/type,
+      // but not required.
+    });
+
+    function setImgSource(src) {
+      imageSource = src;
+      const urlBtn = document.getElementById('src-url-btn');
+      const fileBtn = document.getElementById('src-file-btn');
+      document.getElementById('url-container').classList.toggle('hidden', src !== 'url');
+      document.getElementById('file-container').classList.toggle('hidden', src !== 'file');
+
+      urlBtn.className = src === 'url'
+        ? 'px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all bg-lux-navy text-white'
+        : 'px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all text-lux-navy/40';
+
+      fileBtn.className = src === 'file'
+        ? 'px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all bg-lux-navy text-white'
+        : 'px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all text-lux-navy/40';
+    }
+
+    function updatePreview(src) {
+      const preview = document.getElementById('image-preview');
+      if (!preview) return;
+
+      if (src) {
+        preview.style.backgroundImage = `url('${src}')`;
+        preview.innerHTML = '';
+      } else {
+        preview.style.backgroundImage = 'none';
+        preview.innerHTML = '<span class="text-[10px] font-bold text-lux-navy/20 uppercase tracking-widest">Image Preview</span>';
+      }
+    }
+
+    // --- Create Facility Submit ---
+    document.getElementById('asset-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const token = localStorage.getItem('token');
+
+      const imageFileEl = document.getElementById('f-image-file');
+      const imageFile = imageFileEl?.files?.length ? imageFileEl.files[0] : null;
+
+      // Backend requires: resort_id, name, category, type, total_units
+      // Resort selection: backend schema requires it, so we reuse existing resorts behavior.
+      // We only show assets for admin; resorts list is available.
+      let resortId = null;
+      try {
+        const res = await api.get('/resorts');
+        if (res.success && res.data?.length) resortId = res.data[0].id;
+      } catch (err) {
+        console.error(err);
+      }
+
+      if (!resortId) {
+        showToast('System error: could not determine resort.', 'error');
+        return;
+      }
+
+      const payload = {
+        resort_id: resortId,
+        name: document.getElementById('f-name').value.trim(),
+        // Must match backend facilitySchema `category` values
+        category: document.getElementById('f-category').value,
+        // Must match backend facilitySchema `type` legacy values
+        type: document.getElementById('f-type').value,
+        description: document.getElementById('f-description').value.trim() || null,
+        base_price: Number(document.getElementById('f-price').value),
+        capacity: Number(document.getElementById('f-capacity').value || 1),
+        total_units: Number(document.getElementById('f-total-units').value || 1),
+        // Optional fields in schema
+        size: document.getElementById('f-size').value || null,
+        images_link: (imageSource === 'url') ? (document.getElementById('f-image-url').value.trim() || null) : null,
+      };
+
+      // If user selected file, use multipart endpoint.
+      const isImageUpload = imageSource === 'file' && imageFile;
+      const isImageUrl = imageSource === 'url' && payload.images_link;
+
+      // Prevent sending empty image URL
+      if (!isImageUrl) payload.images_link = null;
+
+      try {
+        let res;
+        if (isImageUpload) {
+          const fd = new FormData();
+          Object.entries(payload).forEach(([k, v]) => {
+            if (v === undefined || v === null || v === '') return;
+            // size is optional but if present, send it (schema allows size)
+            fd.append(k, v);
+          });
+          // backend multer expects image_file
+          fd.append('image_file', imageFile);
+
+          res = await fetch('/api/facilities', {
+            method: 'POST',
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+            body: fd,
+          }).then(r => r.json());
+        } else {
+          // JSON submit (URL only, or no image)
+          res = await api.post('/facilities', {
+            ...payload,
+            images_link: payload.images_link || null,
+            // Keep schema-compatible defaults
+            is_active: true,
+          });
+        }
+
+        if (res.success) {
+          showToast('Facility created successfully', 'success');
+          window.location.href = '/admin/facilities.html';
+        } else {
+          showToast(res.message || 'Action failed', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('System error', 'error');
+      }
+    });
+  </script>
+</body>
+</html>
+
