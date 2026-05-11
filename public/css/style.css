@@ -57,6 +57,11 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
+.glass-header {
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
 .premium-shadow {
   box-shadow: 0 10px 40px -10px rgba(12, 27, 51, 0.1);
 }
