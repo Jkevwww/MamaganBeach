@@ -7,6 +7,12 @@ const { sendTicketEmail } = require('../services/emailService');
 const { sendBookingSMS } = require('../services/smsService');
 const { v4: uuidv4 } = require('uuid');
 
+// Rules/exceptions shared across endpoints
+function isBeachEquipmentCategory(category) {
+  return category === 'beach_equipment';
+}
+
+
 const router = express.Router();
 
 // Create booking (pending payment)
@@ -69,9 +75,30 @@ router.post('/', authenticateToken, async (req, res) => {
     // - beach_equipment: hourly_rate if time_slot is hour-based else daily_rate.
     //   Current system uses fixed time_slot strings; we map any slot to hourly for simplicity.
 
+    // Enforcement: beach equipment cannot be rented on pick hours
+    // (best-effort heuristic since time_slot is currently a fixed label set)
+    // Common “pick” periods in legacy UIs are typically early morning slots.
+    // Adjust this regex/mapping if your actual slot labels differ.
+    if (isBeachEquipmentCategory(fac.category)) {
+      const isPickHour = /(06:00|07:00|08:00|09:00|10:00|11:00|pick|morning)/i.test(time_slot);
+      if (isPickHour) {
+        return res.status(400).json({
+          success: false,
+          message: 'Beach equipment cannot be rented on pick hours. Please choose a different time slot.',
+        });
+      }
+    }
+
+
+
+
+
+
     let total_amount = 0;
 
-    if (fac.category === 'beach_equipment') {
+
+    if (isBeachEquipmentCategory(fac.category)) {
+
       // Interpret each available time_slot as a 1-hour block group for pricing purposes.
       // If you want exact hour counting, update availability model.
       const hourly = Number(fac.hourly_rate) || 0;
@@ -81,6 +108,7 @@ router.post('/', authenticateToken, async (req, res) => {
       const unitPrice = usesDaily ? daily : hourly;
       total_amount = unitPrice * quantity;
     } else {
+
       // cottages/rooms: day price max is used
       const dayUnitPrice = Number(fac.price_day_max) || Number(fac.price_day_min) || Number(fac.base_price) || 0;
 
@@ -227,5 +255,31 @@ router.patch('/:id/cancel', authenticateToken, async (req, res) => {
   }
 });
 
+// Get unavailable dates for date picker (based on availability.is_blocked)
+// Frontend expects: array of YYYY-MM-DD strings
+router.get('/unavailable-dates', async (req, res) => {
+  try {
+    const { facility_id } = req.query;
+    if (!facility_id) {
+      return res.status(400).json({ success: false, message: 'facility_id is required.' });
+    }
+
+    const result = await query(
+      `SELECT DISTINCT date
+       FROM availability
+       WHERE facility_id = ? AND is_blocked = true
+       ORDER BY date DESC`,
+      [facility_id]
+    );
+
+    const dates = result.rows.map(r => r.date);
+    res.json({ success: true, data: dates });
+  } catch (err) {
+    console.error('Unavailable dates error:', err);
+    res.status(500).json({ success: false, message: 'Failed to load unavailable dates.' });
+  }
+});
+
 module.exports = router;
+
 

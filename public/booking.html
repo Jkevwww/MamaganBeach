@@ -152,11 +152,21 @@
       updateTotal();
       updateQtyButtons();
       
-      // Load blocked dates for this facility
+      // Load blocked dates for this facility (availability/capacity is enforced server-side)
       const unavailableRes = await api.get(`/bookings/unavailable-dates?facility_id=${facilityId}`);
       const blockedDates = unavailableRes.success ? unavailableRes.data : [];
       
       initCalendar(blockedDates);
+
+    }
+
+    function isBeachEquipmentCategory(category) {
+      return category === 'beach_equipment';
+    }
+
+    function isPickHourTimeSlot(time_slot) {
+      // Must match backend heuristic in routes/bookings.js
+      return /(06:00|07:00|08:00|09:00|10:00|11:00|pick|morning)/i.test(time_slot);
     }
 
     function initCalendar(blockedDates) {
@@ -182,19 +192,38 @@
         container.innerHTML = '<div class="col-span-full text-lux-navy/30 text-xs py-6 text-center border border-dashed border-lux-navy/10 rounded-2xl">No slots available.</div>';
         return;
       }
-      container.innerHTML = res.data.map(slot => `
-        <button type="button" 
-          onclick="selectSlot('${slot.time_slot}', ${slot.available}, ${slot.is_blocked})"
-          class="slot-btn px-6 py-4 rounded-2xl border border-lux-navy/10 text-sm font-bold transition-all ${slot.is_blocked || slot.available < 1 ? 'opacity-30 cursor-not-allowed' : 'hover:border-lux-gold hover:bg-white'}"
-          ${slot.is_blocked || slot.available < 1 ? 'disabled' : ''}
-          data-slot="${slot.time_slot}"
-        >
-          <div class="mb-1">${slot.time_slot}</div>
-          <div class="text-[10px] font-black uppercase ${slot.is_blocked ? 'text-coral-500' : (slot.available < 3 ? 'text-sand-600' : 'text-lux-gold')}">
-            ${slot.is_blocked ? 'Blocked' : (slot.available + ' available')}
-          </div>
-        </button>
-      `).join('');
+
+      const category = facility?.category;
+      const isBeachEquip = isBeachEquipmentCategory(category);
+
+      container.innerHTML = res.data.map(slot => {
+        const pickHour = isBeachEquip ? isPickHourTimeSlot(slot.time_slot) : false;
+        const blocked = !!slot.is_blocked;
+        const noQty = Number(slot.available) < 1;
+        const disabled = blocked || noQty || pickHour;
+
+        const statusText = pickHour
+          ? 'Pick hours not allowed'
+          : (blocked ? 'Blocked' : (slot.available + ' available'));
+
+        const statusClass = pickHour
+          ? 'text-coral-500'
+          : (blocked ? 'text-coral-500' : (slot.available < 3 ? 'text-sand-600' : 'text-lux-gold'));
+
+        return `
+          <button type="button" 
+            onclick="selectSlot('${slot.time_slot}', ${slot.available}, ${slot.is_blocked}${pickHour ? ', true' : ''})"
+            class="slot-btn px-6 py-4 rounded-2xl border border-lux-navy/10 text-sm font-bold transition-all ${disabled ? 'opacity-30 cursor-not-allowed' : 'hover:border-lux-gold hover:bg-white'}"
+            ${disabled ? 'disabled' : ''}
+            data-slot="${slot.time_slot}"
+          >
+            <div class="mb-1">${slot.time_slot}</div>
+            <div class="text-[10px] font-black uppercase ${statusClass}">
+              ${statusText}
+            </div>
+          </button>
+        `;
+      }).join('');
     }
 
     function selectSlot(slot, available, blocked) {
