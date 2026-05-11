@@ -2,10 +2,10 @@ tailwind.config = {
   theme: {
     extend: {
       fontFamily: { 
-        sans: ['Inter', 'Poppins', 'sans-serif'],
+        sans: ['Segoe UI', 'Poppins', 'sans-serif'],
         serif: ['Playfair Display', 'serif'],
         poppins: ['Poppins', 'sans-serif'],
-        inter: ['Inter', 'sans-serif'],
+        inter: ['Segoe UI', 'sans-serif'],
         playfair: ['Playfair Display', 'serif']
       },
       colors: {
