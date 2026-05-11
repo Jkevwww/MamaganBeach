@@ -748,6 +748,25 @@ const empty = document.getElementById('empty-state');
       if(!daysContainer) return;
       const firstDay = new Date(currentYear, currentMonth, 1).getDay();
       const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+      // normalize maintenance dates (they come from <input type="date"> as YYYY-MM-DD)
+      const maintenanceRanges = Array.isArray(allMaintenance)
+        ? allMaintenance
+            .map(m => ({
+              assetId: m.assetId,
+              start: m.start,
+              end: m.end,
+              reason: m.reason,
+              id: m.id,
+            }))
+            .filter(m => m.start && m.end)
+        : [];
+
+      function isInRange(dateStr, startStr, endStr) {
+        // Use lexicographic compare since YYYY-MM-DD
+        if (!startStr || !endStr) return false;
+        return dateStr >= startStr && dateStr <= endStr;
+      }
       document.getElementById('calendar-month-year').textContent = `${["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][currentMonth]} ${currentYear}`;
       daysContainer.innerHTML = '';
       for(let i = 0; i < firstDay; i++) daysContainer.appendChild(Object.assign(document.createElement('div'), {className:'calendar-day empty'}));
@@ -755,7 +774,7 @@ const empty = document.getElementById('empty-state');
         const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
         const dayDiv = Object.assign(document.createElement('div'), {className:'calendar-day text-[10px] font-bold', textContent:d});
         if(new Date().toISOString().split('T')[0] === dateStr) dayDiv.classList.add('today');
-        if(allMaintenance.some(m => dateStr >= m.start && dateStr <= m.end)) dayDiv.classList.add('maintenance');
+        if(isInRange(dateStr, m.start, m.end)) dayDiv.classList.add('maintenance');
         daysContainer.appendChild(dayDiv);
       }
     }
