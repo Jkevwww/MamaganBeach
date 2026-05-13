@@ -309,8 +309,10 @@
         
         placeholder.classList.add('hidden');
         statusIndicator.classList.remove('hidden');
+        // Hide Activate button only after optics successfully starts
         activateBtn.classList.add('hidden');
         deactivateBtn.disabled = false;
+
         deactivateBtn.classList.remove('text-lux-navy/20');
         deactivateBtn.classList.add('text-lux-navy');
         
@@ -451,8 +453,28 @@
 
     // Check camera permission on page load
     document.addEventListener('DOMContentLoaded', () => {
+      // Ensure optics library is loaded before user can start.
+      // This avoids a race where buttons work but Html5Qrcode is undefined.
+      const activateBtn = document.getElementById('activate-btn');
+      const deactivateBtn = document.getElementById('deactivate-btn');
+
+      deactivateBtn.disabled = true;
+      deactivateBtn.classList.add('text-lux-navy/20');
+      deactivateBtn.classList.remove('text-lux-navy');
+
+      if (typeof window.Html5Qrcode === 'undefined') {
+        showCameraError('Optics library failed to load. Refresh the page and allow scripts if blocked.');
+        if (activateBtn) {
+          activateBtn.disabled = false; // keep visible, but user will get error when starting
+          activateBtn.innerHTML = '<i class="fas fa-eye"></i><span>Activate Optics</span>';
+          activateBtn.classList.remove('opacity-50');
+        }
+        return;
+      }
+
       checkCameraPermission();
     });
+
 
     async function verifyManual() {
       const input = document.getElementById('manual-qr');

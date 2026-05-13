@@ -1,11 +1,9 @@
-# TODO
+- [x] Inspect checkin.html button visibility and camera (optics) UI logic
+- [x] Identify where camera status/button classes are being toggled and why buttons may be invisible/disabled
+- [x] Fix button visibility (Activate/Deactivate) so they render correctly and work
+- [ ] Fix optics/camera activation so camera permission + camera start works reliably
+- [ ] Validate backend endpoint /api/verify-arrival contract with frontend payload
+- [ ] Test locally by starting server and opening /admin/checkin.html; verify optics active indicator and scan callbacks
 
-## Manage Facilities
-- [x] Fix Manage Facilities form submission to support:
-  - [x] Image upload from local file (multipart field name `image_file`)
-  - [x] Image URL via `images_link`
-- [x] Align submitted fields with backend `facilitySchema` expectations (resort_id, name, type/category, base_price, capacity, total_units, etc.)
-- [x] Ensure edit flow can update facility details and replace image when uploading a file
-- [x] Keep delete flow using existing backend endpoint
 
 
