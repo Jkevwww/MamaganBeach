@@ -3,19 +3,19 @@ function renderAdminNav(activePage) {
   if (!nav) return;
   const items = [
     { id: 'dashboard', label: 'Dashboard', icon: 'fa-chart-pie', href: '/admin/dashboard.html' },
-    { id: 'facilities', label: 'Manage Facilities', icon: 'fa-hotel', href: '/admin/facilities.html' },
+    { id: 'facilities', label: 'Facilities', icon: 'fa-hotel', href: '/admin/facilities.html' },
     { id: 'rates', label: 'Rates & Promos', icon: 'fa-tags', href: '/admin/rates.html' },
-    { id: 'calendar', label: 'Block Dates', icon: 'fa-calendar-lock', href: '/admin/calendar.html' },
-    { id: 'bookings', label: 'All Bookings', icon: 'fa-book', href: '/admin/bookings.html' },
-    { id: 'checkin', label: 'Confirm Arrival', icon: 'fa-qrcode', href: '/admin/checkin.html' },
-    { id: 'reports', label: 'Revenue Report', icon: 'fa-file-invoice-dollar', href: '/admin/reports.html' },
-    { id: 'clients', label: 'Client Records', icon: 'fa-users-gear', href: '/admin/clients.html' },
+    { id: 'calendar', label: 'Calendar', icon: 'fa-calendar-lock', href: '/admin/calendar.html' },
+    { id: 'bookings', label: 'Bookings', icon: 'fa-book', href: '/admin/bookings.html' },
+    { id: 'checkin', label: 'Check-in', icon: 'fa-qrcode', href: '/admin/checkin.html' },
+    { id: 'reports', label: 'Reports', icon: 'fa-file-invoice-dollar', href: '/admin/reports.html' },
+    { id: 'clients', label: 'Clients', icon: 'fa-users', href: '/admin/clients.html' },
     { id: 'logs', label: 'System Logs', icon: 'fa-list-ul', href: '/admin/logs.html' },
   ];
   nav.innerHTML = items.map(item => `
-    <a href="${item.href}" class="flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 group ${activePage === item.id ? 'bg-lux-navy text-lux-gold shadow-lg shadow-lux-navy/20' : 'text-lux-navy/50 hover:bg-lux-navy/5 hover:text-lux-navy'}">
-      <i class="fas ${item.icon} w-5 text-center text-sm ${activePage === item.id ? 'text-lux-gold' : 'text-lux-navy/20 group-hover:text-lux-gold'}"></i>
-      <span class="text-[10px] font-black uppercase tracking-[0.2em]">${item.label}</span>
+    <a href="${item.href}" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activePage === item.id ? 'active' : ''}">
+      <i class="fas ${item.icon} w-5 text-center text-sm"></i>
+      <span class="text-sm font-medium">${item.label}</span>
     </a>
   `).join('');
 }

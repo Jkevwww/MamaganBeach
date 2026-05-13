@@ -3,83 +3,88 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign In | Mamagan Beach Resort Collection</title>
+  <title>Sign In | Mamagan Beach Resort</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/tailwind-config.js"></script>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-<body class="bg-lux-dark font-sans text-lux-navy min-h-screen flex items-center justify-center relative overflow-hidden">
-  <!-- Premium Background -->
+<body class="bg-gray-50 font-sans text-gray-800 min-h-screen flex items-center justify-center relative overflow-hidden">
+  <!-- Background -->
   <div class="absolute inset-0 z-0">
-    <div class="absolute inset-0 bg-lux-navy/60 z-10"></div>
-    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-lux-navy/20 to-lux-navy/80 z-20"></div>
-    <div class="absolute inset-0 bg-[url('/images/backgrounds/background2.jpg')] bg-cover bg-center scale-105 animate-pulse-slow"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-primary-600 via-primary-700 to-gray-900 z-10"></div>
+    <div class="absolute inset-0 bg-[url('/images/backgrounds/background2.jpg')] bg-cover bg-center opacity-20"></div>
   </div>
 
-  <main class="relative z-30 w-full max-w-md px-6 py-12 page-transition">
+  <!-- Decorative Elements -->
+  <div class="absolute top-20 left-20 w-64 h-64 bg-primary-500/20 rounded-full blur-3xl"></div>
+  <div class="absolute bottom-20 right-20 w-96 h-96 bg-accent-500/10 rounded-full blur-3xl"></div>
+
+  <main class="relative z-10 w-full max-w-md px-6 py-12 page-transition">
     <div class="text-center mb-10">
-      <h1 class="luxury-heading text-4xl font-bold text-white mb-2 drop-shadow-lg">Welcome Back</h1>
-      <p class="text-white font-medium tracking-widest text-[10px] uppercase bg-lux-navy/30 inline-block px-4 py-1 rounded-full backdrop-blur-sm">The peak of coastal luxury awaits</p>
+      <a href="/" class="inline-flex items-center gap-3 mb-8">
+        <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12">
+      </a>
+      <h1 class="font-heading text-3xl font-bold text-white mb-2">Welcome Back</h1>
+      <p class="text-white/70 text-sm">Sign in to continue to your account</p>
     </div>
 
-    <div class="bg-white/95 p-10 rounded-[2.5rem] premium-shadow border border-white/20 backdrop-blur-2xl">
+    <div class="bg-white rounded-2xl shadow-xl p-8 md:p-10">
       <!-- Error Message -->
-      <div id="error-message" class="hidden mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-600 text-xs flex items-center gap-3 fade-in">
+      <div id="error-message" class="hidden mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm flex items-center gap-3 fade-in">
         <i class="fas fa-circle-exclamation"></i>
         <span id="error-text"></span>
       </div>
 
-      <form id="login-form" class="space-y-6">
+      <form id="login-form" class="space-y-5">
         <div class="space-y-2">
-          <label for="email" class="block text-[10px] font-black uppercase tracking-[0.2em] text-lux-navy/60 ml-2">Digital Identity</label>
-          <input type="email" id="email" required class="premium-input bg-lux-cream/50 border-lux-navy/10 text-lux-navy focus:bg-white" placeholder="email@example.com">
+          <label for="email" class="block text-sm font-semibold text-gray-700">Email Address</label>
+          <input type="email" id="email" required class="form-input" placeholder="you@example.com">
         </div>
 
-        <div class="space-y-2 relative">
-          <div class="flex justify-between items-center ml-2">
-            <label for="password" class="block text-[10px] font-black uppercase tracking-[0.2em] text-lux-navy/60">Access Key</label>
-            <a href="/forgot-password.html" class="text-[9px] font-bold text-lux-gold uppercase tracking-widest hover:text-lux-navy transition-colors">Forgot?</a>
+        <div class="space-y-2">
+          <div class="flex justify-between items-center">
+            <label for="password" class="block text-sm font-semibold text-gray-700">Password</label>
+            <a href="/forgot-password.html" class="text-xs font-medium text-primary-600 hover:text-primary-700 transition-colors">Forgot password?</a>
           </div>
           <div class="relative">
-            <input type="password" id="password" required class="premium-input bg-lux-cream/50 border-lux-navy/10 text-lux-navy focus:bg-white" placeholder="••••••••">
-            <button type="button" id="password-toggle" title="Toggle password visibility" aria-label="Toggle password visibility" class="absolute right-6 top-1/2 -translate-y-1/2 text-lux-navy/20 hover:text-lux-gold transition-colors">
+            <input type="password" id="password" required class="form-input pr-12" placeholder="Enter your password">
+            <button type="button" id="password-toggle" title="Toggle password visibility" aria-label="Toggle password visibility" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary-600 transition-colors">
               <i id="password-toggle-icon" class="fas fa-eye"></i>
             </button>
           </div>
         </div>
 
-        <div class="flex items-center gap-3 ml-2">
-          <input type="checkbox" id="remember" class="w-4 h-4 rounded border-lux-navy/10 bg-lux-cream/50 text-lux-gold focus:ring-lux-gold">
-          <label for="remember" class="text-[10px] font-bold text-lux-navy/40 uppercase tracking-widest">Maintain Session</label>
+        <div class="flex items-center gap-3">
+          <input type="checkbox" id="remember" class="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500">
+          <label for="remember" class="text-sm text-gray-600">Remember me for 30 days</label>
         </div>
 
-        <button type="submit" id="login-btn" class="premium-button-gold w-full flex items-center justify-center gap-4 group py-6 shadow-xl">
-          <span class="text-xs">Authorize Access</span>
+        <button type="submit" id="login-btn" class="btn btn-primary btn-block py-4 group">
+          <span>Sign In</span>
           <i id="login-spinner" class="fas fa-circle-notch fa-spin hidden"></i>
-          <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform text-xs"></i>
         </button>
       </form>
 
-      <div class="relative my-10">
-        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-lux-navy/5"></div></div>
-        <div class="relative flex justify-center text-[10px] font-black uppercase tracking-[0.3em]"><span class="px-4 bg-white text-lux-navy/20">Social Integration</span></div>
+      <div class="relative my-8">
+        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-200"></div></div>
+        <div class="relative flex justify-center text-xs font-medium text-gray-500 uppercase tracking-wider"><span class="px-4 bg-white">Or continue with</span></div>
       </div>
 
       <div class="grid grid-cols-2 gap-4">
-        <a href="/api/auth/google" class="flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-white border border-lux-navy/5 text-lux-navy text-[10px] font-bold uppercase tracking-widest hover:bg-lux-cream transition-all shadow-sm">
-          <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4" alt="Google">
+        <a href="/api/auth/google" class="flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-100 hover:border-gray-300 transition-all">
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google">
           Google
         </a>
-        <a href="/api/auth/github" class="flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-white border border-lux-navy/5 text-lux-navy text-[10px] font-bold uppercase tracking-widest hover:bg-lux-cream transition-all shadow-sm">
-          <i class="fab fa-github text-base"></i>
+        <a href="/api/auth/github" class="flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-100 hover:border-gray-300 transition-all">
+          <i class="fab fa-github text-lg"></i>
           GitHub
         </a>
       </div>
     </div>
 
-    <p class="text-center mt-10 text-[10px] font-bold uppercase tracking-widest text-white/30">
-      New to the collection? <a href="/register.html" class="text-lux-gold hover:text-white transition-colors border-b border-lux-gold/30 pb-0.5">Apply for Membership</a>
+    <p class="text-center mt-8 text-sm text-white/70">
+      Don't have an account? <a href="/register.html" class="text-white font-semibold hover:text-primary-200 transition-colors">Sign up</a>
     </p>
   </main>
 
@@ -112,18 +117,12 @@
           remember: document.getElementById('remember').checked
         });
 
-        console.log('Login response:', res);
-
         if (res.success) {
-          // Store credentials
           localStorage.setItem('token', res.token);
           localStorage.setItem('user', JSON.stringify(res.user));
           
-          console.log('Authorization established:', res.user.role);
-
-          showToast('Access Authorized: Welcome back, ' + (res.user.full_name || 'Administrator'), 'success');
+          showToast('Welcome back, ' + (res.user.full_name || 'User'), 'success');
           
-          // Determine redirect destination
           let target = '/';
           if (res.user && res.user.role === 'admin') {
             target = '/admin/dashboard.html';
@@ -133,21 +132,19 @@
           const redirect = urlParams.get('redirect');
           if (redirect) target = decodeURIComponent(redirect);
           
-          console.log('Redirecting to secure terminal:', target);
-          
           setTimeout(() => {
             window.location.replace(target);
           }, 500);
         } else {
           btn.disabled = false;
           spinner.classList.add('hidden');
-          document.getElementById('error-text').textContent = res.message || 'Authorization failed.';
+          document.getElementById('error-text').textContent = res.message || 'Login failed.';
           err.classList.remove('hidden');
         }
       } catch (error) {
         btn.disabled = false;
         spinner.classList.add('hidden');
-        document.getElementById('error-text').textContent = 'Connectivity error. Please try again.';
+        document.getElementById('error-text').textContent = 'Connection error. Please try again.';
         err.classList.remove('hidden');
       }
     });

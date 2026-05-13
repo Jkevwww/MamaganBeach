@@ -3,97 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Membership Application | Mamagan Beach Resort Collection</title>
+  <title>Create Account | Mamagan Beach Resort</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/tailwind-config.js"></script>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-<body class="bg-lux-dark font-sans text-lux-navy min-h-screen flex items-center justify-center relative overflow-hidden py-20">
-  <!-- Premium Background -->
+<body class="bg-gray-50 font-sans text-gray-800 min-h-screen flex items-center justify-center relative overflow-hidden py-12">
+  <!-- Background -->
   <div class="absolute inset-0 z-0">
-    <div class="absolute inset-0 bg-lux-navy/60 z-10"></div>
-    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-lux-navy/20 to-lux-navy/80 z-20"></div>
-    <div class="absolute inset-0 bg-[url('/images/backgrounds/background3.jpg')] bg-cover bg-center scale-105 animate-pulse-slow"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-primary-600 via-primary-700 to-gray-900 z-10"></div>
+    <div class="absolute inset-0 bg-[url('/images/backgrounds/background3.jpg')] bg-cover bg-center opacity-20"></div>
   </div>
 
-  <main class="relative z-30 w-full max-w-2xl px-4 sm:px-6 page-transition">
+  <!-- Decorative Elements -->
+  <div class="absolute top-10 left-10 w-64 h-64 bg-primary-500/20 rounded-full blur-3xl"></div>
+  <div class="absolute bottom-10 right-10 w-96 h-96 bg-accent-500/10 rounded-full blur-3xl"></div>
 
-
+  <main class="relative z-10 w-full max-w-2xl px-4 sm:px-6 page-transition">
     <div class="text-center mb-10">
-      <h1 class="luxury-heading text-4xl font-bold text-white mb-2 drop-shadow-lg">Join the Collection</h1>
-      <p class="text-white font-medium tracking-widest text-[10px] uppercase bg-lux-navy/30 inline-block px-4 py-1 rounded-full backdrop-blur-sm">Begin your journey into bespoke coastal luxury</p>
+      <a href="/" class="inline-flex items-center justify-center gap-3 mb-8">
+        <img src="/images/logos/LOGO.png" alt="Mamagan" class="h-12">
+      </a>
+      <h1 class="font-heading text-3xl font-bold text-white mb-2">Create Your Account</h1>
+      <p class="text-white/70 text-sm">Join us for an unforgettable beach experience</p>
     </div>
 
-    <div class="bg-white/95 p-10 md:p-12 rounded-[2.5rem] premium-shadow border border-white/20 backdrop-blur-2xl">
+    <div class="bg-white rounded-2xl shadow-xl p-8 md:p-10">
       <form id="register-form" class="space-y-6">
         <div class="grid md:grid-cols-2 gap-6">
           <div class="space-y-2">
-            <label for="full_name" class="block text-[10px] font-black uppercase tracking-[0.2em] text-lux-navy/60 ml-2">Full Legal Name</label>
-            <input type="text" id="full_name" required class="premium-input bg-lux-cream/50 border-lux-navy/10 text-lux-navy focus:bg-white" placeholder="Juan Dela Cruz">
+            <label for="full_name" class="block text-sm font-semibold text-gray-700">Full Name</label>
+            <input type="text" id="full_name" required class="form-input" placeholder="Juan Dela Cruz">
           </div>
           <div class="space-y-2">
-            <label for="email" class="block text-[10px] font-black uppercase tracking-[0.2em] text-lux-navy/60 ml-2">Digital Identity</label>
-            <input type="email" id="email" required class="premium-input bg-lux-cream/50 border-lux-navy/10 text-lux-navy focus:bg-white" placeholder="email@example.com">
+            <label for="email" class="block text-sm font-semibold text-gray-700">Email Address</label>
+            <input type="email" id="email" required class="form-input" placeholder="you@example.com">
           </div>
         </div>
 
         <div class="grid md:grid-cols-2 gap-6">
           <div class="space-y-2">
-            <label for="phone" class="block text-[10px] font-black uppercase tracking-[0.2em] text-lux-navy/60 ml-2">Contact Number</label>
-            <input type="tel" id="phone" class="premium-input bg-lux-cream/50 border-lux-navy/10 text-lux-navy focus:bg-white" placeholder="+63 900 000 0000">
+            <label for="phone" class="block text-sm font-semibold text-gray-700">Phone Number</label>
+            <input type="tel" id="phone" class="form-input" placeholder="+63 900 000 0000">
           </div>
-          <div class="space-y-2 relative">
-            <label for="password" class="block text-[10px] font-black uppercase tracking-[0.2em] text-lux-navy/60 ml-2">Access Key</label>
+          <div class="space-y-2">
+            <label for="password" class="block text-sm font-semibold text-gray-700">Password</label>
             <div class="relative">
-              <input type="password" id="password" required minlength="6" class="premium-input bg-lux-cream/50 border-lux-navy/10 text-lux-navy focus:bg-white" placeholder="••••••••">
-              <button type="button" onclick="togglePassword('password')" title="Toggle password visibility" aria-label="Toggle password visibility" class="absolute right-6 top-1/2 -translate-y-1/2 text-lux-navy/20 hover:text-lux-gold transition-colors">
+              <input type="password" id="password" required minlength="6" class="form-input pr-12" placeholder="Min. 6 characters">
+              <button type="button" onclick="togglePassword('password')" title="Toggle password visibility" aria-label="Toggle password visibility" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary-600 transition-colors">
                 <i class="fas fa-eye"></i>
               </button>
             </div>
           </div>
         </div>
 
-        <div class="space-y-2 relative">
-          <label for="confirm_password" class="block text-[10px] font-black uppercase tracking-[0.2em] text-lux-navy/60 ml-2">Confirm Access Key</label>
+        <div class="space-y-2">
+          <label for="confirm_password" class="block text-sm font-semibold text-gray-700">Confirm Password</label>
           <div class="relative">
-            <input type="password" id="confirm_password" required minlength="6" class="premium-input bg-lux-cream/50 border-lux-navy/10 text-lux-navy focus:bg-white" placeholder="••••••••">
-            <button type="button" onclick="togglePassword('confirm_password')" title="Toggle password visibility" aria-label="Toggle password visibility" class="absolute right-6 top-1/2 -translate-y-1/2 text-lux-navy/20 hover:text-lux-gold transition-colors">
+            <input type="password" id="confirm_password" required minlength="6" class="form-input pr-12" placeholder="Confirm your password">
+            <button type="button" onclick="togglePassword('confirm_password')" title="Toggle password visibility" aria-label="Toggle password visibility" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary-600 transition-colors">
               <i class="fas fa-eye"></i>
             </button>
           </div>
         </div>
 
-        <div class="pt-4">
-          <button type="submit" id="register-btn" class="premium-button-gold w-full flex items-center justify-center gap-4 group py-6 shadow-xl">
-            <span class="text-xs">Apply for Membership</span>
+        <div class="flex items-start gap-3">
+          <input type="checkbox" id="terms" required class="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 mt-1">
+          <label for="terms" class="text-sm text-gray-600">
+            I agree to the <a href="#" class="text-primary-600 hover:text-primary-700 font-medium">Terms of Service</a> and <a href="#" class="text-primary-600 hover:text-primary-700 font-medium">Privacy Policy</a>
+          </label>
+        </div>
+
+        <div class="pt-2">
+          <button type="submit" id="register-btn" class="btn btn-primary btn-block py-4">
+            <span>Create Account</span>
             <i id="register-spinner" class="fas fa-circle-notch fa-spin hidden"></i>
-            <i class="fas fa-crown group-hover:rotate-12 transition-transform text-xs"></i>
           </button>
         </div>
       </form>
 
-      <div class="relative my-10">
-        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-lux-navy/5"></div></div>
-        <div class="relative flex justify-center text-[10px] font-black uppercase tracking-[0.3em]"><span class="px-4 bg-white text-lux-navy/20">Social Integration</span></div>
+      <div class="relative my-8">
+        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-200"></div></div>
+        <div class="relative flex justify-center text-xs font-medium text-gray-500 uppercase tracking-wider"><span class="px-4 bg-white">Or sign up with</span></div>
       </div>
 
       <div class="grid grid-cols-2 gap-4">
-        <a href="/api/auth/google" class="flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-white/95 border border-lux-navy/10 text-lux-navy text-[10px] font-bold uppercase tracking-widest hover:bg-lux-gold hover:text-white transition-all shadow-lg">
-
-          <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4" alt="Google">
+        <a href="/api/auth/google" class="flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-100 hover:border-gray-300 transition-all">
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google">
           Google
         </a>
-        <a href="/api/auth/github" class="flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-white/95 border border-lux-navy/10 text-lux-navy text-[10px] font-bold uppercase tracking-widest hover:bg-lux-gold hover:text-white transition-all shadow-lg">
-
-          <i class="fab fa-github text-base"></i>
+        <a href="/api/auth/github" class="flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-100 hover:border-gray-300 transition-all">
+          <i class="fab fa-github text-lg"></i>
           GitHub
         </a>
       </div>
     </div>
 
-    <p class="text-center mt-10 text-[10px] font-bold uppercase tracking-widest text-white/30">
-      Already a member? <a href="/login.html" class="text-lux-gold hover:text-white transition-colors border-b border-lux-gold/30 pb-0.5">Access Your Account</a>
+    <p class="text-center mt-8 text-sm text-white/70">
+      Already have an account? <a href="/login.html" class="text-white font-semibold hover:text-primary-200 transition-colors">Sign in</a>
     </p>
   </main>
 
@@ -103,7 +111,9 @@
   <script>
     function togglePassword(id) {
       const input = document.getElementById(id);
+      const icon = input.nextElementSibling.querySelector('i');
       input.type = input.type === 'password' ? 'text' : 'password';
+      icon.className = input.type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
     }
 
     document.getElementById('register-form').addEventListener('submit', async (e) => {
@@ -136,7 +146,7 @@
           localStorage.setItem('token', res.token);
           localStorage.setItem('user', JSON.stringify(res.user));
           if (typeof showToast === 'function') {
-            showToast('Membership granted successfully.', 'success');
+            showToast('Account created successfully!', 'success');
           }
           setTimeout(() => {
             if (res.user && res.user.role === 'admin') {
@@ -149,7 +159,7 @@
           btn.disabled = false;
           spinner.classList.add('hidden');
           if (typeof showToast === 'function') {
-            showToast(res.message || 'Application failed.', 'error');
+            showToast(res.message || 'Registration failed.', 'error');
           }
         }
       } catch (error) {
