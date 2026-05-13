@@ -58,21 +58,21 @@
 <body class="bg-lux-cream font-sans text-lux-navy">
   <div class="flex h-screen overflow-hidden">
     <!-- Sidebar -->
-    <aside class="w-80 bg-white border-r border-lux-navy/5 flex-shrink-0 hidden md:flex flex-col relative z-20">
-      <div class="p-10 border-b border-lux-navy/5">
-        <a href="/" class="flex items-center gap-4 group" aria-label="Mamagan Beach Resort Home">
-          <img src="/images/logos/LOGO.png" alt="Mamagan Logo" class="h-12 group-hover:scale-110 transition-transform">
+    <aside class="w-64 bg-white border-r border-gray-200 flex-shrink-0 hidden md:flex flex-col relative z-20">
+      <div class="p-6 border-b border-gray-200">
+        <a href="/" class="flex items-center gap-3 group">
+          <img src="/images/logos/LOGO.png" alt="Mamagan Logo" class="h-10 group-hover:scale-105 transition-transform">
           <div class="flex flex-col">
-            <span class="luxury-heading font-bold text-xl leading-none">Mamagan</span>
-            <span class="text-[8px] font-black uppercase tracking-[0.4em] text-lux-gold mt-1">Beach Resort</span>
+            <span class="font-heading font-bold text-lg leading-tight text-gray-900">Mamagan</span>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-primary-600">Admin Panel</span>
           </div>
         </a>
       </div>
-      <nav id="admin-nav" class="flex-1 p-6 space-y-2" aria-label="Admin Navigation"></nav>
-      <div class="p-8 border-t border-lux-navy/5">
-        <button id="logout-btn" title="Sign Out" aria-label="Sign Out" class="w-full flex items-center gap-4 px-6 py-4 text-red-600 hover:bg-red-50 rounded-2xl transition-all group">
-          <i class="fas fa-sign-out-alt w-5 text-center group-hover:-translate-x-1 transition-transform" aria-hidden="true"></i>
-          <span class="text-[10px] font-black uppercase tracking-widest">Terminate Session</span>
+      <nav id="admin-nav" class="flex-1 p-4 space-y-1 overflow-y-auto"></nav>
+      <div class="p-4 border-t border-gray-200">
+        <button id="logout-btn" title="Sign Out" aria-label="Sign Out" class="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-all">
+          <i class="fas fa-sign-out-alt w-5 text-center"></i>
+          <span class="text-sm font-medium">Sign Out</span>
         </button>
       </div>
     </aside>
