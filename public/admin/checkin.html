@@ -179,6 +179,24 @@
               </span>
             </div>
 
+            <!-- Capture Options -->
+            <div class="mb-6 space-y-3 p-4 bg-lux-gold/5 rounded-xl border border-lux-gold/20">
+              <div class="flex items-center gap-3">
+                <input type="checkbox" id="capture-photo-checkbox" class="w-4 h-4 rounded border-lux-gold/30 text-lux-gold focus:ring-lux-gold" checked>
+                <div class="flex-1">
+                  <label for="capture-photo-checkbox" class="text-xs font-bold text-lux-navy block">Capture Photo</label>
+                  <p class="text-[10px] text-lux-navy/50">Save snapshot of guest on successful check-in</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <input type="checkbox" id="record-video-checkbox" class="w-4 h-4 rounded border-lux-gold/30 text-lux-gold focus:ring-lux-gold">
+                <div class="flex-1">
+                  <label for="record-video-checkbox" class="text-xs font-bold text-lux-navy block">Record Video (10s)</label>
+                  <p class="text-[10px] text-lux-navy/50">Record check-in activity for audit trail</p>
+                </div>
+              </div>
+            </div>
+
             <!-- Toggle Button -->
             <div class="mt-10 flex gap-3">
               <button id="camera-toggle-btn" aria-label="Toggle camera on/off" class="flex-1 py-5 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all shadow-xl shadow-lux-navy/10 flex items-center justify-center gap-3">
@@ -237,11 +255,17 @@
     let currentCameraId = null;
     let availableCameras = [];
     let cameraActive = false;
+    let mediaRecorder = null;
+    let recordedChunks = [];
     let cameraSettings = {
       brightness: 100,
       contrast: 100,
       zoom: 100,
       mirror: false
+    };
+    let captureSettings = {
+      capturePhoto: true,
+      recordVideo: false
     };
 
     // Check camera permissions on page load
