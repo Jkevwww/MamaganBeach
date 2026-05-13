@@ -106,6 +106,7 @@ app.use('/api/facilities', require('./routes/facilities'));
 app.use('/api/bookings', require('./routes/bookings'));
 app.use('/api/payments', require('./routes/payments'));
 app.use('/api/tickets', require('./routes/tickets'));
+app.use('/api/checkin', require('./routes/checkin'));
 
 // Compatibility: legacy admin check-in page calls POST /api/verify-arrival
 // Frontend sends: { admission_id: <decodedText from QR> }

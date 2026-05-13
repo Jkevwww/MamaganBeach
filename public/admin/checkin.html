@@ -268,6 +268,266 @@
       recordVideo: false
     };
 
+    // Function to capture a photo from the video stream
+    async function captureAndUploadPhoto(admissionId) {
+      if (!captureSettings.capturePhoto) return null;
+
+      const video = document.querySelector('#qr-reader video');
+      if (!video) {
+        console.error('Video element not found for photo capture.');
+        return null;
+      }
+
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext('2d');
+
+        // Flip the image if mirrored
+        if (cameraSettings.mirror) {
+          context.translate(canvas.width, 0);
+          context.scale(-1, 1);
+        }
+        
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        
+        const formData = new FormData();
+        formData.append('photo', blob, `${admissionId}.png`);
+        formData.append('admissionId', admissionId);
+
+        const response = await api.post('/checkin/upload/photo', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+
+        if (response.success) {
+          showToast('Photo captured and uploaded successfully.', 'success');
+          return response.filePath;
+        } else {
+          throw new Error(response.message || 'Photo upload failed.');
+        }
+      } catch (error) {
+        console.error('Error capturing or uploading photo:', error);
+        showToast(`Error: ${error.message}`, 'error');
+        return null;
+      }
+    }
+
+    // Function to start video recording
+    function startRecording(stream) {
+      if (!captureSettings.recordVideo) return;
+
+      recordedChunks = [];
+      const options = { mimeType: 'video/webm; codecs=vp9' };
+      mediaRecorder = new MediaRecorder(stream, options);
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          recordedChunks.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstart = () => {
+        showToast('Recording started...', 'info');
+      };
+
+      mediaRecorder.onstop = async () => {
+        const videoBlob = new Blob(recordedChunks, { type: 'video/webm' });
+        await uploadVideo(videoBlob);
+      };
+
+      mediaRecorder.start();
+      setTimeout(() => {
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+          mediaRecorder.stop();
+        }
+      }, 10000); // Record for 10 seconds
+    }
+
+    // Function to upload the recorded video
+    async function uploadVideo(videoBlob) {
+      const admissionId = document.getElementById('manual-qr').value; // Or get from the last scan
+      if (!admissionId) {
+        showToast('Admission ID not available for video upload.', 'error');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('video', videoBlob, `${admissionId}.webm`);
+      formData.append('admissionId', admissionId);
+
+      try {
+        const response = await api.post('/checkin/upload/video', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+
+        if (response.success) {
+          showToast('Video uploaded successfully.', 'success');
+        } else {
+          throw new Error(response.message || 'Video upload failed.');
+        }
+      } catch (error) {
+        console.error('Error uploading video:', error);
+        showToast(`Error: ${error.message}`, 'error');
+      }
+    }
+
+    // Function to capture a photo from the video stream
+    async function captureAndUploadPhoto(admissionId) {
+      if (!captureSettings.capturePhoto) return null;
+
+      const video = document.querySelector('#qr-reader video');
+      if (!video) {
+        console.error('Video element not found for photo capture.');
+        return null;
+      }
+
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext('2d');
+
+        // Flip the image if mirrored
+        if (cameraSettings.mirror) {
+          context.translate(canvas.width, 0);
+          context.scale(-1, 1);
+        }
+        
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        
+        const formData = new FormData();
+        formData.append('photo', blob, `${admissionId}.png`);
+        formData.append('admissionId', admissionId);
+
+        // Note: Using a placeholder endpoint as per instruction context.
+        const response = await api.post('/checkin/upload/photo', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+
+        if (response.success) {
+          showToast('Photo captured and uploaded successfully.', 'success');
+          return response.filePath;
+        } else {
+          throw new Error(response.message || 'Photo upload failed.');
+        }
+      } catch (error) {
+        console.error('Error capturing or uploading photo:', error);
+        showToast(`Error: ${error.message}`, 'error');
+        return null;
+      }
+    }
+
+    // Function to capture a photo from the video stream
+    async function captureAndUploadPhoto(admissionId) {
+      if (!captureSettings.capturePhoto) return null;
+
+      const video = document.querySelector('#qr-reader video');
+      if (!video) {
+        console.error('Video element not found for photo capture.');
+        return null;
+      }
+
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext('2d');
+
+        // Flip the image if mirrored
+        if (cameraSettings.mirror) {
+          context.translate(canvas.width, 0);
+          context.scale(-1, 1);
+        }
+        
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        
+        const formData = new FormData();
+        formData.append('photo', blob, `${admissionId}.png`);
+        formData.append('admissionId', admissionId);
+
+        const response = await api.post('/checkin/upload/photo', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+
+        if (response.success) {
+          showToast('Photo captured and uploaded successfully.', 'success');
+          return response.filePath;
+        } else {
+          throw new Error(response.message || 'Photo upload failed.');
+        }
+      } catch (error) {
+        console.error('Error capturing or uploading photo:', error);
+        showToast(`Error: ${error.message}`, 'error');
+        return null;
+      }
+    }
+
+    // Function to start video recording
+    function startRecording(stream) {
+      if (!captureSettings.recordVideo) return;
+
+      recordedChunks = [];
+      const options = { mimeType: 'video/webm; codecs=vp9' };
+      mediaRecorder = new MediaRecorder(stream, options);
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          recordedChunks.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstart = () => {
+        showToast('Recording started...', 'info');
+      };
+
+      mediaRecorder.onstop = async () => {
+        const videoBlob = new Blob(recordedChunks, { type: 'video/webm' });
+        await uploadVideo(videoBlob);
+      };
+
+      mediaRecorder.start();
+      setTimeout(() => {
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+          mediaRecorder.stop();
+        }
+      }, 10000); // Record for 10 seconds
+    }
+
+    // Function to upload the recorded video
+    async function uploadVideo(videoBlob) {
+      const admissionId = document.getElementById('manual-qr').value; // Or get from the last scan
+      if (!admissionId) {
+        showToast('Admission ID not available for video upload.', 'error');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('video', videoBlob, `${admissionId}.webm`);
+      formData.append('admissionId', admissionId);
+
+      try {
+        const response = await api.post('/checkin/upload/video', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+
+        if (response.success) {
+          showToast('Video uploaded successfully.', 'success');
+        } else {
+          throw new Error(response.message || 'Video upload failed.');
+        }
+      } catch (error) {
+        console.error('Error uploading video:', error);
+        showToast(`Error: ${error.message}`, 'error');
+      }
+    }
+
     // Check camera permissions on page load
     async function checkCameraPermission() {
       try {
@@ -442,6 +702,32 @@
       });
     }
 
+    function setupCaptureOptions() {
+      const photoCheckbox = document.getElementById('capture-photo-checkbox');
+      const videoCheckbox = document.getElementById('record-video-checkbox');
+
+      photoCheckbox.addEventListener('change', (e) => {
+        captureSettings.capturePhoto = e.target.checked;
+      });
+
+      videoCheckbox.addEventListener('change', (e) => {
+        captureSettings.recordVideo = e.target.checked;
+      });
+    }
+
+    function setupCaptureOptions() {
+      const photoCheckbox = document.getElementById('capture-photo-checkbox');
+      const videoCheckbox = document.getElementById('record-video-checkbox');
+
+      photoCheckbox.addEventListener('change', (e) => {
+        captureSettings.capturePhoto = e.target.checked;
+      });
+
+      videoCheckbox.addEventListener('change', (e) => {
+        captureSettings.recordVideo = e.target.checked;
+      });
+    }
+
     // Toggle camera on/off
     async function toggleCamera() {
       if (cameraActive) {
@@ -593,7 +879,7 @@
             aspectRatio: 1.0,
             disableFlip: false
           },
-          (decodedText) => {
+          async (decodedText) => {
             console.log('Optics Protocol Match:', decodedText);
             // Visual feedback on scan
             readerDiv.classList.add('scanner-active');
@@ -601,8 +887,14 @@
             
             // Play a subtle beep sound
             playScanSound();
+
+            // Capture photo while video stream is active
+            const photoPath = await captureAndUploadPhoto(decodedText);
+
+            // Now stop the scanner
+            await stopScan();
             
-            verifyArrival(decodedText);
+            verifyArrival(decodedText, photoPath);
           },
           (errorMessage) => {
             // Ignore constant lookup errors - this is normal behavior
@@ -619,6 +911,12 @@
         
         // Apply saved camera settings
         applyVideoFilters();
+
+        // Start recording if enabled
+        const video = readerDiv.querySelector('video');
+        if (video && video.srcObject) {
+            startRecording(video.srcObject);
+        }
         
         showToast('Optical verification system active.', 'success');
       } catch (err) {
@@ -762,6 +1060,8 @@
       setupControlsToggle();
       setupCameraControls();
       setupCameraSelection();
+      setupCaptureOptions();
+      setupCaptureOptions();
       
       // Setup event listeners for buttons
       const toggleBtn = document.getElementById('camera-toggle-btn');
@@ -812,7 +1112,15 @@
     }
 
     async function verifyArrival(payload) {
+      // Populate the manual input field so video upload can find the ID
+      document.getElementById('manual-qr').value = payload;
+
       try {
+        // Capture photo before verification if enabled
+        if (captureSettings.capturePhoto) {
+          await captureAndUploadPhoto(payload);
+        }
+
         // Using the requested verification endpoint
         const res = await api.post('/verify-arrival', { admission_id: payload });
         
@@ -830,7 +1138,7 @@
       }
     }
 
-    function showResult(res) {
+    function showResult(res, photoPath = null) {
       const container = document.getElementById('checkin-result');
       const content = document.getElementById('result-content');
       container.classList.remove('hidden');
@@ -839,6 +1147,16 @@
       container.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
       if (res.success) {
+        let photoHtml = '';
+        if (photoPath) {
+          photoHtml = `
+            <div class="mt-8 text-center">
+              <span class="text-[8px] font-black uppercase tracking-widest text-white/30 mb-4 block">Check-in Snapshot</span>
+              <img src="/${photoPath}" alt="Check-in photo" class="rounded-2xl border-2 border-white/10 w-40 mx-auto shadow-lg">
+            </div>
+          `;
+        }
+
         content.innerHTML = `
           <div class="w-24 h-24 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-8 border-2 border-green-500/20 shadow-lg shadow-green-500/10">
             <i class="fas fa-check-circle text-green-400 text-4xl"></i>
@@ -862,6 +1180,7 @@
                 <span class="text-sm font-bold text-white">${new Date().toLocaleTimeString()}</span>
             </div>
           </div>
+          ${photoHtml}
         `;
       } else {
         content.innerHTML = `
