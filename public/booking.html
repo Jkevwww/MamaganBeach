@@ -180,32 +180,45 @@
 
     function initCalendar(blockedDates) {
       try {
-        // Ensure flatpickr is loaded
         if (typeof flatpickr === 'undefined') {
-          console.error('Flatpickr not loaded. Please ensure the library is included.');
+          console.error('Flatpickr not loaded');
           return;
         }
-        
-        flatpickr('#date-picker', {
+
+        if (calendarInstance) {
+          calendarInstance.destroy();
+        }
+
+        const pickerEl = document.getElementById('date-picker');
+        if (!pickerEl) return;
+
+        // Ensure blockedDates are formatted correctly for Flatpickr (YYYY-MM-DD)
+        const formattedBlocked = (blockedDates || []).map(d => {
+          try {
+            const date = new Date(d);
+            return isNaN(date.getTime()) ? d : date.toISOString().split('T')[0];
+          } catch (e) {
+            return d;
+          }
+        });
+
+        calendarInstance = flatpickr(pickerEl, {
           minDate: 'today',
-          maxDate: new Date(Date.now() + 60 * 86400000), // 60 days range
+          maxDate: new Date(Date.now() + 60 * 86400000),
           dateFormat: 'Y-m-d',
-          disable: blockedDates,
-          onChange: async (dates) => {
-            if (dates.length) {
-              selectedDate = dates[0].toISOString().split('T')[0];
+          disable: formattedBlocked,
+          disableMobile: true,
+          animate: true,
+          onChange: async (selectedDates, dateStr) => {
+            if (selectedDates.length > 0) {
+              selectedDate = dateStr;
               document.getElementById('summary-date').textContent = selectedDate;
               await loadAvailability(selectedDate);
             }
-          },
-          onError: (dateStr, key, config) => {
-            console.error('Calendar error:', dateStr, key, config);
-            showToast('Calendar initialization error. Please refresh the page.', 'error');
           }
         });
       } catch (e) {
         console.error('Calendar init error:', e);
-        showToast('Failed to initialize calendar.', 'error');
       }
     }
 
