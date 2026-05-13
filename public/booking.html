@@ -178,19 +178,34 @@
     }
 
     function initCalendar(blockedDates) {
-      flatpickr('#date-picker', {
-        minDate: 'today',
-        maxDate: new Date(Date.now() + 60 * 86400000), // 60 days range
-        dateFormat: 'Y-m-d',
-        disable: blockedDates,
-        onChange: async (dates) => {
-          if (dates.length) {
-            selectedDate = dates[0].toISOString().split('T')[0];
-            document.getElementById('summary-date').textContent = selectedDate;
-            await loadAvailability(selectedDate);
-          }
+      try {
+        // Ensure flatpickr is loaded
+        if (typeof flatpickr === 'undefined') {
+          console.error('Flatpickr not loaded. Please ensure the library is included.');
+          return;
         }
-      });
+        
+        flatpickr('#date-picker', {
+          minDate: 'today',
+          maxDate: new Date(Date.now() + 60 * 86400000), // 60 days range
+          dateFormat: 'Y-m-d',
+          disable: blockedDates,
+          onChange: async (dates) => {
+            if (dates.length) {
+              selectedDate = dates[0].toISOString().split('T')[0];
+              document.getElementById('summary-date').textContent = selectedDate;
+              await loadAvailability(selectedDate);
+            }
+          },
+          onError: (dateStr, key, config) => {
+            console.error('Calendar error:', dateStr, key, config);
+            showToast('Calendar initialization error. Please refresh the page.', 'error');
+          }
+        });
+      } catch (e) {
+        console.error('Calendar init error:', e);
+        showToast('Failed to initialize calendar.', 'error');
+      }
     }
 
     async function loadAvailability(date) {
@@ -315,11 +330,12 @@
       }
     });
 
-    loadFacility();
-  </script>
-</body>
-</html>
-lity();
+    // Ensure DOM is ready before initializing calendar
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadFacility);
+    } else {
+      loadFacility();
+    }
   </script>
 </body>
 </html>

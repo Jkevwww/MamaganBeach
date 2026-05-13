@@ -498,6 +498,38 @@ a:hover {
   opacity: 0.6;
 }
 
+/* Premium Input - Admin Forms */
+.premium-input {
+  width: 100%;
+  padding: 1rem 1.125rem;
+  font-family: var(--font-primary);
+  font-size: 0.95rem;
+  color: var(--gray-900);
+  background: var(--white) !important;
+  border: 2px solid var(--gray-300);
+  border-radius: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  font-weight: 500;
+}
+
+.premium-input:hover {
+  border-color: var(--gray-400);
+  background: var(--white) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.premium-input:focus {
+  border-color: #c5a059;
+  background: var(--white) !important;
+  box-shadow: 0 0 0 4px rgba(197, 160, 89, 0.1), inset 0 0 0 2px #c5a059;
+}
+
+.premium-input::placeholder {
+  color: var(--gray-500);
+  font-weight: 400;
+}
+
 /* Select */
 .form-select {
   appearance: none;

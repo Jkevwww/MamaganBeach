@@ -132,8 +132,8 @@
           </div>
           
           <!-- Use anchor tag for navigation (semantic HTML) -->
-          <a href="/admin/create-facility.html" aria-label="Add New Asset" class="inline-flex items-center px-8 py-3 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all shadow-xl">
-            <i class="fas fa-plus mr-2" aria-hidden="true"></i>New Asset
+          <a href="/admin/create-facility.html" aria-label="Add New Asset" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-lux-navy to-lux-navy/80 text-white text-[11px] font-black uppercase tracking-widest rounded-full hover:shadow-2xl hover:from-lux-gold hover:to-lux-gold/80 transition-all duration-200 border-2 border-transparent hover:border-lux-navy">
+            <i class="fas fa-plus mr-2 text-lg" aria-hidden="true"></i>New Asset
           </a>
           
           <!-- Auth navigation container (populated by auth.js) -->
@@ -145,18 +145,18 @@
         <!-- Assets Tab -->
         <section id="tab-content-assets" class="space-y-10">
             <!-- Search & Filter Bar -->
-            <div class="flex flex-col md:flex-row justify-between items-center gap-6 bg-white p-6 rounded-[2rem] border border-lux-navy/5 shadow-sm">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6 bg-white p-8 rounded-[2rem] border-2 border-lux-navy/10 shadow-md">
                 <div class="relative w-full md:w-96">
-                    <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-lux-navy/20"></i>
+                    <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-lux-navy/40 text-lg"></i>
                     <label for="asset-search" class="sr-only">Search assets by name or category</label>
-                    <input type="text" id="asset-search" oninput="handleSearch()" placeholder="Search Name or Category..." class="w-full pl-14 pr-6 py-3 bg-lux-navy/5 border-transparent rounded-full text-[10px] font-bold uppercase tracking-widest outline-none focus:bg-white focus:ring-2 focus:ring-lux-gold/20 transition-all">
+                    <input type="text" id="asset-search" oninput="handleSearch()" placeholder="Search Name or Category..." class="w-full pl-14 pr-6 py-4 bg-white border-2 border-lux-navy/20 rounded-full text-[11px] font-bold uppercase tracking-widest outline-none focus:bg-white focus:border-lux-gold focus:ring-2 focus:ring-lux-gold/20 transition-all">
                 </div>
                 <div class="flex items-center gap-4 w-full md:w-auto">
-                    <button onclick="clearSearch()" class="px-6 py-3 text-[10px] font-black uppercase tracking-widest text-lux-navy/40 hover:text-lux-navy transition-colors">
+                    <button onclick="clearSearch()" class="px-6 py-3 text-[11px] font-black uppercase tracking-widest text-lux-navy hover:text-lux-gold hover:bg-lux-gold/5 rounded-lg transition-all border-2 border-lux-navy/20 hover:border-lux-gold">
                         Clear Search
                     </button>
                     <div class="h-8 w-px bg-lux-navy/10 mx-2"></div>
-                    <p id="asset-count" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30">Showing 0 Assets</p>
+                    <p id="asset-count" class="text-[11px] font-black uppercase tracking-widest text-lux-navy/50">Showing 0 Assets</p>
                 </div>
             </div>
 

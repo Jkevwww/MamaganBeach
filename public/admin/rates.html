@@ -39,8 +39,8 @@
           <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">Optimize yields and seasonal offerings</p>
         </div>
         <div class="flex items-center gap-8">
-          <button onclick="openModal('promo-modal')" class="px-8 py-3 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all shadow-xl" aria-label="Launch New Promo" title="Launch New Promo">
-            <i class="fas fa-tag mr-2"></i>Launch New Promo
+          <button onclick="openModal('promo-modal')" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-lux-navy to-lux-navy/80 text-white text-[11px] font-black uppercase tracking-widest rounded-full hover:shadow-2xl hover:from-lux-gold hover:to-lux-gold/80 transition-all duration-200 border-2 border-transparent hover:border-lux-navy" aria-label="Launch New Promo" title="Launch New Promo">
+            <i class="fas fa-tag mr-2 text-lg"></i>Launch New Promo
           </button>
           <div id="auth-nav" class="flex items-center gap-3"></div>
         </div>
@@ -61,19 +61,63 @@
                     <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-8 relative z-10">Global multipliers for high-demand windows</p>
                     <form class="space-y-6 relative z-10">
                         <div class="space-y-1">
-                            <label for="weekend-mult" class="text-[8px] font-black uppercase tracking-widest text-white/30">Weekend Multiplier</label>
-                            <input type="number" id="weekend-mult" step="0.1" value="1.2" class="premium-input bg-white/5 border-white/10 text-white focus:bg-white focus:text-lux-navy" title="Weekend Multiplier" aria-label="Weekend Multiplier">
+                            <label for="weekend-mult" class="text-[11px] font-black uppercase tracking-widest text-white/60">Weekend Multiplier</label>
+                            <input type="number" id="weekend-mult" step="0.1" value="1.2" class="premium-input bg-white/10 border-2 border-white/30 text-lux-navy focus:bg-white focus:border-lux-gold focus:text-lux-navy" title="Weekend Multiplier" aria-label="Weekend Multiplier">
                         </div>
                         <div class="space-y-1">
-                            <label for="holiday-surge" class="text-[8px] font-black uppercase tracking-widest text-white/30">Holiday Surge</label>
-                            <input type="number" id="holiday-surge" step="0.1" value="1.5" class="premium-input bg-white/5 border-white/10 text-white focus:bg-white focus:text-lux-navy" title="Holiday Surge" aria-label="Holiday Surge">
+                            <label for="holiday-surge" class="text-[11px] font-black uppercase tracking-widest text-white/60">Holiday Surge</label>
+                            <input type="number" id="holiday-surge" step="0.1" value="1.5" class="premium-input bg-white/10 border-2 border-white/30 text-lux-navy focus:bg-white focus:border-lux-gold focus:text-lux-navy" title="Holiday Surge" aria-label="Holiday Surge">
                         </div>
-                        <button type="submit" class="w-full py-4 bg-lux-gold text-lux-navy text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-white transition-all">Apply Multipliers</button>
+                        <button type="submit" class="w-full py-4 bg-gradient-to-r from-lux-gold to-lux-gold/80 text-lux-navy text-[11px] font-black uppercase tracking-widest rounded-full hover:shadow-2xl transition-all border-2 border-lux-gold/50">Apply Multipliers</button>
                     </form>
                 </div>
             </div>
         </div>
       </main>
+    </div>
+  </div>
+
+  <!-- Promo Modal -->
+  <div id="promo-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 py-8 backdrop-blur-xl bg-lux-navy/40">
+      <div class="relative bg-white rounded-[3rem] w-full max-w-2xl shadow-2xl border border-lux-navy/5">
+        <div class="p-10 border-b border-lux-navy/5 flex justify-between items-center bg-lux-navy/5">
+          <h3 class="luxury-heading text-2xl font-bold">Create Promotion</h3>
+          <button onclick="closeModal('promo-modal')" aria-label="Close modal" class="text-lux-navy/20 hover:text-lux-navy transition-colors text-2xl">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <form id="promo-form" class="p-10 space-y-6">
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="space-y-1">
+              <label for="promo-code" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Promo Code</label>
+              <input type="text" id="promo-code" required class="premium-input" placeholder="e.g. SUMMER20">
+            </div>
+            <div class="space-y-1">
+              <label for="promo-discount" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Discount %</label>
+              <input type="number" id="promo-discount" required min="1" max="100" class="premium-input" placeholder="20">
+            </div>
+          </div>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="space-y-1">
+              <label for="promo-start" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Start Date</label>
+              <input type="date" id="promo-start" required class="premium-input">
+            </div>
+            <div class="space-y-1">
+              <label for="promo-end" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">End Date</label>
+              <input type="date" id="promo-end" required class="premium-input">
+            </div>
+          </div>
+          <div class="space-y-1">
+            <label for="promo-desc" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Description</label>
+            <textarea id="promo-desc" rows="3" class="premium-input resize-none" placeholder="Promotion details..."></textarea>
+          </div>
+          <div class="flex gap-4 justify-end pt-6">
+            <button type="button" onclick="closeModal('promo-modal')" class="px-8 py-3 bg-lux-navy/10 text-lux-navy text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-navy/20 transition-all">Cancel</button>
+            <button type="submit" class="px-8 py-3 bg-gradient-to-r from-lux-navy to-lux-navy/80 text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:shadow-xl transition-all border-2 border-transparent hover:border-lux-gold">Create Promo</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 
