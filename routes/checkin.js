@@ -1,22 +1,4 @@
-// POST /checkin/upload/photo
-router.post('/upload/photo', upload.single('photo'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ success: false, message: 'No photo uploaded.' });
-  }
-
-  const filePath = path.join('uploads', 'checkin-photos', req.file.filename).replace(/\\/g, '/');
-  res.json({ success: true, filePath });
-});
-
-// POST /checkin/upload/video
-router.post('/upload/video', upload.single('video'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ success: false, message: 'No video uploaded.' });
-  }
-
-  const filePath = path.join('uploads', 'checkin-videos', req.file.filename).replace(/\\/g, '/');
-  res.json({ success: true, filePath });
-});const express = require('express');
+const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
@@ -50,6 +32,16 @@ router.post('/upload/photo', upload.single('photo'), (req, res) => {
   }
 
   const filePath = path.join('uploads', 'checkin-photos', req.file.filename).replace(/\\/g, '/');
+  res.json({ success: true, filePath });
+});
+
+// POST /checkin/upload/video
+router.post('/upload/video', upload.single('video'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ success: false, message: 'No video uploaded.' });
+  }
+
+  const filePath = path.join('uploads', 'checkin-videos', req.file.filename).replace(/\\/g, '/');
   res.json({ success: true, filePath });
 });
 
@@ -92,22 +84,4 @@ router.post('/verify', async (req, res) => {
     }
 });
 
-module.exports = router;// POST /checkin/upload/photo
-router.post('/upload/photo', upload.single('photo'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ success: false, message: 'No photo uploaded.' });
-  }
-
-  const filePath = path.join('uploads', 'checkin-photos', req.file.filename).replace(/\/g, '/');
-  res.json({ success: true, filePath });
-});
-
-// POST /checkin/upload/video
-router.post('/upload/video', upload.single('video'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ success: false, message: 'No video uploaded.' });
-  }
-
-  const filePath = path.join('uploads', 'checkin-videos', req.file.filename).replace(/\/g, '/');
-  res.json({ success: true, filePath });
-});
+module.exports = router;
