@@ -54,27 +54,32 @@
             <form id="booking-form" class="space-y-8">
               <div>
                 <label class="block text-[10px] font-black uppercase tracking-widest text-lux-navy/40 mb-3">Select Date</label>
-                <input type="text" id="date-picker" class="w-full px-6 py-4 rounded-2xl bg-white border border-lux-navy/10 focus:border-lux-gold outline-none transition-all" placeholder="Pick a date">
+                <input type="text" id="date-picker" class="w-full px-6 py-4 rounded-2xl bg-white border-2 border-lux-navy/20 focus:border-lux-gold outline-none transition-all text-lux-navy font-semibold" placeholder="Pick a date" required>
+                <p class="text-[10px] text-lux-navy/40 mt-2 font-medium">Format: YYYY-MM-DD</p>
               </div>
 
               <div>
                 <label class="block text-[10px] font-black uppercase tracking-widest text-lux-navy/40 mb-3">Select Time Slot</label>
                 <div id="time-slots" class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <div class="text-lux-navy/20 text-xs py-6 text-center border-2 border-dashed border-lux-navy/10 rounded-2xl">Select a date first</div>
+                  <div class="text-lux-navy/20 text-xs py-8 text-center border-2 border-dashed border-lux-navy/20 rounded-2xl font-semibold">Select a date first</div>
                 </div>
               </div>
 
               <div>
                 <label for="quantity" class="block text-[10px] font-black uppercase tracking-widest text-lux-navy/40 mb-3">Quantity</label>
                 <div class="flex items-center gap-4">
-                  <button type="button" onclick="changeQty(-1)" title="Decrease quantity" aria-label="Decrease quantity" class="w-12 h-12 rounded-full border border-lux-navy/10 hover:border-lux-gold hover:text-lux-gold transition-all"><i class="fas fa-minus text-xs"></i></button>
-                  <input type="number" id="quantity" value="1" min="1" aria-label="Quantity" placeholder="1" class="w-20 text-center py-3 rounded-2xl border border-lux-navy/10 font-black text-lux-navy" readonly>
-                  <button type="button" onclick="changeQty(1)" title="Increase quantity" aria-label="Increase quantity" class="w-12 h-12 rounded-full border border-lux-navy/10 hover:border-lux-gold hover:text-lux-gold transition-all"><i class="fas fa-plus text-xs"></i></button>
+                  <button type="button" onclick="changeQty(-1)" id="qty-minus" title="Decrease quantity" aria-label="Decrease quantity" class="w-14 h-14 rounded-full border-2 border-lux-navy/30 hover:border-lux-gold hover:text-lux-gold hover:bg-lux-gold/5 transition-all duration-200 font-bold flex items-center justify-center">
+                    <i class="fas fa-minus text-lg"></i>
+                  </button>
+                  <input type="number" id="quantity" value="1" min="1" aria-label="Quantity" placeholder="1" class="w-24 text-center py-4 rounded-2xl border-2 border-lux-navy/20 font-black text-lux-navy text-lg" readonly>
+                  <button type="button" onclick="changeQty(1)" id="qty-plus" title="Increase quantity" aria-label="Increase quantity" class="w-14 h-14 rounded-full border-2 border-lux-navy/30 hover:border-lux-gold hover:text-lux-gold hover:bg-lux-gold/5 transition-all duration-200 font-bold flex items-center justify-center">
+                    <i class="fas fa-plus text-lg"></i>
+                  </button>
                 </div>
                 <p id="qty-hint" class="text-[10px] font-bold uppercase tracking-widest text-lux-navy/30 mt-3"></p>
               </div>
 
-              <button type="submit" id="book-btn" class="w-full py-6 bg-lux-navy text-white font-black uppercase tracking-widest rounded-full hover:bg-lux-gold hover:shadow-2xl transition-all flex items-center justify-center gap-4">
+              <button type="submit" id="book-btn" class="w-full py-6 bg-gradient-to-r from-lux-navy to-lux-navy/80 text-white font-black uppercase tracking-widest rounded-full hover:shadow-2xl hover:from-lux-gold hover:to-lux-gold/80 transition-all duration-300 flex items-center justify-center gap-4 border-2 border-transparent hover:border-lux-navy">
                 <span>Confirm Reservation</span>
                 <i id="book-spinner" class="fas fa-circle-notch fa-spin hidden"></i>
               </button>

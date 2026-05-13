@@ -40,21 +40,21 @@
           <div class="glass-card p-10 rounded-[2.5rem] premium-shadow border border-lux-navy/5">
             <h3 class="luxury-heading font-bold text-xl mb-8">Select Method</h3>
             <div class="grid grid-cols-2 gap-4">
-              <button onclick="selectMethod('gcash')" id="btn-gcash" class="method-btn p-6 border-2 border-lux-navy/5 rounded-2xl text-center hover:border-lux-gold transition-all group">
-                <img src="https://brandlogos.net/wp-content/uploads/2022/07/gcash-logo_brandlogos.net_kxdbq.png" class="h-8 mx-auto mb-3 object-contain" alt="GCash">
-                <span class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 group-hover:text-lux-navy transition-colors">GCash</span>
+              <button onclick="selectMethod('gcash')" id="btn-gcash" class="method-btn p-8 border-2 border-lux-navy/20 rounded-2xl text-center hover:border-lux-gold hover:bg-lux-gold/5 transition-all duration-200 group font-semibold">
+                <img src="https://brandlogos.net/wp-content/uploads/2022/07/gcash-logo_brandlogos.net_kxdbq.png" class="h-10 mx-auto mb-4 object-contain" alt="GCash">
+                <span class="text-[11px] font-black uppercase tracking-widest text-lux-navy/60 group-hover:text-lux-navy transition-colors">GCash</span>
               </button>
-              <button onclick="selectMethod('maya')" id="btn-maya" class="method-btn p-6 border-2 border-lux-navy/5 rounded-2xl text-center hover:border-lux-gold transition-all group">
-                <img src="https://www.svgrepo.com/show/331295/maya.svg" class="h-8 mx-auto mb-3 object-contain" alt="Maya">
-                <span class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 group-hover:text-lux-navy transition-colors">Maya</span>
+              <button onclick="selectMethod('maya')" id="btn-maya" class="method-btn p-8 border-2 border-lux-navy/20 rounded-2xl text-center hover:border-lux-gold hover:bg-lux-gold/5 transition-all duration-200 group font-semibold">
+                <img src="https://www.svgrepo.com/show/331295/maya.svg" class="h-10 mx-auto mb-4 object-contain" alt="Maya">
+                <span class="text-[11px] font-black uppercase tracking-widest text-lux-navy/60 group-hover:text-lux-navy transition-colors">Maya</span>
               </button>
-              <button onclick="selectMethod('grabpay')" id="btn-grabpay" class="method-btn p-6 border-2 border-lux-navy/5 rounded-2xl text-center hover:border-lux-gold transition-all group">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Grab_Logo_2023.svg/512px-Grab_Logo_2023.svg.png" class="h-6 mx-auto mb-5 object-contain" alt="GrabPay">
-                <span class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 group-hover:text-lux-navy transition-colors">GrabPay</span>
+              <button onclick="selectMethod('grabpay')" id="btn-grabpay" class="method-btn p-8 border-2 border-lux-navy/20 rounded-2xl text-center hover:border-lux-gold hover:bg-lux-gold/5 transition-all duration-200 group font-semibold">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Grab_Logo_2023.svg/512px-Grab_Logo_2023.svg.png" class="h-8 mx-auto mb-4 object-contain" alt="GrabPay">
+                <span class="text-[11px] font-black uppercase tracking-widest text-lux-navy/60 group-hover:text-lux-navy transition-colors">GrabPay</span>
               </button>
-              <button onclick="selectMethod('card')" id="btn-card" class="method-btn p-6 border-2 border-lux-navy/5 rounded-2xl text-center hover:border-lux-gold transition-all group">
-                <i class="fas fa-credit-card text-2xl text-lux-navy/20 mb-3 group-hover:text-lux-navy transition-colors"></i>
-                <span class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 group-hover:text-lux-navy transition-colors block">Credit Card</span>
+              <button onclick="selectMethod('card')" id="btn-card" class="method-btn p-8 border-2 border-lux-navy/20 rounded-2xl text-center hover:border-lux-gold hover:bg-lux-gold/5 transition-all duration-200 group font-semibold">
+                <i class="fas fa-credit-card text-3xl text-lux-navy/30 mb-4 group-hover:text-lux-navy transition-colors"></i>
+                <span class="text-[11px] font-black uppercase tracking-widest text-lux-navy/60 group-hover:text-lux-navy transition-colors block">Credit Card</span>
               </button>
             </div>
 
@@ -76,7 +76,7 @@
               </div>
             </div>
 
-            <button onclick="payNow()" id="pay-btn" class="w-full mt-10 py-6 bg-lux-navy text-white font-black uppercase tracking-widest rounded-full hover:bg-lux-gold hover:shadow-2xl transition-all flex items-center justify-center gap-4 disabled:opacity-30 disabled:cursor-not-allowed" disabled>
+            <button onclick="payNow()" id="pay-btn" class="w-full mt-10 py-7 bg-gradient-to-r from-lux-navy to-lux-navy/80 text-white font-black uppercase tracking-widest rounded-full hover:shadow-2xl hover:from-lux-gold hover:to-lux-gold/80 transition-all duration-300 flex items-center justify-center gap-4 disabled:opacity-30 disabled:cursor-not-allowed border-2 border-transparent hover:border-lux-navy" disabled>
               <span>Authorize Settlement</span>
               <i id="pay-spinner" class="fas fa-circle-notch fa-spin hidden"></i>
             </button>

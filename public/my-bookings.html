@@ -82,70 +82,80 @@
       }
 
       container.innerHTML = res.data.map(b => {
-        const statusColors = {
-          pending: 'bg-lux-gold/10 text-lux-gold border-lux-gold/20',
-          confirmed: 'bg-green-500/10 text-green-600 border-green-500/20',
-          cancelled: 'bg-red-500/10 text-red-600 border-red-500/20',
-          completed: 'bg-lux-navy/10 text-lux-navy/50 border-lux-navy/20',
-        };
-        const payColors = {
-          pending: 'text-lux-gold',
-          paid: 'text-green-600',
-          refunded: 'text-lux-navy/30',
-        };
-        return `
-          <div class="glass-card rounded-[2rem] p-8 md:p-10 border border-lux-navy/5 card-hover fade-in">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
-              <div class="flex-1">
-                <div class="flex items-center gap-4 mb-6">
-                  <h3 class="luxury-heading font-bold text-2xl text-lux-navy">${b.facility_name}</h3>
-                  <span class="px-4 py-1 text-[8px] font-black uppercase tracking-[0.2em] rounded-full border ${statusColors[b.status] || 'bg-lux-navy/5 text-lux-navy/40'}">${b.status}</span>
+       // Enhanced status color scheme with better visibility
+       const statusColors = {
+         pending: 'bg-yellow-100 text-yellow-800 border-2 border-yellow-400',
+         confirmed: 'bg-green-100 text-green-800 border-2 border-green-400',
+         cancelled: 'bg-red-100 text-red-800 border-2 border-red-400',
+         completed: 'bg-blue-100 text-blue-800 border-2 border-blue-400',
+       };
+       const payColors = {
+         pending: 'text-yellow-600 font-bold',
+         paid: 'text-green-600 font-bold',
+         refunded: 'text-gray-500 font-bold',
+       };
+        
+       // Format date for better readability
+       const bookingDateObj = new Date(b.booking_date);
+       const formattedDate = bookingDateObj.toLocaleDateString('en-US', { 
+         month: 'short', 
+         day: 'numeric', 
+         year: 'numeric' 
+       });
+        
+       return `
+         <div class="glass-card rounded-[2rem] p-8 md:p-10 border-2 border-lux-navy/10 card-hover fade-in shadow-lg">
+           <div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
+             <div class="flex-1">
+               <div class="flex items-center gap-4 mb-6">
+                 <h3 class="luxury-heading font-bold text-2xl text-lux-navy">${b.facility_name}</h3>
+                 <span class="px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] rounded-full border ${statusColors[b.status] || 'bg-gray-100 text-gray-700 border-2 border-gray-300'}">${b.status.toUpperCase()}</span>
+               </div>
+               <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+                 <div class="space-y-2 p-3 bg-lux-navy/2 rounded-lg border border-lux-navy/5">
+                   <span class="block text-[9px] font-black uppercase tracking-widest text-lux-navy/40">Destination</span>
+                   <span class="text-sm font-bold text-lux-navy"><i class="fas fa-hotel mr-2 text-lux-gold"></i>${b.resort_name}</span>
+                 </div>
+                 <div class="space-y-2 p-3 bg-lux-navy/2 rounded-lg border border-lux-navy/5">
+                   <span class="block text-[9px] font-black uppercase tracking-widest text-lux-navy/40">Date</span>
+                   <span class="text-sm font-bold text-lux-navy"><i class="fas fa-calendar mr-2 text-lux-gold"></i>${formattedDate}</span>
+                 </div>
+                 <div class="space-y-2 p-3 bg-lux-navy/2 rounded-lg border border-lux-navy/5">
+                   <span class="block text-[9px] font-black uppercase tracking-widest text-lux-navy/40">Time Window</span>
+                   <span class="text-sm font-bold text-lux-navy"><i class="fas fa-clock mr-2 text-lux-gold"></i>${b.time_slot}</span>
+                  </div>
+                 <div class="space-y-2 p-3 bg-lux-navy/2 rounded-lg border border-lux-navy/5">
+                   <span class="block text-[9px] font-black uppercase tracking-widest text-lux-navy/40">Allocation</span>
+                   <span class="text-sm font-bold text-lux-navy"><i class="fas fa-users mr-2 text-lux-gold"></i>${b.quantity} units</span>
+                  </div>
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-                  <div class="space-y-1">
-                    <span class="block text-[8px] font-black uppercase tracking-widest text-lux-navy/20">Destination</span>
-                    <span class="text-xs font-bold text-lux-navy/60"><i class="fas fa-hotel mr-2 text-lux-gold"></i>${b.resort_name}</span>
-                  </div>
-                  <div class="space-y-1">
-                    <span class="block text-[8px] font-black uppercase tracking-widest text-lux-navy/20">Date</span>
-                    <span class="text-xs font-bold text-lux-navy/60"><i class="fas fa-calendar mr-2 text-lux-gold"></i>${b.booking_date}</span>
-                  </div>
-                  <div class="space-y-1">
-                    <span class="block text-[8px] font-black uppercase tracking-widest text-lux-navy/20">Time Window</span>
-                    <span class="text-xs font-bold text-lux-navy/60"><i class="fas fa-clock mr-2 text-lux-gold"></i>${b.time_slot}</span>
-                  </div>
-                  <div class="space-y-1">
-                    <span class="block text-[8px] font-black uppercase tracking-widest text-lux-navy/20">Allocation</span>
-                    <span class="text-xs font-bold text-lux-navy/60"><i class="fas fa-users mr-2 text-lux-gold"></i>${b.quantity} units</span>
-                  </div>
-                </div>
-                <div class="flex items-center gap-6 pt-6 border-t border-lux-navy/5">
-                  <div class="flex flex-col">
-                    <span class="text-[8px] font-black uppercase tracking-widest text-lux-navy/20 mb-1">Total Investment</span>
-                    <span class="text-xl font-black text-lux-navy">PHP ${Number(b.total_amount).toLocaleString('en-PH', {minimumFractionDigits: 2})}</span>
-                  </div>
-                  <div class="flex flex-col">
-                    <span class="text-[8px] font-black uppercase tracking-widest text-lux-navy/20 mb-1">Settlement</span>
-                    <span class="text-[10px] font-black uppercase tracking-widest ${payColors[b.payment_status] || ''}"><i class="fas fa-circle text-[6px] mr-2"></i>${b.payment_status}</span>
-                  </div>
-                </div>
-              </div>
-              <div class="flex flex-row md:flex-col gap-3">
-                ${b.payment_status === 'paid' ? `
-                  <a href="/ticket.html?booking=${b.id}" class="px-6 py-3 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all text-center"><i class="fas fa-ticket mr-2"></i>Access Pass</a>
-                ` : b.status !== 'cancelled' ? `
-                  <a href="/payment.html?booking=${b.id}" class="px-6 py-3 bg-lux-gold text-lux-navy text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-white hover:shadow-xl transition-all text-center">Finalize Payment</a>
-                ` : ''}
-                ${b.payment_status === 'paid' && b.status === 'cancelled' ? `
-                  <button onclick="requestRefund('${b.id}')" class="px-6 py-3 bg-white border border-lux-gold text-lux-gold text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold hover:text-white transition-all text-center">Request Refund</button>
-                ` : ''}
-                ${b.status !== 'cancelled' && b.status !== 'completed' ? `
-                  <button onclick="cancelBooking('${b.id}')" class="px-6 py-3 border border-lux-navy/5 text-lux-navy/40 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all">Relinquish</button>
-                ` : ''}
-              </div>
-            </div>
-          </div>
-        `;
+               <div class="flex items-center gap-6 pt-6 border-t-2 border-lux-navy/10">
+                 <div class="flex flex-col">
+                   <span class="text-[9px] font-black uppercase tracking-widest text-lux-navy/40 mb-2">Total Investment</span>
+                   <span class="text-2xl font-black text-lux-navy">PHP ${Number(b.total_amount).toLocaleString('en-PH', {minimumFractionDigits: 2})}</span>
+                 </div>
+                 <div class="flex flex-col">
+                   <span class="text-[9px] font-black uppercase tracking-widest text-lux-navy/40 mb-2">Settlement</span>
+                   <span class="text-[11px] font-black uppercase tracking-widest ${payColors[b.payment_status] || ''} flex items-center"><i class="fas fa-circle text-[7px] mr-2"></i>${b.payment_status}</span>
+                 </div>
+               </div>
+             </div>
+             <div class="flex flex-row md:flex-col gap-3">
+               ${b.payment_status === 'paid' ? `
+                 <a href="/ticket.html?booking=${b.id}" class="px-6 py-3 bg-gradient-to-r from-lux-navy to-lux-navy/80 text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:shadow-lg hover:from-lux-gold hover:to-lux-gold/80 transition-all duration-200 text-center border-2 border-transparent hover:border-lux-navy"><i class="fas fa-ticket mr-2"></i>Access Pass</a>
+               ` : b.status !== 'cancelled' ? `
+                 <a href="/payment.html?booking=${b.id}" class="px-6 py-3 bg-gradient-to-r from-lux-gold to-lux-gold/80 text-lux-navy text-[10px] font-black uppercase tracking-widest rounded-full hover:shadow-lg transition-all duration-200 text-center border-2 border-transparent hover:border-lux-navy">Finalize Payment</a>
+               ` : ''}
+               ${b.payment_status === 'paid' && b.status === 'cancelled' ? `
+                 <button onclick="requestRefund('${b.id}')" class="px-6 py-3 bg-white border-2 border-lux-gold text-lux-gold text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold hover:text-white transition-all duration-200 text-center">Request Refund</button>
+               ` : ''}
+               ${b.status !== 'cancelled' && b.status !== 'completed' ? `
+                 <button onclick="cancelBooking('${b.id}')" class="px-6 py-3 border-2 border-red-300 text-red-600 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-red-50 hover:text-red-700 hover:border-red-500 transition-all duration-200">Relinquish</button>
+               ` : ''}
+             </div>
+           </div>
+         </div>
+       `;
       }).join('');
     }
 

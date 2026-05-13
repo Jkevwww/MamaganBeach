@@ -41,36 +41,36 @@
       <div class="glass-card p-8 rounded-[2rem] premium-shadow mb-16 flex flex-col gap-8 fade-in delay-200">
         <div class="flex flex-col lg:flex-row items-center justify-between gap-8">
           <div class="relative w-full lg:max-w-md group">
-            <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-lux-navy/30 group-focus-within:text-lux-gold transition-colors"></i>
+            <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-lux-navy/40 group-focus-within:text-lux-gold transition-colors text-lg"></i>
             <input type="text" id="facility-search" 
-              class="w-full pl-14 pr-12 py-4 rounded-2xl bg-white/50 border border-lux-navy/5 focus:border-lux-gold focus:bg-white outline-none transition-all placeholder:text-lux-navy/20" 
+              class="w-full pl-14 pr-12 py-4 rounded-2xl bg-white border-2 border-lux-navy/20 focus:border-lux-gold focus:bg-white outline-none transition-all placeholder:text-lux-navy/30 font-semibold text-lux-navy" 
               placeholder="Search by name, description, or amenities...">
-            <button id="clear-search" title="Clear search" aria-label="Clear search" class="absolute right-5 top-1/2 -translate-y-1/2 text-lux-navy/20 hover:text-lux-gold hidden"><i class="fas fa-times-circle"></i></button>
+            <button id="clear-search" title="Clear search" aria-label="Clear search" class="absolute right-5 top-1/2 -translate-y-1/2 text-lux-navy/20 hover:text-lux-gold hidden text-lg"><i class="fas fa-times-circle"></i></button>
           </div>
 
           <div class="flex flex-wrap justify-center gap-3" id="type-filters">
-            <button data-type="all" class="filter-btn active px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest bg-lux-navy text-white transition-all shadow-lg hover:shadow-lux-navy/20">All</button>
-            <button data-type="cabana" class="filter-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest bg-white text-lux-navy border border-lux-navy/5 hover:border-lux-gold transition-all">Cabanas</button>
-            <button data-type="day_bed" class="filter-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest bg-white text-lux-navy border border-lux-navy/5 hover:border-lux-gold transition-all">Day Beds</button>
-            <button data-type="jet_ski" class="filter-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest bg-white text-lux-navy border border-lux-navy/5 hover:border-lux-gold transition-all">Jet Skis</button>
-            <button data-type="island_tour" class="filter-btn px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest bg-white text-lux-navy border border-lux-navy/5 hover:border-lux-gold transition-all">Tours</button>
+            <button data-type="all" class="filter-btn active px-8 py-3 rounded-full text-[11px] font-black uppercase tracking-widest bg-gradient-to-r from-lux-navy to-lux-navy/80 text-white transition-all shadow-lg hover:shadow-2xl hover:from-lux-gold hover:to-lux-gold/80 border-2 border-transparent hover:border-lux-navy duration-200">All</button>
+            <button data-type="cabana" class="filter-btn px-8 py-3 rounded-full text-[11px] font-black uppercase tracking-widest bg-white text-lux-navy border-2 border-lux-navy/30 hover:border-lux-gold hover:bg-lux-gold/5 transition-all duration-200">Cabanas</button>
+            <button data-type="day_bed" class="filter-btn px-8 py-3 rounded-full text-[11px] font-black uppercase tracking-widest bg-white text-lux-navy border-2 border-lux-navy/30 hover:border-lux-gold hover:bg-lux-gold/5 transition-all duration-200">Day Beds</button>
+            <button data-type="jet_ski" class="filter-btn px-8 py-3 rounded-full text-[11px] font-black uppercase tracking-widest bg-white text-lux-navy border-2 border-lux-navy/30 hover:border-lux-gold hover:bg-lux-gold/5 transition-all duration-200">Jet Skis</button>
+            <button data-type="island_tour" class="filter-btn px-8 py-3 rounded-full text-[11px] font-black uppercase tracking-widest bg-white text-lux-navy border-2 border-lux-navy/30 hover:border-lux-gold hover:bg-lux-gold/5 transition-all duration-200">Tours</button>
           </div>
         </div>
 
         <div class="pt-8 border-t border-lux-navy/5 flex flex-wrap items-center justify-between gap-6">
           <div class="flex flex-wrap items-center gap-6">
             <div class="flex flex-col gap-2">
-              <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30">Price Range (PHP)</label>
+              <label class="text-[11px] font-black uppercase tracking-widest text-lux-navy/40">Price Range (PHP)</label>
               <div class="flex items-center gap-4">
-                <input type="number" id="min-price" class="w-24 px-4 py-2 rounded-xl bg-white/50 border border-lux-navy/5 text-xs outline-none" placeholder="Min">
-                <span class="text-lux-navy/20">-</span>
-                <input type="number" id="max-price" class="w-24 px-4 py-2 rounded-xl bg-white/50 border border-lux-navy/5 text-xs outline-none" placeholder="Max">
+                <input type="number" id="min-price" class="w-24 px-4 py-2 rounded-xl bg-white border-2 border-lux-navy/20 focus:border-lux-gold text-xs outline-none font-semibold" placeholder="Min">
+                <span class="text-lux-navy/30 font-bold">-</span>
+                <input type="number" id="max-price" class="w-24 px-4 py-2 rounded-xl bg-white border-2 border-lux-navy/20 focus:border-lux-gold text-xs outline-none font-semibold" placeholder="Max">
               </div>
             </div>
 
             <div class="flex flex-col gap-2">
-              <label for="capacity-filter" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30">Capacity</label>
-              <select id="capacity-filter" title="Filter by capacity" aria-label="Filter by capacity" class="px-4 py-2 rounded-xl bg-white/50 border border-lux-navy/5 text-xs outline-none cursor-pointer">
+              <label for="capacity-filter" class="text-[11px] font-black uppercase tracking-widest text-lux-navy/40">Capacity</label>
+              <select id="capacity-filter" title="Filter by capacity" aria-label="Filter by capacity" class="px-4 py-2 rounded-xl bg-white border-2 border-lux-navy/20 focus:border-lux-gold text-xs outline-none cursor-pointer font-semibold">
                 <option value="any">Any Capacity</option>
                 <option value="2">2+ Guests</option>
                 <option value="5">5+ Guests</option>
