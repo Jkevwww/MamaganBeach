@@ -107,13 +107,83 @@
                     <p class="text-[10px] font-black uppercase tracking-widest text-lux-navy/20">Awaiting Optics Initialization</p>
                 </div>
             </div>
-            <div class="mt-10 flex gap-4">
-              <button id="activate-btn" onclick="startScan()" aria-label="Activate camera scanner" class="flex-1 py-5 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all shadow-xl shadow-lux-navy/10 flex items-center justify-center gap-3">
-                <i class="fas fa-eye"></i>
-                <span>Activate Optics</span>
+            <!-- Permission & Device Status -->
+            <div id="permission-status" class="mb-6 p-4 rounded-xl bg-blue-50 border border-blue-200 hidden">
+              <div class="flex items-center gap-2">
+                <i class="fas fa-info-circle text-blue-600"></i>
+                <span class="text-xs font-medium text-blue-700">Camera permission required. Click "Allow" when prompted or enable in browser settings.</span>
+              </div>
+            </div>
+
+            <!-- Camera Selection Dropdown -->
+            <div class="mb-6 space-y-2">
+              <label for="camera-select" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Camera Device</label>
+              <select id="camera-select" aria-label="Select camera device" class="w-full px-4 py-3 rounded-xl border border-lux-navy/10 bg-white text-sm font-medium text-lux-navy focus:ring-2 focus:ring-lux-gold focus:border-transparent transition-all">
+                <option value="">Detecting cameras...</option>
+              </select>
+            </div>
+
+            <!-- Camera Controls Panel (Collapsible) -->
+            <div class="mb-6 bg-lux-navy/5 rounded-2xl p-4 transition-all" id="camera-controls-panel">
+              <button type="button" id="toggle-controls" class="w-full flex items-center justify-between text-sm font-bold text-lux-navy mb-3 hover:text-lux-gold transition-colors" aria-expanded="false">
+                <span class="flex items-center gap-2"><i class="fas fa-sliders-h"></i> Advanced Controls</span>
+                <i class="fas fa-chevron-down transition-transform"></i>
               </button>
-              <button id="deactivate-btn" onclick="stopScan()" disabled aria-label="Deactivate camera scanner" class="px-10 py-5 border border-lux-navy/10 text-lux-navy/20 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
-                Deactivate
+              
+              <div id="controls-content" class="hidden space-y-4 pt-3 border-t border-lux-navy/10">
+                <!-- Brightness Control -->
+                <div class="space-y-1">
+                  <div class="flex items-center justify-between">
+                    <label for="brightness-slider" class="text-[8px] font-black uppercase tracking-widest text-lux-navy/30">Brightness</label>
+                    <span id="brightness-value" class="text-[8px] font-bold text-lux-navy">100%</span>
+                  </div>
+                  <input type="range" id="brightness-slider" min="50" max="150" value="100" class="w-full h-2 bg-lux-navy/10 rounded-full appearance-none cursor-pointer" aria-label="Adjust brightness">
+                </div>
+
+                <!-- Contrast Control -->
+                <div class="space-y-1">
+                  <div class="flex items-center justify-between">
+                    <label for="contrast-slider" class="text-[8px] font-black uppercase tracking-widest text-lux-navy/30">Contrast</label>
+                    <span id="contrast-value" class="text-[8px] font-bold text-lux-navy">100%</span>
+                  </div>
+                  <input type="range" id="contrast-slider" min="50" max="150" value="100" class="w-full h-2 bg-lux-navy/10 rounded-full appearance-none cursor-pointer" aria-label="Adjust contrast">
+                </div>
+
+                <!-- Zoom Control -->
+                <div class="space-y-1">
+                  <div class="flex items-center justify-between">
+                    <label for="zoom-slider" class="text-[8px] font-black uppercase tracking-widest text-lux-navy/30">Zoom</label>
+                    <span id="zoom-value" class="text-[8px] font-bold text-lux-navy">1.0x</span>
+                  </div>
+                  <input type="range" id="zoom-slider" min="100" max="200" value="100" step="10" class="w-full h-2 bg-lux-navy/10 rounded-full appearance-none cursor-pointer" aria-label="Adjust zoom">
+                </div>
+
+                <!-- Mirror/Flip Option -->
+                <div class="flex items-center gap-2 pt-2">
+                  <input type="checkbox" id="mirror-checkbox" class="w-4 h-4 rounded border-lux-navy/20 text-lux-gold focus:ring-lux-gold" aria-label="Mirror camera feed">
+                  <label for="mirror-checkbox" class="text-xs font-medium text-lux-navy">Mirror Feed (for selfie camera)</label>
+                </div>
+
+                <!-- Reset Button -->
+                <button type="button" id="reset-controls-btn" class="w-full mt-3 py-2 px-4 bg-lux-navy/10 hover:bg-lux-navy/20 text-lux-navy text-xs font-bold rounded-lg transition-colors">
+                  <i class="fas fa-undo mr-2"></i> Reset to Defaults
+                </button>
+              </div>
+            </div>
+
+            <!-- Camera State Badge -->
+            <div class="mb-6 flex items-center justify-between px-4 py-2 bg-lux-navy/5 rounded-lg">
+              <span class="text-xs font-bold text-lux-navy">Camera Status:</span>
+              <span id="camera-state-badge" class="inline-flex items-center gap-1 px-3 py-1 bg-gray-200 text-gray-700 text-xs font-bold rounded-full">
+                <i class="fas fa-circle text-gray-500 text-[6px]"></i> OFF
+              </span>
+            </div>
+
+            <!-- Toggle Button -->
+            <div class="mt-10 flex gap-3">
+              <button id="camera-toggle-btn" onclick="toggleCamera()" aria-label="Toggle camera on/off" class="flex-1 py-5 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all shadow-xl shadow-lux-navy/10 flex items-center justify-center gap-3">
+                <i id="toggle-icon" class="fas fa-power-off"></i>
+                <span id="toggle-text">Turn On Camera</span>
               </button>
             </div>
           </div>
@@ -166,18 +236,218 @@
     let html5QrCode = null;
     let currentCameraId = null;
     let availableCameras = [];
+    let cameraActive = false;
+    let cameraSettings = {
+      brightness: 100,
+      contrast: 100,
+      zoom: 100,
+      mirror: false
+    };
 
     // Check camera permissions on page load
     async function checkCameraPermission() {
       try {
         if (navigator.permissions) {
           const result = await navigator.permissions.query({ name: 'camera' });
-          if (result.state === 'denied') {
-            showCameraError('Camera permission denied. Please allow camera access in your browser settings.');
-          }
+          updatePermissionStatus(result.state);
+          result.addEventListener('change', () => updatePermissionStatus(result.state));
         }
       } catch (err) {
         // Permissions API not supported, continue anyway
+      }
+    }
+
+    function updatePermissionStatus(state) {
+      const statusBadge = document.getElementById('permission-status');
+      if (state === 'denied') {
+        statusBadge.classList.remove('hidden');
+      } else {
+        statusBadge.classList.add('hidden');
+      }
+    }
+
+    // Load camera settings from localStorage
+    function loadCameraSettings() {
+      const saved = localStorage.getItem('cameraSettings_' + (typeof loadUser !== 'undefined' ? 'default' : 'default'));
+      if (saved) {
+        cameraSettings = { ...cameraSettings, ...JSON.parse(saved) };
+        updateSettingsUI();
+      }
+    }
+
+    // Save camera settings to localStorage
+    function saveCameraSettings() {
+      localStorage.setItem('cameraSettings_default', JSON.stringify(cameraSettings));
+    }
+
+    // Update UI to reflect current settings
+    function updateSettingsUI() {
+      document.getElementById('brightness-slider').value = cameraSettings.brightness;
+      document.getElementById('brightness-value').textContent = cameraSettings.brightness + '%';
+      document.getElementById('contrast-slider').value = cameraSettings.contrast;
+      document.getElementById('contrast-value').textContent = cameraSettings.contrast + '%';
+      document.getElementById('zoom-slider').value = cameraSettings.zoom;
+      document.getElementById('zoom-value').textContent = (cameraSettings.zoom / 100).toFixed(1) + 'x';
+      document.getElementById('mirror-checkbox').checked = cameraSettings.mirror;
+      applyVideoFilters();
+    }
+
+    // Apply video filters based on settings
+    function applyVideoFilters() {
+      const qrReader = document.getElementById('qr-reader');
+      if (!qrReader) return;
+      
+      const video = qrReader.querySelector('video');
+      if (!video) return;
+      
+      let filters = [];
+      filters.push(`brightness(${cameraSettings.brightness}%)`);
+      filters.push(`contrast(${cameraSettings.contrast}%)`);
+      
+      video.style.filter = filters.join(' ');
+      video.style.zoom = (cameraSettings.zoom / 100);
+      
+      if (cameraSettings.mirror) {
+        video.style.transform = 'scaleX(-1)';
+      } else {
+        video.style.transform = 'scaleX(1)';
+      }
+    }
+
+    // Toggle advanced controls visibility
+    function setupControlsToggle() {
+      const toggleBtn = document.getElementById('toggle-controls');
+      const content = document.getElementById('controls-content');
+      const chevron = toggleBtn.querySelector('i.fa-chevron-down');
+      
+      if (!toggleBtn) return;
+      
+      toggleBtn.addEventListener('click', () => {
+        const isHidden = content.classList.contains('hidden');
+        if (isHidden) {
+          content.classList.remove('hidden');
+          toggleBtn.setAttribute('aria-expanded', 'true');
+          chevron.style.transform = 'rotate(180deg)';
+        } else {
+          content.classList.add('hidden');
+          toggleBtn.setAttribute('aria-expanded', 'false');
+          chevron.style.transform = 'rotate(0deg)';
+        }
+      });
+    }
+
+    // Setup camera controls event listeners
+    function setupCameraControls() {
+      const brightnessSlider = document.getElementById('brightness-slider');
+      const contrastSlider = document.getElementById('contrast-slider');
+      const zoomSlider = document.getElementById('zoom-slider');
+      const mirrorCheckbox = document.getElementById('mirror-checkbox');
+      const resetBtn = document.getElementById('reset-controls-btn');
+      
+      brightnessSlider?.addEventListener('input', (e) => {
+        cameraSettings.brightness = parseInt(e.target.value);
+        document.getElementById('brightness-value').textContent = cameraSettings.brightness + '%';
+        applyVideoFilters();
+      });
+      
+      contrastSlider?.addEventListener('input', (e) => {
+        cameraSettings.contrast = parseInt(e.target.value);
+        document.getElementById('contrast-value').textContent = cameraSettings.contrast + '%';
+        applyVideoFilters();
+      });
+      
+      zoomSlider?.addEventListener('input', (e) => {
+        cameraSettings.zoom = parseInt(e.target.value);
+        document.getElementById('zoom-value').textContent = (cameraSettings.zoom / 100).toFixed(1) + 'x';
+        applyVideoFilters();
+      });
+      
+      mirrorCheckbox?.addEventListener('change', (e) => {
+        cameraSettings.mirror = e.target.checked;
+        applyVideoFilters();
+      });
+      
+      resetBtn?.addEventListener('click', () => {
+        cameraSettings = { brightness: 100, contrast: 100, zoom: 100, mirror: false };
+        updateSettingsUI();
+        showToast('Camera settings reset to defaults.', 'info');
+      });
+    }
+
+    // Update camera selection dropdown
+    async function updateCameraList() {
+      const select = document.getElementById('camera-select');
+      await getCameras();
+      
+      select.innerHTML = '';
+      if (availableCameras.length === 0) {
+        select.innerHTML = '<option value="">No cameras found</option>';
+        return;
+      }
+      
+      availableCameras.forEach((camera, index) => {
+        const option = document.createElement('option');
+        option.value = camera.deviceId;
+        let label = camera.label || `Camera ${index + 1}`;
+        if (label.toLowerCase().includes('environment') || label.toLowerCase().includes('back')) {
+          label = '📷 Back Camera - ' + label;
+        } else if (label.toLowerCase().includes('user') || label.toLowerCase().includes('front')) {
+          label = '🤳 Front Camera - ' + label;
+        }
+        option.textContent = label;
+        select.appendChild(option);
+      });
+      
+      // Select previously used camera if available
+      if (currentCameraId && availableCameras.find(c => c.deviceId === currentCameraId)) {
+        select.value = currentCameraId;
+      } else if (availableCameras.length > 0) {
+        currentCameraId = availableCameras[0].deviceId;
+        select.value = currentCameraId;
+      }
+    }
+
+    // Handle camera selection change
+    function setupCameraSelection() {
+      const select = document.getElementById('camera-select');
+      select?.addEventListener('change', (e) => {
+        currentCameraId = e.target.value;
+        if (cameraActive) {
+          showToast('Camera will switch on next activation.', 'info');
+        }
+      });
+    }
+
+    // Toggle camera on/off
+    async function toggleCamera() {
+      if (cameraActive) {
+        await stopScan();
+      } else {
+        await startScan();
+      }
+    }
+
+    // Update camera state badge
+    function updateCameraStateBadge() {
+      const badge = document.getElementById('camera-state-badge');
+      const toggleBtn = document.getElementById('camera-toggle-btn');
+      const toggleText = document.getElementById('toggle-text');
+      const toggleIcon = document.getElementById('toggle-icon');
+      
+      if (cameraActive) {
+        badge.innerHTML = '<i class="fas fa-circle text-lux-gold text-[6px] animate-pulse"></i> SCANNING';
+        badge.className = 'inline-flex items-center gap-1 px-3 py-1 bg-lux-gold/20 text-lux-gold text-xs font-bold rounded-full';
+        toggleBtn.classList.remove('hover:bg-lux-gold');
+        toggleBtn.classList.add('bg-lux-gold', 'text-lux-navy');
+        toggleText.textContent = 'Turn Off Camera';
+        toggleIcon.className = 'fas fa-power-off';
+      } else {
+        badge.innerHTML = '<i class="fas fa-circle text-gray-500 text-[6px]"></i> OFF';
+        badge.className = 'inline-flex items-center gap-1 px-3 py-1 bg-gray-200 text-gray-700 text-xs font-bold rounded-full';
+        toggleBtn.classList.remove('bg-lux-gold', 'text-lux-navy');
+        toggleBtn.classList.add('hover:bg-lux-gold');
+        toggleText.textContent = 'Turn On Camera';
+        toggleIcon.className = 'fas fa-power-off';
       }
     }
 
@@ -234,9 +504,8 @@
     async function startScan() {
       const readerDiv = document.getElementById('qr-reader');
       const placeholder = document.getElementById('placeholder-icon');
-      const activateBtn = document.getElementById('activate-btn');
-      const deactivateBtn = document.getElementById('deactivate-btn');
       const statusIndicator = document.getElementById('scanner-status');
+      const toggleBtn = document.getElementById('camera-toggle-btn');
       
       // Check if browser supports camera
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -257,9 +526,9 @@
 
         html5QrCode = new Html5Qrcode("qr-reader");
         
-        activateBtn.disabled = true;
-        activateBtn.classList.add('opacity-50');
-        activateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Synchronizing...</span>';
+        toggleBtn.disabled = true;
+        toggleBtn.classList.add('opacity-50');
+        toggleBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Initializing...</span>';
 
         // Try to get cameras first
         await getCameras();
@@ -309,16 +578,20 @@
         
         placeholder.classList.add('hidden');
         statusIndicator.classList.remove('hidden');
-        // Hide Activate button only after optics successfully starts
-        activateBtn.classList.add('hidden');
-        deactivateBtn.disabled = false;
-
-        deactivateBtn.classList.remove('text-lux-navy/20');
-        deactivateBtn.classList.add('text-lux-navy');
+        
+        cameraActive = true;
+        updateCameraStateBadge();
+        toggleBtn.disabled = false;
+        toggleBtn.innerHTML = '<i id="toggle-icon" class="fas fa-power-off"></i><span id="toggle-text">Turn Off Camera</span>';
+        
+        // Apply saved camera settings
+        applyVideoFilters();
         
         showToast('Optical verification system active.', 'success');
       } catch (err) {
         console.error('Camera failed:', err);
+        toggleBtn.disabled = false;
+        toggleBtn.innerHTML = '<i id="toggle-icon" class="fas fa-power-off"></i><span id="toggle-text">Turn On Camera</span>';
         
         // Provide specific error messages
         let errorMessage = 'Camera access denied. Please check permissions.';
@@ -359,10 +632,12 @@
             
             placeholder.classList.add('hidden');
             statusIndicator.classList.remove('hidden');
-            activateBtn.classList.add('hidden');
-            deactivateBtn.disabled = false;
-            deactivateBtn.classList.remove('text-lux-navy/20');
-            deactivateBtn.classList.add('text-lux-navy');
+            
+            cameraActive = true;
+            updateCameraStateBadge();
+            toggleBtn.disabled = false;
+            toggleBtn.innerHTML = '<i id="toggle-icon" class="fas fa-power-off"></i><span id="toggle-text">Turn Off Camera</span>';
+            applyVideoFilters();
             
             showToast('Using front camera for verification.', 'success');
             return;
@@ -374,18 +649,14 @@
           showCameraError(errorMessage);
         }
         
-        activateBtn.disabled = false;
-        activateBtn.classList.remove('opacity-50');
-        activateBtn.innerHTML = '<i class="fas fa-eye"></i><span>Activate Optics</span>';
         showToast(errorMessage, 'error');
       }
     }
 
     async function stopScan() {
-      const activateBtn = document.getElementById('activate-btn');
-      const deactivateBtn = document.getElementById('deactivate-btn');
       const placeholder = document.getElementById('placeholder-icon');
       const statusIndicator = document.getElementById('scanner-status');
+      const toggleBtn = document.getElementById('camera-toggle-btn');
 
       if (html5QrCode) {
         try {
@@ -402,14 +673,11 @@
           
           placeholder.classList.remove('hidden');
           statusIndicator.classList.add('hidden');
-          activateBtn.classList.remove('hidden');
-          activateBtn.disabled = false;
-          activateBtn.classList.remove('opacity-50');
-          activateBtn.innerHTML = '<i class="fas fa-eye"></i><span>Activate Optics</span>';
           
-          deactivateBtn.disabled = true;
-          deactivateBtn.classList.add('text-lux-navy/20');
-          deactivateBtn.classList.remove('text-lux-navy');
+          cameraActive = false;
+          updateCameraStateBadge();
+          toggleBtn.disabled = false;
+          toggleBtn.innerHTML = '<i id="toggle-icon" class="fas fa-power-off"></i><span id="toggle-text">Turn On Camera</span>';
           
           showToast('Optical system offline.', 'info');
         } catch (err) {
@@ -418,13 +686,11 @@
           html5QrCode = null;
           placeholder.classList.remove('hidden');
           statusIndicator.classList.add('hidden');
-          activateBtn.classList.remove('hidden');
-          activateBtn.disabled = false;
-          activateBtn.classList.remove('opacity-50');
-          activateBtn.innerHTML = '<i class="fas fa-eye"></i><span>Activate Optics</span>';
-          deactivateBtn.disabled = true;
-          deactivateBtn.classList.add('text-lux-navy/20');
-          deactivateBtn.classList.remove('text-lux-navy');
+          
+          cameraActive = false;
+          updateCameraStateBadge();
+          toggleBtn.disabled = false;
+          toggleBtn.innerHTML = '<i id="toggle-icon" class="fas fa-power-off"></i><span id="toggle-text">Turn On Camera</span>';
         }
       }
     }
@@ -451,28 +717,28 @@
       }
     }
 
-    // Check camera permission on page load
-    document.addEventListener('DOMContentLoaded', () => {
-      // Ensure optics library is loaded before user can start.
-      // This avoids a race where buttons work but Html5Qrcode is undefined.
-      const activateBtn = document.getElementById('activate-btn');
-      const deactivateBtn = document.getElementById('deactivate-btn');
-
-      deactivateBtn.disabled = true;
-      deactivateBtn.classList.add('text-lux-navy/20');
-      deactivateBtn.classList.remove('text-lux-navy');
-
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Ensure optics library is loaded
       if (typeof window.Html5Qrcode === 'undefined') {
         showCameraError('Optics library failed to load. Refresh the page and allow scripts if blocked.');
-        if (activateBtn) {
-          activateBtn.disabled = false; // keep visible, but user will get error when starting
-          activateBtn.innerHTML = '<i class="fas fa-eye"></i><span>Activate Optics</span>';
-          activateBtn.classList.remove('opacity-50');
-        }
         return;
       }
 
+      // Setup UI controls
+      setupControlsToggle();
+      setupCameraControls();
+      setupCameraSelection();
+      
+      // Load settings and check permissions
+      loadCameraSettings();
       checkCameraPermission();
+      
+      // Update camera list
+      await updateCameraList();
+      
+      // Initialize camera state
+      updateCameraStateBadge();
     });
 
 
@@ -508,6 +774,8 @@
         
         if (res.success) {
             showToast('Guest verified successfully', 'success');
+            // Save camera settings after successful scan
+            saveCameraSettings();
         } else {
             showToast(res.message || 'Invalid Admission ID', 'error');
         }
