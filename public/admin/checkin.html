@@ -8,21 +8,50 @@
   <script src="/js/tailwind-config.js"></script>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" type="text/javascript"></script>
   <style>
     #qr-reader video {
         object-fit: cover !important;
         border-radius: 2rem !important;
+        width: 100% !important;
+        height: 100% !important;
     }
     #qr-reader__scan_region {
         border: none !important;
+        min-height: 300px !important;
     }
     #qr-reader__dashboard {
         display: none !important;
     }
+    #qr-reader__camera_permission {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        height: 100% !important;
+    }
     .scanner-active {
         border-color: #c5a059 !important;
         box-shadow: 0 0 40px rgba(197, 160, 89, 0.2);
+    }
+    .camera-error {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        height: 100% !important;
+        text-align: center !important;
+        padding: 2rem !important;
+    }
+    .camera-error i {
+        font-size: 3rem !important;
+        margin-bottom: 1rem !important;
+        color: #ef4444 !important;
+    }
+    .camera-error p {
+        color: #64748b !important;
+        font-size: 0.875rem !important;
+        line-height: 1.5 !important;
     }
   </style>
 </head>
