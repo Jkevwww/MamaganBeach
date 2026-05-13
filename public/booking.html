@@ -25,6 +25,9 @@
           <a href="/my-bookings.html" class="text-lux-navy/70 hover:text-lux-gold font-medium transition-colors uppercase tracking-widest text-xs">Bookings</a>
           <div id="auth-nav" class="flex items-center gap-4"></div>
         </div>
+        <button class="md:hidden text-gray-600 text-xl" aria-label="Toggle menu" title="Toggle menu" aria-expanded="false" aria-controls="mobile-menu">
+          <i class="fas fa-bars"></i>
+        </button>
       </div>
     </div>
   </nav>
@@ -218,12 +221,12 @@
         return `
           <button type="button" 
             onclick="selectSlot('${slot.time_slot}', ${slot.available}, ${slot.is_blocked}${pickHour ? ', true' : ''})"
-            class="slot-btn px-6 py-4 rounded-2xl border border-lux-navy/10 text-sm font-bold transition-all ${disabled ? 'opacity-30 cursor-not-allowed' : 'hover:border-lux-gold hover:bg-white'}"
+            class="slot-btn px-6 py-4 rounded-2xl border-2 text-sm font-bold transition-all duration-200 ${disabled ? 'opacity-40 cursor-not-allowed border-lux-navy/10 bg-gray-50' : 'border-lux-navy/20 hover:border-lux-gold hover:bg-lux-gold/5 hover:shadow-md'}"
             ${disabled ? 'disabled' : ''}
             data-slot="${slot.time_slot}"
           >
-            <div class="mb-1">${slot.time_slot}</div>
-            <div class="text-[10px] font-black uppercase ${statusClass}">
+            <div class="mb-2 text-base font-black">${slot.time_slot}</div>
+            <div class="text-[11px] font-black uppercase ${statusClass}">
               ${statusText}
             </div>
           </button>
