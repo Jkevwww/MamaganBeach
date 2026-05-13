@@ -592,6 +592,7 @@ a:hover {
   position: fixed;
   inset: 0;
   background: rgba(15, 23, 42, 0.5);
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   z-index: var(--z-modal-backdrop);
   animation: fadeIn 0.2s ease;
@@ -879,6 +880,7 @@ a:hover {
   right: 0;
   z-index: var(--z-sticky);
   background: rgba(255, 255, 255, 0.85);
+  -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--gray-200);
   transition: all var(--transition-base);
@@ -891,6 +893,7 @@ a:hover {
 
 .navbar-light {
   background: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
