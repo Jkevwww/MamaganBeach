@@ -164,6 +164,72 @@
     });
 
     let html5QrCode = null;
+    let currentCameraId = null;
+    let availableCameras = [];
+
+    // Check camera permissions on page load
+    async function checkCameraPermission() {
+      try {
+        if (navigator.permissions) {
+          const result = await navigator.permissions.query({ name: 'camera' });
+          if (result.state === 'denied') {
+            showCameraError('Camera permission denied. Please allow camera access in your browser settings.');
+          }
+        }
+      } catch (err) {
+        // Permissions API not supported, continue anyway
+      }
+    }
+
+    // Get available cameras
+    async function getCameras() {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        availableCameras = devices.filter(device => device.kind === 'videoinput');
+        return availableCameras;
+      } catch (err) {
+        console.error('Failed to enumerate cameras:', err);
+        return [];
+      }
+    }
+
+    // Show camera error in the reader div
+    function showCameraError(message) {
+      const readerDiv = document.getElementById('qr-reader');
+      const placeholder = document.getElementById('placeholder-icon');
+      
+      placeholder.classList.add('hidden');
+      
+      // Remove existing error if any
+      const existingError = readerDiv.querySelector('.camera-error');
+      if (existingError) {
+        existingError.remove();
+      }
+      
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'camera-error';
+      errorDiv.innerHTML = `
+        <i class="fas fa-camera-slash"></i>
+        <p class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 mb-2">Camera Unavailable</p>
+        <p>${message}</p>
+        <button onclick="retryCamera()" class="mt-6 px-6 py-3 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all">
+          Retry Access
+        </button>
+      `;
+      readerDiv.appendChild(errorDiv);
+    }
+
+    // Retry camera access
+    async function retryCamera() {
+      const readerDiv = document.getElementById('qr-reader');
+      const existingError = readerDiv.querySelector('.camera-error');
+      if (existingError) {
+        existingError.remove();
+      }
+      const placeholder = document.getElementById('placeholder-icon');
+      placeholder.classList.remove('hidden');
+      await startScan();
+    }
 
     async function startScan() {
       const readerDiv = document.getElementById('qr-reader');
@@ -172,9 +238,21 @@
       const deactivateBtn = document.getElementById('deactivate-btn');
       const statusIndicator = document.getElementById('scanner-status');
       
+      // Check if browser supports camera
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        showCameraError('Your browser does not support camera access. Please use a modern browser like Chrome, Firefox, or Safari.');
+        return;
+      }
+
       try {
         if (html5QrCode) {
           await stopScan();
+        }
+
+        // Remove any existing error messages
+        const existingError = readerDiv.querySelector('.camera-error');
+        if (existingError) {
+          existingError.remove();
         }
 
         html5QrCode = new Html5Qrcode("qr-reader");
@@ -183,12 +261,35 @@
         activateBtn.classList.add('opacity-50');
         activateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Synchronizing...</span>';
 
+        // Try to get cameras first
+        await getCameras();
+
+        // Determine which camera to use
+        let cameraConfig;
+        if (currentCameraId && availableCameras.find(c => c.deviceId === currentCameraId)) {
+          // Use previously selected camera
+          cameraConfig = { deviceId: { exact: currentCameraId } };
+        } else if (availableCameras.length > 0) {
+          // Try environment (back) camera first, fallback to any available
+          const envCamera = availableCameras.find(c => c.label.toLowerCase().includes('environment') || c.label.toLowerCase().includes('back'));
+          if (envCamera) {
+            cameraConfig = { deviceId: { exact: envCamera.deviceId } };
+            currentCameraId = envCamera.deviceId;
+          } else {
+            cameraConfig = { facingMode: "environment" };
+          }
+        } else {
+          // No cameras enumerated, try generic environment mode
+          cameraConfig = { facingMode: "environment" };
+        }
+
         await html5QrCode.start(
-          { facingMode: "environment" },
+          cameraConfig,
           { 
-            fps: 15, 
-            qrbox: { width: 280, height: 280 },
-            aspectRatio: 1.0
+            fps: 10, 
+            qrbox: { width: 250, height: 250 },
+            aspectRatio: 1.0,
+            disableFlip: false
           },
           (decodedText) => {
             console.log('Optics Protocol Match:', decodedText);
@@ -196,10 +297,13 @@
             readerDiv.classList.add('scanner-active');
             setTimeout(() => readerDiv.classList.remove('scanner-active'), 500);
             
+            // Play a subtle beep sound
+            playScanSound();
+            
             verifyArrival(decodedText);
           },
           (errorMessage) => {
-              // Ignore constant lookup errors
+            // Ignore constant lookup errors - this is normal behavior
           }
         );
         
@@ -213,10 +317,65 @@
         showToast('Optical verification system active.', 'success');
       } catch (err) {
         console.error('Camera failed:', err);
+        
+        // Provide specific error messages
+        let errorMessage = 'Camera access denied. Please check permissions.';
+        
+        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+          errorMessage = 'Camera permission denied. Please allow camera access in your browser settings and refresh the page.';
+          showCameraError(errorMessage);
+        } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+          errorMessage = 'No camera device found. Please connect a camera and try again.';
+          showCameraError(errorMessage);
+        } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+          errorMessage = 'Camera is already in use by another application. Please close other apps using the camera.';
+          showCameraError(errorMessage);
+        } else if (err.name === 'OverconstrainedError') {
+          errorMessage = 'Camera does not support required settings. Trying fallback...';
+          // Try with user-facing camera as fallback
+          try {
+            if (html5QrCode) {
+              await html5QrCode.stop();
+              html5QrCode.clear();
+            }
+            html5QrCode = new Html5Qrcode("qr-reader");
+            await html5QrCode.start(
+              { facingMode: "user" },
+              { 
+                fps: 10, 
+                qrbox: { width: 250, height: 250 },
+                aspectRatio: 1.0
+              },
+              (decodedText) => {
+                readerDiv.classList.add('scanner-active');
+                setTimeout(() => readerDiv.classList.remove('scanner-active'), 500);
+                playScanSound();
+                verifyArrival(decodedText);
+              },
+              () => {}
+            );
+            
+            placeholder.classList.add('hidden');
+            statusIndicator.classList.remove('hidden');
+            activateBtn.classList.add('hidden');
+            deactivateBtn.disabled = false;
+            deactivateBtn.classList.remove('text-lux-navy/20');
+            deactivateBtn.classList.add('text-lux-navy');
+            
+            showToast('Using front camera for verification.', 'success');
+            return;
+          } catch (fallbackErr) {
+            errorMessage = 'Unable to access camera. Please check your device and try again.';
+            showCameraError(errorMessage);
+          }
+        } else {
+          showCameraError(errorMessage);
+        }
+        
         activateBtn.disabled = false;
         activateBtn.classList.remove('opacity-50');
         activateBtn.innerHTML = '<i class="fas fa-eye"></i><span>Activate Optics</span>';
-        showToast('Camera access denied. check permissions.', 'error');
+        showToast(errorMessage, 'error');
       }
     }
 
@@ -229,8 +388,15 @@
       if (html5QrCode) {
         try {
           await html5QrCode.stop();
-          html5QrCode.clear();
+          await html5QrCode.clear();
           html5QrCode = null;
+          
+          // Remove any error messages
+          const readerDiv = document.getElementById('qr-reader');
+          const existingError = readerDiv.querySelector('.camera-error');
+          if (existingError) {
+            existingError.remove();
+          }
           
           placeholder.classList.remove('hidden');
           statusIndicator.classList.add('hidden');
@@ -246,9 +412,47 @@
           showToast('Optical system offline.', 'info');
         } catch (err) {
           console.error('Failed to stop optics:', err);
+          // Force reset even if stop fails
+          html5QrCode = null;
+          placeholder.classList.remove('hidden');
+          statusIndicator.classList.add('hidden');
+          activateBtn.classList.remove('hidden');
+          activateBtn.disabled = false;
+          activateBtn.classList.remove('opacity-50');
+          activateBtn.innerHTML = '<i class="fas fa-eye"></i><span>Activate Optics</span>';
+          deactivateBtn.disabled = true;
+          deactivateBtn.classList.add('text-lux-navy/20');
+          deactivateBtn.classList.remove('text-lux-navy');
         }
       }
     }
+
+    // Play a subtle scan success sound
+    function playScanSound() {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = 880; // A5 note
+        oscillator.type = 'sine';
+        gainNode.gain.value = 0.1;
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.1);
+      } catch (err) {
+        // Audio not supported or blocked, silently fail
+      }
+    }
+
+    // Check camera permission on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      checkCameraPermission();
+    });
 
     async function verifyManual() {
       const input = document.getElementById('manual-qr');
