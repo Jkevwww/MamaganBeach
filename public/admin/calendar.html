@@ -3,123 +3,577 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inventory Control | Mamagan Beach Resort</title>
+  <meta name="description" content="Manage facility blackout dates and maintenance schedules for Mamagan Beach Resort">
+  <title>Calendar Management | Mamagan Beach Resort Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/tailwind-config.js"></script>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <style>
-body .flatpickr-calendar .flatpickr-months { display: flex !important; align-items: center !important; justify-content: space-between !important; width: 100% !important; }
-body .flatpickr-calendar .flatpickr-prev-month, body .flatpickr-calendar .flatpickr-next-month { position: static !important; display: flex !important; align-items: center !important; justify-content: center !important; width: 2.25rem !important; height: 2.25rem !important; border-radius: 9999px !important; background: rgba(11,25,44,0.05) !important; color: #0B192C !important; padding: 0 !important; }
-body .flatpickr-calendar .flatpickr-prev-month:hover, body .flatpickr-calendar .flatpickr-next-month:hover { background: #0B192C !important; color: #ffffff !important; }
-body .flatpickr-calendar .flatpickr-current-month { position: static !important; display: flex !important; align-items: center !important; justify-content: center !important; gap: 0.25rem !important; font-size: 1.125rem !important; font-weight: 800 !important; color: #0B192C !important; width: auto !important; height: auto !important; padding: 0 !important; }
-body .flatpickr-calendar select.flatpickr-monthDropdown-months { background: transparent !important; border: none !important; font-weight: 800 !important; color: #0B192C !important; padding: 0 !important; appearance: none !important; }
-body .flatpickr-calendar input.cur-year { background: transparent !important; border: none !important; box-shadow: none !important; font-weight: 800 !important; color: #0B192C !important; padding: 0 !important; margin: 0 !important; width: 3.2rem !important; appearance: textfield !important; display: inline-block !important; }
-body .flatpickr-calendar input.cur-year::-webkit-inner-spin-button, body .flatpickr-calendar input.cur-year::-webkit-outer-spin-button { -webkit-appearance: none !important; margin: 0 !important; }
-body .flatpickr-calendar .flatpickr-weekdays { display: flex !important; width: 100% !important; }
-body .flatpickr-calendar .flatpickr-weekdaycontainer { display: grid !important; grid-template-columns: repeat(7, 1fr) !important; width: 100% !important; }
-body .flatpickr-calendar span.flatpickr-weekday { display: block !important; text-align: center !important; font-size: 0.7rem !important; font-weight: 900 !important; text-transform: uppercase !important; color: rgba(11,25,44,0.3) !important; }
-body .flatpickr-calendar .flatpickr-days, body .flatpickr-calendar .dayContainer { display: grid !important; grid-template-columns: repeat(7, 1fr) !important; width: 100% !important; justify-items: center !important; }
-body .flatpickr-calendar .flatpickr-day { display: flex !important; align-items: center !important; justify-content: center !important; border-radius: 9999px !important; font-weight: 600 !important; color: #0B192C !important; border: 1px solid transparent !important; margin: 0 !important; }
-body .flatpickr-calendar .flatpickr-day:hover { background: rgba(197,168,128,0.2) !important; color: #C5A880 !important; }
-body .flatpickr-calendar .flatpickr-day.selected, body .flatpickr-calendar .flatpickr-day.startRange, body .flatpickr-calendar .flatpickr-day.endRange { background: #0B192C !important; color: #ffffff !important; border-color: #0B192C !important; }
-body .flatpickr-calendar .flatpickr-day.today { border-color: #C5A880 !important; color: #C5A880 !important; }
-body .flatpickr-calendar.inline { display: block !important; width: 100% !important; background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
-body .flatpickr-calendar.inline .flatpickr-months { margin-bottom: 2rem !important; }
-body .flatpickr-calendar.inline .flatpickr-weekdays { margin-bottom: 1rem !important; }
-body .flatpickr-calendar.inline .dayContainer { gap: 0.5rem !important; }
-body .flatpickr-calendar.inline .flatpickr-day { width: 2.5rem !important; height: 2.5rem !important; }
-body > .flatpickr-calendar:not(.inline) { position: absolute !important; display: none !important; width: 310px !important; max-width: 310px !important; background: #ffffff !important; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1) !important; border-radius: 1.5rem !important; padding: 1.25rem !important; border: 1px solid rgba(11,25,44,0.05) !important; z-index: 99999 !important; }
-body > .flatpickr-calendar:not(.inline).open { display: block !important; }
-body > .flatpickr-calendar:not(.inline) .flatpickr-months { margin-bottom: 1rem !important; }
-body > .flatpickr-calendar:not(.inline) .flatpickr-weekdays { margin-bottom: 0.5rem !important; }
-body > .flatpickr-calendar:not(.inline) .dayContainer { gap: 0.25rem !important; }
-body > .flatpickr-calendar:not(.inline) .flatpickr-day { width: 2rem !important; height: 2rem !important; font-size: 0.875rem !important; }
+    /* ===== Flatpickr Custom Styling - Scoped and Organized ===== */
+    .flatpickr-calendar {
+      font-family: var(--font-primary, 'Inter', sans-serif) !important;
+      border-radius: var(--radius-xl, 1rem) !important;
+      box-shadow: var(--shadow-xl) !important;
+      border: 1px solid var(--gray-200) !important;
+      padding: 1rem !important;
+    }
+
+    .flatpickr-calendar.inline {
+      box-shadow: none !important;
+      border: none !important;
+      background: transparent !important;
+      padding: 0 !important;
+    }
+
+    /* Month Navigation */
+    .flatpickr-months {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      width: 100% !important;
+      margin-bottom: 1rem !important;
+    }
+
+    .flatpickr-prev-month,
+    .flatpickr-next-month {
+      position: static !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 2.25rem !important;
+      height: 2.25rem !important;
+      border-radius: var(--radius-full) !important;
+      background: var(--gray-100) !important;
+      color: var(--gray-700) !important;
+      padding: 0 !important;
+      transition: all var(--transition-fast) !important;
+    }
+
+    .flatpickr-prev-month:hover,
+    .flatpickr-next-month:hover {
+      background: var(--primary-600, #0891b2) !important;
+      color: var(--white) !important;
+    }
+
+    /* Current Month Display */
+    .flatpickr-current-month {
+      position: static !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 0.25rem !important;
+      font-size: 1.125rem !important;
+      font-weight: 800 !important;
+      color: var(--gray-800) !important;
+      width: auto !important;
+      padding: 0 !important;
+    }
+
+    .flatpickr-current-month select.flatpickr-monthDropdown-months {
+      background: transparent !important;
+      border: none !important;
+      font-weight: 800 !important;
+      color: var(--gray-800) !important;
+      padding: 0 !important;
+      appearance: none !important;
+      cursor: pointer;
+    }
+
+    .flatpickr-current-month input.cur-year {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      font-weight: 800 !important;
+      color: var(--gray-800) !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      width: 3.5rem !important;
+      appearance: textfield !important;
+      cursor: pointer;
+    }
+
+    .flatpickr-current-month input.cur-year::-webkit-inner-spin-button,
+    .flatpickr-current-month input.cur-year::-webkit-outer-spin-button {
+      -webkit-appearance: none !important;
+      margin: 0 !important;
+    }
+
+    /* Weekday Headers */
+    .flatpickr-weekdays {
+      display: flex !important;
+      width: 100% !important;
+      margin-bottom: 0.5rem !important;
+    }
+
+    .flatpickr-weekdaycontainer {
+      display: grid !important;
+      grid-template-columns: repeat(7, 1fr) !important;
+      width: 100% !important;
+    }
+
+    span.flatpickr-weekday {
+      display: block !important;
+      text-align: center !important;
+      font-size: 0.6875rem !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.05em !important;
+      color: var(--gray-500) !important;
+    }
+
+    /* Day Container */
+    .flatpickr-days,
+    .dayContainer {
+      display: grid !important;
+      grid-template-columns: repeat(7, 1fr) !important;
+      width: 100% !important;
+      justify-items: center !important;
+      gap: 0.25rem !important;
+    }
+
+    /* Individual Days */
+    .flatpickr-day {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      border-radius: var(--radius-md) !important;
+      font-weight: 600 !important;
+      font-size: 0.875rem !important;
+      color: var(--gray-700) !important;
+      border: 1px solid transparent !important;
+      margin: 0 !important;
+      width: 2.5rem !important;
+      height: 2.5rem !important;
+      transition: all var(--transition-fast) !important;
+      cursor: pointer;
+    }
+
+    .flatpickr-day:hover {
+      background: var(--primary-glow, rgba(8, 145, 178, 0.1)) !important;
+      color: var(--primary-600, #0891b2) !important;
+    }
+
+    .flatpickr-day.selected,
+    .flatpickr-day.startRange,
+    .flatpickr-day.endRange {
+      background: var(--primary-600, #0891b2) !important;
+      color: var(--white) !important;
+      border-color: var(--primary-600, #0891b2) !important;
+    }
+
+    .flatpickr-day.today {
+      border-color: var(--primary-600, #0891b2) !important;
+      color: var(--primary-600, #0891b2) !important;
+      font-weight: 700 !important;
+    }
+
+    .flatpickr-day.inactive {
+      color: var(--gray-300) !important;
+      cursor: default !important;
+    }
+
+    .flatpickr-day.inactive:hover {
+      background: transparent !important;
+      color: var(--gray-300) !important;
+    }
+
+    /* Blocked dates styling */
+    .flatpickr-day.is-blocked {
+      background: var(--gray-900) !important;
+      color: var(--white) !important;
+      border-color: var(--gray-900) !important;
+      position: relative;
+    }
+
+    .flatpickr-day.is-blocked::after {
+      content: '×' !important;
+      position: absolute !important;
+      font-size: 1.2rem !important;
+      line-height: 1 !important;
+    }
+
+    .flatpickr-day.is-blocked:hover {
+      background: var(--gray-800) !important;
+      color: var(--white) !important;
+    }
+
+    /* Inline Calendar Specific */
+    .flatpickr-calendar.inline .flatpickr-months {
+      margin-bottom: 1.5rem !important;
+    }
+
+    .flatpickr-calendar.inline .dayContainer {
+      gap: 0.5rem !important;
+    }
+
+    .flatpickr-calendar.inline .flatpickr-day {
+      width: 2.75rem !important;
+      height: 2.75rem !important;
+    }
+
+    /* Popup Calendar Specific */
+    body > .flatpickr-calendar:not(.inline) {
+      position: absolute !important;
+      display: none !important;
+      width: 310px !important;
+      max-width: 310px !important;
+      background: var(--white) !important;
+      box-shadow: var(--shadow-xl) !important;
+      border-radius: var(--radius-xl, 1.5rem) !important;
+      padding: 1.25rem !important;
+      border: 1px solid var(--gray-200) !important;
+      z-index: 99999 !important;
+    }
+
+    body > .flatpickr-calendar:not(.inline).open {
+      display: block !important;
+    }
+
+    /* ===== Form Input Overrides ===== */
+    .premium-input {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      font-family: var(--font-primary, 'Inter', sans-serif);
+      font-size: 0.9375rem;
+      color: var(--gray-800);
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg, 0.75rem);
+      transition: all var(--transition-fast);
+      outline: none;
+    }
+
+    .premium-input:hover {
+      border-color: var(--gray-300);
+    }
+
+    .premium-input:focus {
+      border-color: var(--primary-600, #0891b2);
+      background: var(--white);
+      box-shadow: 0 0 0 4px var(--primary-glow, rgba(8, 145, 178, 0.15));
+    }
+
+    .premium-input::placeholder {
+      color: var(--gray-400);
+    }
+
+    .premium-input.error {
+      border-color: var(--error, #ef4444);
+      box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
+    }
+
+    /* ===== Button Overrides ===== */
+    .premium-button-navy {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.875rem 1.5rem;
+      font-family: var(--font-primary, 'Inter', sans-serif);
+      font-size: 0.875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--white);
+      background: var(--gray-900);
+      border: none;
+      border-radius: var(--radius-lg, 0.75rem);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .premium-button-navy:hover {
+      background: var(--gray-800);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .premium-button-navy:active {
+      transform: translateY(0);
+    }
+
+    .premium-button-navy:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .premium-button-navy.loading {
+      pointer-events: none;
+      position: relative;
+      color: transparent;
+    }
+
+    .premium-button-navy.loading::after {
+      content: '';
+      position: absolute;
+      width: 1.25rem;
+      height: 1.25rem;
+      border: 2px solid var(--white);
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ===== Legend Styles ===== */
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .legend-dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: var(--radius-full);
+      flex-shrink: 0;
+    }
+
+    .legend-dot--blocked {
+      background: var(--gray-900);
+    }
+
+    .legend-dot--today {
+      border: 1.5px solid var(--primary-600, #0891b2);
+      background: transparent;
+    }
+
+    /* ===== Loading Skeleton ===== */
+    .skeleton {
+      background: linear-gradient(90deg, var(--gray-100) 25%, var(--gray-200) 50%, var(--gray-100) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: var(--radius-md);
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    /* ===== Toast Notification ===== */
+    .toast-container {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 999999;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem 1.25rem;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-xl);
+      font-size: 0.875rem;
+      font-weight: 500;
+      animation: slideInRight 0.3s ease-out;
+      max-width: 400px;
+      border-left: 4px solid var(--gray-400);
+    }
+
+    .toast--success {
+      border-left-color: var(--success, #10b981);
+    }
+
+    .toast--error {
+      border-left-color: var(--error, #ef4444);
+    }
+
+    .toast--info {
+      border-left-color: var(--info, #3b82f6);
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* ===== Responsive Adjustments ===== */
+    @media (max-width: 1024px) {
+      .flatpickr-day {
+        width: 2.25rem !important;
+        height: 2.25rem !important;
+        font-size: 0.8125rem !important;
+      }
+    }
+
+    /* Focus visible for accessibility */
+    .flatpickr-day:focus-visible {
+      outline: 2px solid var(--primary-600, #0891b2);
+      outline-offset: 2px;
+    }
+
+    button:focus-visible,
+    select:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible {
+      outline: 2px solid var(--primary-600, #0891b2);
+      outline-offset: 2px;
+    }
   </style>
 </head>
-<body class="bg-lux-cream font-sans text-lux-navy">
+<body class="bg-gray-50 font-sans text-gray-800">
   <div class="flex h-screen overflow-hidden">
     <!-- Sidebar -->
-    <aside class="w-80 bg-white border-r border-lux-navy/5 flex-shrink-0 hidden md:flex flex-col relative z-20">
-      <div class="p-10 border-b border-lux-navy/5">
-        <a href="/" class="flex items-center gap-4 group">
-          <img src="/images/logos/LOGO.png" alt="Mamagan Logo" class="h-12 group-hover:scale-110 transition-transform">
+    <aside class="w-64 bg-white border-r border-gray-200 flex-shrink-0 hidden md:flex flex-col relative z-20" aria-label="Main sidebar">
+      <div class="p-6 border-b border-gray-200">
+        <a href="/" class="flex items-center gap-3 group" aria-label="Mamagan Beach Resort Home">
+          <img src="/images/logos/LOGO.png" alt="Mamagan Logo" class="h-10 group-hover:scale-105 transition-transform">
           <div class="flex flex-col">
-            <span class="luxury-heading font-bold text-xl leading-none">Mamagan</span>
-            <span class="text-[8px] font-black uppercase tracking-[0.4em] text-lux-gold mt-1">Beach Resort</span>
+            <span class="font-heading font-bold text-lg leading-tight text-gray-900">Mamagan</span>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-primary-600">Admin Panel</span>
           </div>
         </a>
       </div>
-      <nav id="admin-nav" class="flex-1 p-6 space-y-2"></nav>
-      <div class="p-8 border-t border-lux-navy/5">
-        <button id="logout-btn" title="Sign Out" aria-label="Sign Out" class="w-full flex items-center gap-4 px-6 py-4 text-red-600 hover:bg-red-50 rounded-2xl transition-all">
-          <i class="fas fa-sign-out-alt"></i>
-          <span class="text-[10px] font-black uppercase tracking-widest">TERMINATE SESSION</span>
+      <nav id="admin-nav" class="flex-1 p-4 space-y-1 overflow-y-auto" aria-label="Admin navigation"></nav>
+      <div class="p-4 border-t border-gray-200">
+        <button id="logout-btn" title="Sign Out" aria-label="Sign out of your account" class="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-all">
+          <i class="fas fa-sign-out-alt w-5 text-center"></i>
+          <span class="text-sm font-medium">Sign Out</span>
         </button>
       </div>
     </aside>
 
     <!-- Main Content -->
     <div class="flex-1 overflow-y-auto">
-      <header class="bg-white/80 backdrop-blur-xl glass-header border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-30">
+      <header class="bg-white border-b border-gray-200 px-8 py-5 flex justify-between items-center sticky top-0 z-10">
         <div>
-          <h1 class="luxury-heading text-2xl font-bold text-lux-navy">Inventory Control</h1>
-          <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-widest">Global Asset Blackout Protocol</p>
+          <h1 class="font-heading text-2xl font-bold text-gray-900">Calendar Management</h1>
+          <p class="text-xs text-gray-500 mt-1">Manage facility blackout dates and availability</p>
         </div>
-        <div id="auth-nav"></div>
+        <div id="auth-nav" aria-label="Authentication navigation"></div>
       </header>
 
-      <main class="p-10">
-        <div class="grid lg:grid-cols-2 gap-10">
+      <main class="p-8 space-y-8 page-transition">
+        <div class="grid lg:grid-cols-2 gap-8">
           
           <!-- Column 1: Asset Calendar -->
-          <div class="bg-white rounded-[3rem] p-12 border border-lux-navy/5 shadow-2xl shadow-lux-navy/5">
-            <div class="flex justify-between items-center mb-10">
-              <h3 class="luxury-heading text-xl font-bold">Asset Calendar</h3>
-              <div class="flex gap-4">
-                <div class="flex items-center gap-2">
-                  <div class="w-2 h-2 rounded-full bg-lux-navy/10"></div>
-                  <span class="text-[9px] font-black uppercase tracking-widest text-lux-navy/40">Blocked</span>
+          <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+            <div class="flex justify-between items-center mb-6">
+              <h2 class="font-heading font-bold text-lg text-gray-900">Availability Calendar</h2>
+              <div class="flex gap-4" aria-label="Calendar legend">
+                <div class="legend-item">
+                  <div class="legend-dot legend-dot--blocked"></div>
+                  <span class="text-xs font-medium text-gray-500">Blocked</span>
                 </div>
-                <div class="flex items-center gap-2">
-                  <div class="w-2 h-2 rounded-full border border-lux-gold"></div>
-                  <span class="text-[9px] font-black uppercase tracking-widest text-lux-navy/40">Today</span>
+                <div class="legend-item">
+                  <div class="legend-dot legend-dot--today"></div>
+                  <span class="text-xs font-medium text-gray-500">Today</span>
                 </div>
               </div>
             </div>
             
-            <!-- Blueprint Container -->
+            <!-- Calendar Container -->
             <div id="isolated-inline-wrapper" class="w-full">
-              <div id="inline-calendar"></div>
+              <div id="inline-calendar" role="grid" aria-label="Facility availability calendar"></div>
             </div>
           </div>
 
           <!-- Column 2: Form -->
-          <div class="space-y-8">
-            <div class="bg-white/50 backdrop-blur-md p-12 rounded-[3rem] border border-lux-navy/5 shadow-xl">
-              <h3 class="luxury-heading text-xl font-bold mb-8">Blackout Protocol</h3>
-              <form id="block-form" class="space-y-6">
+          <div class="space-y-6">
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+              <h2 class="font-heading font-bold text-lg text-gray-900 mb-6">Add Blackout Period</h2>
+              <form id="block-form" class="space-y-5" novalidate>
                 <div>
-                  <label for="facility-select" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 ml-2">Target Asset</label>
-                  <select id="facility-select" class="premium-input mt-1" title="Select facility" aria-label="Select facility">
-                    <option value="all">Global (All Assets)</option>
+                  <label for="facility-select" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Target Facility
+                  </label>
+                  <select 
+                    id="facility-select" 
+                    class="premium-input" 
+                    title="Select facility" 
+                    aria-label="Select facility to apply blackout"
+                    aria-describedby="facility-help"
+                  >
+                    <option value="all">All Facilities (Global)</option>
                   </select>
+                  <p id="facility-help" class="mt-1 text-xs text-gray-500">Select a specific facility or apply to all</p>
                 </div>
+
                 <div>
-                  <label for="block-dates" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 ml-2">Temporal Window</label>
-                  <input type="text" id="block-dates" class="premium-input mt-1" placeholder="Select date range..." title="Temporal Window" aria-label="Temporal Window">
+                  <label for="block-dates" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Date Range
+                  </label>
+                  <input 
+                    type="text" 
+                    id="block-dates" 
+                    class="premium-input" 
+                    placeholder="Select start and end dates..." 
+                    title="Select date range for blackout" 
+                    aria-label="Select date range for blackout period"
+                    aria-describedby="dates-help"
+                    autocomplete="off"
+                  >
+                  <p id="dates-help" class="mt-1 text-xs text-gray-500">Click to select a date range</p>
                 </div>
+
                 <div>
-                  <label for="reason" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 ml-2">Justification</label>
-                  <textarea id="reason" class="premium-input mt-1 h-32 focus:ring-2 focus:ring-lux-gold/20" placeholder="State reason for blockage..." title="Justification" aria-label="Justification"></textarea>
+                  <label for="reason" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Reason for Blackout
+                  </label>
+                  <textarea 
+                    id="reason" 
+                    class="premium-input h-28 resize-none" 
+                    placeholder="e.g., Maintenance, Renovation, Private Event..." 
+                    title="Enter reason for blackout" 
+                    aria-label="Enter reason for blackout period"
+                    aria-describedby="reason-help"
+                    maxlength="500"
+                  ></textarea>
+                  <div class="flex justify-between mt-1">
+                    <p id="reason-help" class="text-xs text-gray-500">Provide a brief explanation</p>
+                    <span id="char-count" class="text-xs text-gray-400">0/500</span>
+                  </div>
                 </div>
-                <button type="submit" class="premium-button-navy w-full py-5 rounded-2xl flex items-center justify-center gap-3">
-                  <span class="text-[11px] font-black uppercase tracking-widest">Activate Blackout</span>
-                  <i class="fas fa-lock text-[10px]"></i>
+
+                <!-- Form validation message area -->
+                <div id="form-message" class="hidden p-3 rounded-lg text-sm" role="alert" aria-live="polite"></div>
+
+                <button 
+                  type="submit" 
+                  id="submit-btn"
+                  class="premium-button-navy w-full py-4 rounded-lg flex items-center justify-center gap-2"
+                  aria-label="Activate blackout period"
+                >
+                  <i class="fas fa-calendar-xmark" aria-hidden="true"></i>
+                  <span>Activate Blackout</span>
                 </button>
               </form>
+            </div>
+
+            <!-- Blocked Dates Summary -->
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+              <h3 class="font-heading font-bold text-base text-gray-900 mb-4">
+                <i class="fas fa-list-check mr-2 text-gray-400" aria-hidden="true"></i>
+                Active Blackouts
+              </h3>
+              <div id="blocked-dates-list" class="space-y-3 max-h-64 overflow-y-auto" aria-label="List of active blackout periods">
+                <div class="skeleton h-12 w-full"></div>
+                <div class="skeleton h-12 w-full"></div>
+                <div class="skeleton h-12 w-full"></div>
+              </div>
+              <div id="no-blackouts" class="hidden text-center py-8">
+                <i class="fas fa-calendar-check text-3xl text-gray-300 mb-3" aria-hidden="true"></i>
+                <p class="text-sm text-gray-500">No active blackout periods</p>
+              </div>
             </div>
           </div>
 
@@ -128,110 +582,470 @@ body > .flatpickr-calendar:not(.inline) .flatpickr-day { width: 2rem !important;
     </div>
   </div>
 
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
   <script src="/js/api.js?v=2"></script>
   <script src="/js/auth.js?v=2"></script>
   <script src="/js/toast.js?v=2"></script>
   <script src="/js/admin.js?v=2"></script>
   <script>
-    let calendar;
-    let currentBlockedDates = [];
+    /**
+     * Calendar Management Module
+     * Handles blackout date management for facilities
+     */
+    (function() {
+      'use strict';
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      if (typeof renderAdminNav === 'function') renderAdminNav('calendar');
-      const user = await loadUser();
-      if (!user || user.role !== 'admin') {
-        window.location.replace('/login.html');
-        return;
-      }
+      // State management
+      let calendar = null;
+      let blockedDates = [];
+      let facilities = [];
+      let isLoading = false;
 
-      // 1. Initialize SINGLE Inline Calendar
-      calendar = flatpickr("#inline-calendar", {
-        inline: true,
-        mode: "multiple",
-        minDate: "today",
-        dateFormat: "Y-m-d",
-        onDayCreate: function(dObj, dStr, fp, dayElem) {
-          const dateStr = dayElem.dateObj.toISOString().split('T')[0];
-          if (currentBlockedDates.includes(dateStr)) {
-            dayElem.classList.add("is-blocked");
+      // DOM Elements cache
+      const elements = {
+        calendar: document.getElementById('inline-calendar'),
+        form: document.getElementById('block-form'),
+        facilitySelect: document.getElementById('facility-select'),
+        dateInput: document.getElementById('block-dates'),
+        reasonInput: document.getElementById('reason'),
+        submitBtn: document.getElementById('submit-btn'),
+        blockedList: document.getElementById('blocked-dates-list'),
+        noBlackouts: document.getElementById('no-blackouts'),
+        charCount: document.getElementById('char-count'),
+        formMessage: document.getElementById('form-message')
+      };
+
+      /**
+       * Initialize the application
+       */
+      async function init() {
+        try {
+          // Check authentication
+          const user = await loadUser();
+          if (!user || user.role !== 'admin') {
+            window.location.replace('/login.html?redirect=' + encodeURIComponent(window.location.pathname));
+            return;
           }
+
+          // Render navigation
+          if (typeof renderAdminNav === 'function') {
+            renderAdminNav('calendar');
+          }
+
+          // Initialize components
+          initializeCalendar();
+          initializeDatePicker();
+          initializeEventListeners();
+
+          // Load data
+          await Promise.all([
+            loadFacilities(),
+            loadBlockedDates()
+          ]);
+
+        } catch (error) {
+          console.error('Initialization error:', error);
+          showToast('Failed to initialize calendar. Please refresh the page.', 'error');
         }
-      });
-
-      // 2. Initialize Range Picker
-      flatpickr("#block-dates", {
-        mode: "range",
-        minDate: "today",
-        dateFormat: "Y-m-d"
-      });
-
-      await loadFacilities();
-    });
-
-    async function loadBlockedDates() {
-      try {
-        const facilityId = document.getElementById('facility-select').value;
-        const res = await api.get(`/admin/block-dates${facilityId !== 'all' ? '?facility_id=' + facilityId : ''}`);
-        if (res.success) {
-          currentBlockedDates = res.data.map(d => d.block_date.split('T')[0]);
-          if (calendar) calendar.redraw();
-        }
-      } catch (err) {
-        console.error('Blocked dates error:', err);
       }
-    }
 
-    async function loadFacilities() {
-      try {
-        const res = await api.get('/facilities');
-        if (res.success) {
-          const select = document.getElementById('facility-select');
-          res.data.forEach(f => {
-            const opt = document.createElement('option');
-            opt.value = f.id;
-            opt.textContent = f.name;
-            select.appendChild(opt);
-          });
-        }
-        await loadBlockedDates();
-      } catch (err) {
-        console.error('Facilities error:', err);
+      /**
+       * Initialize the inline calendar using Flatpickr
+       */
+      function initializeCalendar() {
+        calendar = flatpickr(elements.calendar, {
+          inline: true,
+          mode: 'multiple',
+          minDate: 'today',
+          dateFormat: 'Y-m-d',
+          disableMobile: true,
+          ariaDateFormat: 'F j, Y',
+          onChange: handleDateChange,
+          onDayCreate: function(dObj, dStr, fp, dayElem) {
+            // Mark blocked dates
+            if (blockedDates.includes(dStr)) {
+              dayElem.classList.add('is-blocked');
+              dayElem.setAttribute('aria-label', dStr + ' - Blocked');
+              dayElem.setAttribute('title', 'This date is blocked');
+            }
+          },
+          locale: {
+            firstDayOfWeek: 1
+          }
+        });
       }
-    }
 
-    document.getElementById('block-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const facilityId = document.getElementById('facility-select').value;
-      const dateStr = document.getElementById('block-dates').value;
-      const reason = document.getElementById('reason').value;
+      /**
+       * Initialize the range date picker
+       */
+      function initializeDatePicker() {
+        flatpickr(elements.dateInput, {
+          mode: 'range',
+          minDate: 'today',
+          dateFormat: 'Y-m-d',
+          disableMobile: true,
+          ariaDateFormat: 'F j, Y',
+          defaultDate: [],
+          onChange: function(selectedDates, dateStr) {
+            // Validate that both start and end dates are selected
+            if (selectedDates.length === 2) {
+              clearFormError();
+            }
+          },
+          locale: {
+            firstDayOfWeek: 1
+          }
+        });
+      }
 
-      if (!dateStr) return showToast('Temporal window is required.', 'error');
+      /**
+       * Initialize event listeners
+       */
+      function initializeEventListeners() {
+        // Form submission
+        elements.form.addEventListener('submit', handleSubmit);
 
-      const parts = dateStr.split(' to ');
-      const start = parts[0];
-      const end = parts[1] || start;
-      
-      try {
-        const res = await api.post('/admin/block-dates', {
-          facility_id: facilityId === 'all' ? null : facilityId,
-          start_date: start,
-          end_date: end,
-          reason: reason
+        // Facility selection change
+        elements.facilitySelect.addEventListener('change', handleFacilityChange);
+
+        // Character count for reason textarea
+        elements.reasonInput.addEventListener('input', function() {
+          const count = this.value.length;
+          elements.charCount.textContent = count + '/500';
         });
 
-        if (res.success) {
-          showToast('Blackout activated.', 'success');
-          document.getElementById('block-form').reset();
-          await loadBlockedDates();
-        } else {
-          showToast(res.message || 'Error.', 'error');
+        // Logout button
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+          logoutBtn.addEventListener('click', handleLogout);
         }
-      } catch (err) {
-        showToast('Communication failure.', 'error');
       }
-    });
 
-    document.getElementById('facility-select').addEventListener('change', loadBlockedDates);
+      /**
+       * Load facilities from API
+       */
+      async function loadFacilities() {
+        try {
+          const response = await api.get('/facilities');
+          if (response.success && Array.isArray(response.data)) {
+            facilities = response.data;
+            populateFacilityDropdown(facilities);
+          }
+        } catch (error) {
+          console.error('Failed to load facilities:', error);
+          showToast('Failed to load facilities list.', 'error');
+        }
+      }
+
+      /**
+       * Populate the facility dropdown
+       */
+      function populateFacilityDropdown(facilitiesData) {
+        const select = elements.facilitySelect;
+        // Keep the "All" option
+        select.innerHTML = '<option value="all">All Facilities (Global)</option>';
+        
+        facilitiesData.forEach(facility => {
+          const option = document.createElement('option');
+          option.value = facility.id;
+          option.textContent = facility.name;
+          select.appendChild(option);
+        });
+      }
+
+      /**
+       * Load blocked dates from API
+       */
+      async function loadBlockedDates() {
+        try {
+          const facilityId = elements.facilitySelect.value;
+          const endpoint = facilityId !== 'all' 
+            ? `/admin/block-dates?facility_id=${facilityId}`
+            : '/admin/block-dates';
+
+          const response = await api.get(endpoint);
+          
+          if (response.success && Array.isArray(response.data)) {
+            blockedDates = response.data.map(d => {
+              // Extract date part from datetime string
+              const date = new Date(d.block_date || d.date);
+              return date.toISOString().split('T')[0];
+            });
+
+            // Update calendar
+            if (calendar) {
+              calendar.set('defaultDate', blockedDates);
+              calendar.redraw();
+            }
+
+            // Update the list view
+            renderBlockedList(response.data);
+          }
+        } catch (error) {
+          console.error('Failed to load blocked dates:', error);
+          showToast('Failed to load blocked dates.', 'error');
+        }
+      }
+
+      /**
+       * Render the blocked dates list
+       */
+      function renderBlockedList(data) {
+        const list = elements.blockedList;
+        
+        if (!data || data.length === 0) {
+          list.innerHTML = '';
+          elements.noBlackouts.classList.remove('hidden');
+          return;
+        }
+
+        elements.noBlackouts.classList.add('hidden');
+        
+        list.innerHTML = data.map(item => {
+          const facility = facilities.find(f => f.id === (item.facility_id || item.facilityId)) || { name: 'All Facilities' };
+          const date = new Date(item.block_date || item.date);
+          const formattedDate = date.toLocaleDateString('en-PH', { 
+            weekday: 'short', 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric' 
+          });
+
+          return `
+            <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100">
+              <div class="flex-shrink-0 w-8 h-8 rounded-full bg-gray-900 text-white flex items-center justify-center">
+                <i class="fas fa-ban text-xs"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-gray-900 truncate">${facility.name}</p>
+                <p class="text-xs text-gray-500">${formattedDate}</p>
+                ${item.reason ? `<p class="text-xs text-gray-400 mt-1 truncate">${escapeHtml(item.reason)}</p>` : ''}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      /**
+       * Handle form submission
+       */
+      async function handleSubmit(e) {
+        e.preventDefault();
+
+        // Validate form
+        if (!validateForm()) {
+          return;
+        }
+
+        // Set loading state
+        setLoading(true);
+
+        try {
+          const facilityId = elements.facilitySelect.value;
+          const dateStr = elements.dateInput.value;
+          const reason = elements.reasonInput.value.trim();
+
+          // Parse date range
+          const parts = dateStr.split(' to ');
+          const startDate = parts[0].trim();
+          const endDate = (parts[1] || parts[0]).trim();
+
+          // Validate dates
+          if (!startDate || !endDate) {
+            showFormError('Please select a valid date range.', 'error');
+            setLoading(false);
+            return;
+          }
+
+          const response = await api.post('/admin/block-dates', {
+            facility_id: facilityId === 'all' ? null : facilityId,
+            start_date: startDate,
+            end_date: endDate,
+            reason: reason || null
+          });
+
+          if (response.success) {
+            showToast('Blackout period activated successfully.', 'success');
+            resetForm();
+            await loadBlockedDates();
+          } else {
+            showFormError(response.message || 'Failed to create blackout period.', 'error');
+          }
+        } catch (error) {
+          console.error('Submit error:', error);
+          showFormError('Network error. Please check your connection and try again.', 'error');
+        } finally {
+          setLoading(false);
+        }
+      }
+
+      /**
+       * Validate the form
+       */
+      function validateForm() {
+        clearFormError();
+        let isValid = true;
+
+        const dateValue = elements.dateInput.value.trim();
+        const reasonValue = elements.reasonInput.value.trim();
+
+        if (!dateValue) {
+          showFormError('Please select a date range for the blackout period.', 'error');
+          elements.dateInput.classList.add('error');
+          elements.dateInput.focus();
+          isValid = false;
+        } else {
+          const parts = dateValue.split(' to ');
+          if (parts.length < 1 || !parts[0].trim()) {
+            showFormError('Please select both start and end dates.', 'error');
+            elements.dateInput.classList.add('error');
+            elements.dateInput.focus();
+            isValid = false;
+          }
+        }
+
+        if (reasonValue.length > 500) {
+          showFormError('Reason cannot exceed 500 characters.', 'error');
+          elements.reasonInput.classList.add('error');
+          elements.reasonInput.focus();
+          isValid = false;
+        }
+
+        return isValid;
+      }
+
+      /**
+       * Handle facility selection change
+       */
+      async function handleFacilityChange() {
+        await loadBlockedDates();
+      }
+
+      /**
+       * Handle date change in calendar
+       */
+      function handleDateChange(selectedDates, dateStr, instance) {
+        // Optional: Auto-fill the date input when calendar dates are selected
+        if (selectedDates.length >= 2) {
+          const sorted = selectedDates.sort((a, b) => a - b);
+          const start = sorted[0].toISOString().split('T')[0];
+          const end = sorted[sorted.length - 1].toISOString().split('T')[0];
+          // Could auto-fill the input here if needed
+        }
+      }
+
+      /**
+       * Handle logout
+       */
+      function handleLogout() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.replace('/login.html');
+      }
+
+      /**
+       * Set loading state
+       */
+      function setLoading(loading) {
+        isLoading = loading;
+        elements.submitBtn.disabled = loading;
+        elements.submitBtn.classList.toggle('loading', loading);
+        
+        if (loading) {
+          elements.submitBtn.setAttribute('aria-busy', 'true');
+        } else {
+          elements.submitBtn.removeAttribute('aria-busy');
+        }
+      }
+
+      /**
+       * Reset the form
+       */
+      function resetForm() {
+        elements.form.reset();
+        clearFormError();
+        elements.charCount.textContent = '0/500';
+        if (elements.dateInput._flatpickr) {
+          elements.dateInput._flatpickr.clear();
+        }
+      }
+
+      /**
+       * Show form error message
+       */
+      function showFormError(message, type = 'error') {
+        elements.formMessage.textContent = message;
+        elements.formMessage.className = `p-3 rounded-lg text-sm ${type === 'error' ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-blue-50 text-blue-700 border border-blue-200'}`;
+        elements.formMessage.classList.remove('hidden');
+        elements.formMessage.setAttribute('role', 'alert');
+      }
+
+      /**
+       * Clear form error message
+       */
+      function clearFormError() {
+        elements.formMessage.classList.add('hidden');
+        elements.formMessage.textContent = '';
+        elements.dateInput.classList.remove('error');
+        elements.reasonInput.classList.remove('error');
+      }
+
+      /**
+       * Escape HTML to prevent XSS
+       */
+      function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      /**
+       * Show toast notification
+       * Uses the existing toast.js if available, otherwise creates a simple toast
+       */
+      function showToast(message, type = 'info') {
+        if (typeof window.showToast === 'function') {
+          window.showToast(message, type);
+          return;
+        }
+
+        // Fallback toast implementation
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        toast.className = `toast toast--${type}`;
+        
+        const icons = {
+          success: 'fa-check-circle text-green-500',
+          error: 'fa-exclamation-circle text-red-500',
+          info: 'fa-info-circle text-blue-500'
+        };
+
+        toast.innerHTML = `
+          <i class="fas ${icons[type] || icons.info}" aria-hidden="true"></i>
+          <span>${escapeHtml(message)}</span>
+        `;
+
+        container.appendChild(toast);
+
+        // Auto-remove after 4 seconds
+        setTimeout(() => {
+          toast.style.animation = 'slideInRight 0.3s ease-out reverse';
+          setTimeout(() => toast.remove(), 300);
+        }, 4000);
+      }
+
+      // Initialize when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
   </script>
 </body>
 </html>
