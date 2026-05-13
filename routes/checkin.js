@@ -4,7 +4,7 @@ router.post('/upload/photo', upload.single('photo'), (req, res) => {
     return res.status(400).json({ success: false, message: 'No photo uploaded.' });
   }
 
-  const filePath = path.join('uploads', 'checkin-photos', req.file.filename).replace(/\/g, '/');
+  const filePath = path.join('uploads', 'checkin-photos', req.file.filename).replace(/\\/g, '/');
   res.json({ success: true, filePath });
 });
 
@@ -14,7 +14,7 @@ router.post('/upload/video', upload.single('video'), (req, res) => {
     return res.status(400).json({ success: false, message: 'No video uploaded.' });
   }
 
-  const filePath = path.join('uploads', 'checkin-videos', req.file.filename).replace(/\/g, '/');
+  const filePath = path.join('uploads', 'checkin-videos', req.file.filename).replace(/\\/g, '/');
   res.json({ success: true, filePath });
 });const express = require('express');
 const router = express.Router();
