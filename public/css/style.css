@@ -84,6 +84,10 @@
   --z-modal: 1050;
   --z-popover: 1060;
   --z-tooltip: 1070;
+
+  /* Background Images */
+  --bg-hero: linear-gradient(135deg, #0891b2 0%, #06b6d4 50%, #0e7490 100%);
+  --bg-hero2: linear-gradient(135deg, #164e63 0%, #0e7490 50%, #0891b2 100%);
 }
 
 /* ===== Reset & Base ===== */
@@ -1223,6 +1227,17 @@ select:focus-visible,
 textarea:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
+}
+
+/* ===== Hero & Background Classes ===== */
+.hero-bg {
+  background: var(--bg-hero);
+  position: relative;
+}
+
+.background2 {
+  background: var(--bg-hero2);
+  position: relative;
 }
 
 /* ===== Print Styles ===== */

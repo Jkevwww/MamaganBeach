@@ -793,8 +793,18 @@
       errorDiv.className = 'camera-error';
       errorDiv.innerHTML = `
         <i class="fas fa-camera-slash"></i>
-        <p class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 mb-2">Camera Unavailable</p>
-        <p>${message}</p>
+        <p class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 mb-4">Camera Unavailable</p>
+        <p class="text-[10px] text-lux-navy/50 mb-6">${message}</p>
+        <div class="text-left bg-lux-navy/5 rounded-lg p-4 mb-6 text-[9px] text-lux-navy/60">
+          <p class="font-bold mb-2">Quick Fix:</p>
+          <ul class="list-disc ml-4 space-y-1">
+            <li>Ensure you're using HTTPS (not HTTP)</li>
+            <li>Check browser camera permissions in settings</li>
+            <li>Allow access when prompted by your browser</li>
+            <li>Ensure no other app is using the camera</li>
+            <li>Try a different browser (Chrome, Firefox, Safari)</li>
+          </ul>
+        </div>
         <button id="retry-camera-btn" class="mt-6 px-6 py-3 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all">
           Retry Access
         </button>

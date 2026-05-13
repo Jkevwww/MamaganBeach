@@ -324,11 +324,36 @@
       spinner.classList.add('hidden');
 
       if (res.success) {
-        window.location.href = `/payment.html?booking=${res.data.id}`;
+        // Show confirmation modal instead of direct redirect
+        showBookingConfirmation(res.data);
       } else {
         showToast(res.message || 'Booking failed', 'error');
       }
     });
+
+    function showBookingConfirmation(booking) {
+      const modal = document.getElementById('booking-confirmation-modal');
+      if (!modal) return;
+      
+      document.getElementById('confirm-booking-id').textContent = booking.id;
+      document.getElementById('confirm-facility-name').textContent = facility.name || 'Facility';
+      document.getElementById('confirm-date').textContent = window.formatDate ? window.formatDate(booking.booking_date) : booking.booking_date;
+      document.getElementById('confirm-time').textContent = booking.time_slot;
+      document.getElementById('confirm-qty').textContent = booking.quantity;
+      document.getElementById('confirm-total').textContent = `PHP ${Number(booking.total_amount).toLocaleString('en-PH', {minimumFractionDigits: 2})}`;
+      document.getElementById('confirm-booking-id-hidden').value = booking.id;
+      
+      modal.classList.remove('hidden');
+    }
+
+    function proceedToPayment() {
+      const bookingId = document.getElementById('confirm-booking-id-hidden').value;
+      window.location.href = `/payment.html?booking=${bookingId}`;
+    }
+
+    function cancelBookingConfirmation() {
+      document.getElementById('booking-confirmation-modal').classList.add('hidden');
+    }
 
     // Ensure DOM is ready before initializing calendar
     if (document.readyState === 'loading') {
@@ -337,5 +362,73 @@
       loadFacility();
     }
   </script>
+
+  <!-- Booking Confirmation Modal -->
+  <div id="booking-confirmation-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 py-8 backdrop-blur-xl bg-lux-navy/40">
+      <div class="relative bg-white rounded-[3rem] w-full max-w-2xl shadow-2xl border border-lux-navy/5 animate-scale-in">
+        <div class="p-10 border-b border-lux-navy/5 flex justify-between items-center bg-gradient-to-r from-lux-navy to-lux-navy/80">
+          <h3 class="luxury-heading text-2xl font-bold text-white">Booking Confirmed!</h3>
+          <button onclick="cancelBookingConfirmation()" aria-label="Close modal" class="text-white/40 hover:text-white transition-colors text-2xl">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="p-10 space-y-8">
+          <div class="bg-lux-gold/10 rounded-2xl p-6 border-2 border-lux-gold/20">
+            <div class="flex items-center gap-4 mb-6">
+              <div class="w-12 h-12 rounded-full bg-lux-gold/20 flex items-center justify-center">
+                <i class="fas fa-check text-2xl text-lux-gold"></i>
+              </div>
+              <div>
+                <p class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40">Reservation ID</p>
+                <p class="text-lg font-bold text-lux-navy font-mono" id="confirm-booking-id">-</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <h4 class="text-sm font-bold text-lux-navy uppercase tracking-widest">Booking Details</h4>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="p-4 bg-lux-cream rounded-lg">
+                <p class="text-[10px] font-bold text-lux-navy/40 uppercase mb-1">Facility</p>
+                <p class="font-bold text-lux-navy" id="confirm-facility-name">-</p>
+              </div>
+              <div class="p-4 bg-lux-cream rounded-lg">
+                <p class="text-[10px] font-bold text-lux-navy/40 uppercase mb-1">Date</p>
+                <p class="font-bold text-lux-navy" id="confirm-date">-</p>
+              </div>
+              <div class="p-4 bg-lux-cream rounded-lg">
+                <p class="text-[10px] font-bold text-lux-navy/40 uppercase mb-1">Time Slot</p>
+                <p class="font-bold text-lux-navy" id="confirm-time">-</p>
+              </div>
+              <div class="p-4 bg-lux-cream rounded-lg">
+                <p class="text-[10px] font-bold text-lux-navy/40 uppercase mb-1">Guests</p>
+                <p class="font-bold text-lux-navy" id="confirm-qty">-</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-t border-lux-navy/10 pt-6">
+            <div class="flex justify-between items-center mb-6">
+              <span class="text-sm font-bold text-lux-navy uppercase tracking-widest">Total Amount</span>
+              <span class="text-2xl font-black text-lux-gold" id="confirm-total">PHP 0.00</span>
+            </div>
+            <p class="text-[10px] text-lux-navy/50 mb-6">Your booking is reserved for 15 minutes. Please proceed to payment to confirm.</p>
+          </div>
+
+          <input type="hidden" id="confirm-booking-id-hidden">
+          
+          <div class="flex gap-4 justify-end">
+            <button onclick="cancelBookingConfirmation()" class="px-8 py-3 bg-lux-navy/10 text-lux-navy text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-navy/20 transition-all border-2 border-lux-navy/20">
+              Edit Booking
+            </button>
+            <button onclick="proceedToPayment()" class="px-8 py-3 bg-gradient-to-r from-lux-navy to-lux-navy/80 text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:shadow-xl transition-all border-2 border-transparent hover:border-lux-gold flex items-center gap-2">
+              <i class="fas fa-lock"></i> Proceed to Payment
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

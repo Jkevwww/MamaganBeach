@@ -79,8 +79,51 @@
               </div>
             </div>
 
+            <!-- GCash QR Payment Form -->
+            <div id="gcash-form" class="hidden mt-8 space-y-6 fade-in">
+             <div class="bg-lux-gold/10 rounded-2xl p-6 border-2 border-lux-gold/20">
+               <div class="flex items-start gap-4">
+                 <i class="fas fa-qrcode text-3xl text-lux-gold mt-2"></i>
+                 <div>
+                   <h4 class="font-bold text-lux-navy mb-2">GCash QR Payment</h4>
+                   <p class="text-[10px] text-lux-navy/60">Powered by PayMongo. Scan the QR code with your GCash app to complete payment securely.</p>
+                 </div>
+               </div>
+             </div>
+
+             <div class="space-y-2">
+               <label class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">GCash Reference No.</label>
+               <input type="text" id="gcash-ref-no" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="Enter GCash Ref No. (9-15 digits)">
+               <p class="text-[9px] text-lux-navy/40">You'll receive this after scanning and completing payment in your GCash app</p>
+             </div>
+
+             <div class="bg-white rounded-2xl p-8 border-2 border-lux-navy/10 text-center">
+               <div class="inline-block p-6 bg-lux-cream rounded-xl">
+                 <i class="fas fa-mobile-alt text-6xl text-lux-navy/20 block mb-4"></i>
+                 <p class="text-[11px] font-bold text-lux-navy uppercase tracking-widest mb-4">QR Code Will Appear Here</p>
+                 <button type="button" id="generate-qr-btn" class="px-6 py-2 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all">
+                   <i class="fas fa-sync-alt mr-2"></i> Generate QR Code
+                 </button>
+               </div>
+             </div>
+
+             <div id="payment-instructions" class="bg-blue-50 border border-blue-200 rounded-xl p-4 hidden">
+               <h5 class="font-bold text-blue-900 mb-3 flex items-center gap-2">
+                 <i class="fas fa-info-circle"></i> Payment Instructions
+               </h5>
+               <ol class="text-[10px] text-blue-800 space-y-2">
+                 <li><span class="font-bold">1.</span> Open your GCash app</li>
+                 <li><span class="font-bold">2.</span> Tap "Scan QR" or use your phone camera</li>
+                 <li><span class="font-bold">3.</span> Scan the QR code above</li>
+                 <li><span class="font-bold">4.</span> Enter your GCash PIN to authorize</li>
+                 <li><span class="font-bold">5.</span> Copy the Reference No. from the receipt</li>
+                 <li><span class="font-bold">6.</span> Paste it in the field above and click "Confirm Payment"</li>
+               </ol>
+             </div>
+            </div>
+
             <button onclick="payNow()" id="pay-btn" class="w-full mt-10 py-7 bg-gradient-to-r from-lux-navy to-lux-navy/80 text-white font-black uppercase tracking-widest rounded-full hover:shadow-2xl hover:from-lux-gold hover:to-lux-gold/80 transition-all duration-300 flex items-center justify-center gap-4 disabled:opacity-30 disabled:cursor-not-allowed border-2 border-transparent hover:border-lux-navy" disabled>
-              <span>Authorize Settlement</span>
+              <span id="pay-btn-text">Authorize Settlement</span>
               <i id="pay-spinner" class="fas fa-circle-notch fa-spin hidden"></i>
             </button>
           </div>
@@ -160,12 +203,27 @@
       document.getElementById(`btn-${method}`).classList.add('border-lux-gold', 'bg-lux-gold/5');
 
       const cardForm = document.getElementById('card-form');
+      const gcashForm = document.getElementById('gcash-form');
+      const payBtn = document.getElementById('pay-btn');
+      const payBtnText = document.getElementById('pay-btn-text');
+      
       if (method === 'card') {
         cardForm.classList.remove('hidden');
+        gcashForm.classList.add('hidden');
+        payBtnText.textContent = 'Authorize Settlement';
         validateCard();
+      } else if (method === 'gcash') {
+        cardForm.classList.add('hidden');
+        gcashForm.classList.remove('hidden');
+        payBtnText.textContent = 'Confirm Payment';
+        payBtn.disabled = false;
+        document.getElementById('payment-instructions').classList.remove('hidden');
       } else {
         cardForm.classList.add('hidden');
-        document.getElementById('pay-btn').disabled = false;
+        gcashForm.classList.add('hidden');
+        payBtnText.textContent = 'Authorize Settlement';
+        payBtn.disabled = false;
+        document.getElementById('payment-instructions').classList.add('hidden');
       }
     }
 
@@ -198,9 +256,26 @@
       btn.disabled = true;
       spinner.classList.remove('hidden');
 
+      // Validate GCash reference number if using GCash
+      if (selectedMethod === 'gcash') {
+        const refNo = document.getElementById('gcash-ref-no').value.trim();
+        if (!refNo || refNo.length < 9) {
+          showToast('Please enter a valid GCash Reference Number (9-15 digits)', 'warning');
+          btn.disabled = false;
+          spinner.classList.add('hidden');
+          return;
+        }
+      }
+
       // Simulate premium processing delay
       setTimeout(async () => {
-        const res = await api.post('/payments/simulate-success', { booking_id: bookingId });
+        const payload = { booking_id: bookingId };
+        if (selectedMethod === 'gcash') {
+          payload.payment_method = 'gcash';
+          payload.reference_no = document.getElementById('gcash-ref-no').value.trim();
+        }
+        
+        const res = await api.post('/payments/simulate-success', payload);
         if (res.success) {
           showToast('Payment authorized successfully.', 'success');
           setTimeout(() => { window.location.href = `/ticket.html?booking=${bookingId}`; }, 1000);
