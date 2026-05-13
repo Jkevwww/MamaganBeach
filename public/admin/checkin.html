@@ -181,7 +181,7 @@
 
             <!-- Toggle Button -->
             <div class="mt-10 flex gap-3">
-              <button id="camera-toggle-btn" onclick="toggleCamera()" aria-label="Toggle camera on/off" class="flex-1 py-5 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all shadow-xl shadow-lux-navy/10 flex items-center justify-center gap-3">
+              <button id="camera-toggle-btn" aria-label="Toggle camera on/off" class="flex-1 py-5 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all shadow-xl shadow-lux-navy/10 flex items-center justify-center gap-3">
                 <i id="toggle-icon" class="fas fa-power-off"></i>
                 <span id="toggle-text">Turn On Camera</span>
               </button>
@@ -197,7 +197,7 @@
                     <label for="manual-qr" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Admission ID or Payload</label>
                     <textarea id="manual-qr" rows="4" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white h-32 text-center font-mono text-sm tracking-widest" placeholder="PASTE VERIFICATION STRING..."></textarea>
                   </div>
-                  <button id="manual-verify-btn" onclick="verifyManual()" class="w-full py-5 bg-lux-gold text-lux-navy text-[10px] font-black uppercase tracking-widest rounded-full hover:shadow-2xl hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3">
+                  <button id="manual-verify-btn" class="w-full py-5 bg-lux-gold text-lux-navy text-[10px] font-black uppercase tracking-widest rounded-full hover:shadow-2xl hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3">
                     <i class="fas fa-fingerprint"></i>
                     <span id="manual-btn-text">Authorize Manually</span>
                   </button>
@@ -466,9 +466,12 @@
     // Show camera error in the reader div
     function showCameraError(message) {
       const readerDiv = document.getElementById('qr-reader');
-      const placeholder = document.getElementById('placeholder-icon');
+      if (!readerDiv) return;
       
-      placeholder.classList.add('hidden');
+      const placeholder = document.getElementById('placeholder-icon');
+      if (placeholder) {
+        placeholder.classList.add('hidden');
+      }
       
       // Remove existing error if any
       const existingError = readerDiv.querySelector('.camera-error');
@@ -482,11 +485,17 @@
         <i class="fas fa-camera-slash"></i>
         <p class="text-[10px] font-black uppercase tracking-widest text-lux-navy/40 mb-2">Camera Unavailable</p>
         <p>${message}</p>
-        <button onclick="retryCamera()" class="mt-6 px-6 py-3 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all">
+        <button id="retry-camera-btn" class="mt-6 px-6 py-3 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold transition-all">
           Retry Access
         </button>
       `;
       readerDiv.appendChild(errorDiv);
+      
+      // Attach event listener to retry button
+      const retryBtn = document.getElementById('retry-camera-btn');
+      if (retryBtn) {
+        retryBtn.addEventListener('click', retryCamera);
+      }
     }
 
     // Retry camera access
@@ -729,6 +738,17 @@
       setupControlsToggle();
       setupCameraControls();
       setupCameraSelection();
+      
+      // Setup event listeners for buttons
+      const toggleBtn = document.getElementById('camera-toggle-btn');
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', toggleCamera);
+      }
+      
+      const manualVerifyBtn = document.getElementById('manual-verify-btn');
+      if (manualVerifyBtn) {
+        manualVerifyBtn.addEventListener('click', verifyManual);
+      }
       
       // Load settings and check permissions
       loadCameraSettings();
