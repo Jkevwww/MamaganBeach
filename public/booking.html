@@ -127,6 +127,7 @@
     let maxQty = 10; // Default max guests
     let minQty = 1;
     let isNight = false;
+    let calendarInstance = null; // Store calendar instance for cleanup
 
 
     async function loadFacility() {
