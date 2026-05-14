@@ -3,960 +3,512 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Facility Management | Mamagan Beach Resort</title>
+  <title>Facilities | Mamagan Beach Resort Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/tailwind-config.js"></script>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <!-- Flatpickr CSS for potential date picking needs -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <style>
-    .tab-active { border-bottom-color: var(--lux-gold) !important; color: #00234b !important; opacity: 1 !important; }
-    
-    /* Calendar Grid Fixes */
-    .calendar-grid { 
-      display: grid !important; 
-      grid-template-columns: repeat(7, 1fr) !important; 
-      width: 100%;
-    }
-    
-    .calendar-day { 
-      aspect-ratio: 1/1; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      position: relative; 
-      cursor: pointer; 
-      border-radius: 1rem; 
-      transition: all 0.3s;
-      width: 100%;
-    }
-    
-    .calendar-day:hover:not(.empty) { background-color: rgba(0, 35, 75, 0.05); }
-    .calendar-day.active { background-color: #00234b; color: white; }
-    .calendar-day.maintenance { background-color: #c5a059; color: white; }
-    .calendar-day.today { border: 2px solid #c5a059; font-weight: 800; }
-    
-    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0, 35, 75, 0.05); }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #c5a059; border-radius: 10px; }
-    
-    /* Note: .sr-only and .card-hover are defined in /css/style.css - remove duplicates */
-    .modal-backdrop { -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); background-color: rgba(0, 35, 75, 0.4); }
-    .modal-backdrop.fade-in { animation: fadeIn 0.3s ease forwards; }
-    
-    /* Performance: GPU acceleration for card hover */
-    .card-hover { will-change: transform, box-shadow; }
-    
-    /* Focus visible states for accessibility */
-    .tab-btn:focus-visible { outline: 2px solid var(--lux-gold); outline-offset: 2px; }
-    button:focus-visible, a:focus-visible { outline: 2px solid var(--lux-gold); outline-offset: 2px; }
-    
-    /* Loading spinner */
-    .spinner { width: 20px; height: 20px; border: 2px solid transparent; border-top-color: currentColor; border-radius: 50%; animation: spin 0.8s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    
-    /* Skeleton loading state */
-    .skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    .tab-btn { border-bottom: 2px solid transparent; transition: all 0.2s; }
+    .tab-btn.active { border-bottom-color: #c5a059; color: #00234b; font-weight: 600; }
+    .tab-btn:not(.active) { color: #6b7280; }
+    .tab-btn:not(.active):hover { color: #374151; border-bottom-color: #d1d5db; }
 
-    /* Flatpickr Override for Grid behavior if used */
-    .flatpickr-days {
-      display: grid !important;
-      grid-template-columns: repeat(7, 1fr) !important;
-      gap: 2px !important;
-    }
-    .flatpickr-day {
-      display: flex !important;
-      width: 100% !important;
-      max-width: none !important;
-      justify-content: center !important;
-      align-items: center !important;
-    }
-    .flatpickr-weekday {
-      display: block !important;
-      width: 100% !important;
-      text-align: center !important;
-    }
+    .category-badge-cottage { background-color: #fef3c7; color: #92400e; }
+    .category-badge-cabana { background-color: #ccfbf1; color: #134e4a; }
+    .category-badge-beach_equipment { background-color: #cffafe; color: #164e63; }
+
+    .modal-backdrop { position: fixed; inset: 0; background-color: rgba(0,35,75,0.45); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 50; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+    .modal-box { background: white; border-radius: 1rem; width: 100%; max-width: 680px; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 60px rgba(0,0,0,0.2); }
+
+    .facility-card { transition: transform 0.2s, box-shadow 0.2s; }
+    .facility-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+
+    .toggle-switch { position: relative; display: inline-flex; align-items: center; cursor: pointer; }
+    .toggle-switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+    .toggle-slider { width: 2.5rem; height: 1.25rem; background: #d1d5db; border-radius: 9999px; transition: background 0.2s; position: relative; }
+    .toggle-slider::after { content: ''; position: absolute; top: 2px; left: 2px; width: 1rem; height: 1rem; background: white; border-radius: 9999px; transition: transform 0.2s; }
+    .toggle-switch input:checked + .toggle-slider { background: #059669; }
+    .toggle-switch input:checked + .toggle-slider::after { transform: translateX(1.25rem); }
+
+    .skeleton { background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 0.5rem; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
   </style>
 </head>
-<body class="bg-lux-cream font-sans text-lux-navy">
+<body class="bg-gray-50 font-sans text-gray-800">
   <div class="flex h-screen overflow-hidden">
+
     <!-- Sidebar -->
-    <aside class="w-80 bg-white border-r border-lux-navy/5 flex-shrink-0 hidden md:flex flex-col relative z-20">
-      <div class="p-10 border-b border-lux-navy/5">
-        <a href="/" class="flex items-center gap-4 group" aria-label="Mamagan Home">
-          <img src="/images/logos/LOGO.png" alt="Mamagan Logo" class="h-12 group-hover:scale-110 transition-transform">
+    <aside class="w-64 bg-white border-r border-gray-200 flex-shrink-0 hidden md:flex flex-col">
+      <div class="p-6 border-b border-gray-200">
+        <a href="/" class="flex items-center gap-3 group">
+          <img src="/images/logos/LOGO.png" alt="Logo" class="h-10 group-hover:scale-105 transition-transform">
           <div class="flex flex-col">
-            <span class="luxury-heading font-bold text-xl leading-none">Mamagan</span>
-            <span class="text-[8px] font-black uppercase tracking-[0.4em] text-lux-gold mt-1">Beach Resort</span>
+            <span class="font-heading font-bold text-lg leading-tight text-gray-900">Mamagan</span>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-primary-600">Admin Panel</span>
           </div>
         </a>
       </div>
-      <nav id="admin-nav" class="flex-1 p-6 space-y-2" aria-label="Admin Navigation"></nav>
-      <div class="p-8 border-t border-lux-navy/5">
-        <button id="logout-btn" aria-label="Sign Out" title="Sign Out" class="w-full flex items-center gap-4 px-6 py-4 text-red-600 hover:bg-red-50 rounded-2xl transition-all group">
-          <i class="fas fa-sign-out-alt w-5 text-center group-hover:-translate-x-1 transition-transform"></i>
-          <span class="text-[10px] font-black uppercase tracking-widest">Terminate Session</span>
+      <nav id="admin-nav" class="flex-1 p-4 space-y-1 overflow-y-auto"></nav>
+      <div class="p-4 border-t border-gray-200">
+        <button id="logout-btn" class="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-all">
+          <i class="fas fa-sign-out-alt w-5 text-center"></i>
+          <span class="text-sm font-medium">Sign Out</span>
         </button>
       </div>
     </aside>
 
     <!-- Main Content -->
-    <div class="flex-1 overflow-y-auto bg-lux-cream/50">
-      <header class="bg-white/80 backdrop-blur-xl border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-30">
+    <div class="flex-1 overflow-y-auto bg-gray-50">
+
+      <!-- Header -->
+      <header class="bg-white border-b border-gray-200 px-8 py-5 flex justify-between items-center sticky top-0 z-10">
         <div>
-          <h1 class="luxury-heading text-2xl font-bold text-lux-navy">Facility Management</h1>
-          <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">Manage resort inventory, status, and pricing</p>
+          <h1 class="font-heading text-2xl font-bold text-gray-900">Facilities</h1>
+          <p class="text-xs text-gray-500 mt-1">Manage resort facilities, pricing and availability</p>
         </div>
-        <div class="flex items-center gap-8">
-          <!-- Tab Navigation with proper ARIA attributes -->
-          <div class="flex bg-lux-navy/5 p-1 rounded-full border border-lux-navy/5" role="tablist" aria-label="Facility Management Sections">
-            <button 
-              type="button"
-              id="btn-tab-assets" 
-              role="tab" 
-              aria-selected="true" 
-              aria-controls="tab-content-assets"
-              data-tab-target="tab-content-assets"
-              class="tab-btn px-6 py-2 text-[10px] font-black uppercase tracking-widest rounded-full transition-all bg-white shadow-sm text-lux-navy"
-            >Assets</button>
-            <button 
-              type="button"
-              id="btn-tab-calendar" 
-              role="tab" 
-              aria-selected="false" 
-              aria-controls="tab-content-calendar"
-              data-tab-target="tab-content-calendar"
-              class="tab-btn px-6 py-2 text-[10px] font-black uppercase tracking-widest rounded-full transition-all text-lux-navy/40 hover:text-lux-navy"
-            >Maintenance</button>
-          </div>
-          
-          <!-- Use anchor tag for navigation (semantic HTML) -->
-          <a href="/admin/create-facility.html" aria-label="Add New Asset" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-lux-navy to-lux-navy/80 text-white text-[11px] font-black uppercase tracking-widest rounded-full hover:shadow-2xl hover:from-lux-gold hover:to-lux-gold/80 transition-all duration-200 border-2 border-transparent hover:border-lux-navy">
-            <i class="fas fa-plus mr-2 text-lg" aria-hidden="true"></i>New Asset
-          </a>
-          
-          <!-- Auth navigation container (populated by auth.js) -->
-          <div id="auth-nav" aria-label="Authentication Navigation"></div>
-        </div>
+        <button onclick="openAddModal()" class="btn-primary flex items-center gap-2 px-4 py-2 text-sm">
+          <i class="fas fa-plus"></i>
+          Add Facility
+        </button>
       </header>
 
-      <main class="p-10 page-transition space-y-10">
-        <!-- Assets Tab -->
-        <section id="tab-content-assets" class="space-y-10">
-            <!-- Search & Filter Bar -->
-            <div class="flex flex-col md:flex-row justify-between items-center gap-6 bg-white p-8 rounded-[2rem] border-2 border-lux-navy/10 shadow-md">
-                <div class="relative w-full md:w-96">
-                    <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-lux-navy/40 text-lg"></i>
-                    <label for="asset-search" class="sr-only">Search assets by name or category</label>
-                    <input type="text" id="asset-search" oninput="handleSearch()" placeholder="Search Name or Category..." class="w-full pl-14 pr-6 py-4 bg-white border-2 border-lux-navy/20 rounded-full text-[11px] font-bold uppercase tracking-widest outline-none focus:bg-white focus:border-lux-gold focus:ring-2 focus:ring-lux-gold/20 transition-all">
-                </div>
-                <div class="flex items-center gap-4 w-full md:w-auto">
-                    <button onclick="clearSearch()" class="px-6 py-3 text-[11px] font-black uppercase tracking-widest text-lux-navy hover:text-lux-gold hover:bg-lux-gold/5 rounded-lg transition-all border-2 border-lux-navy/20 hover:border-lux-gold">
-                        Clear Search
-                    </button>
-                    <div class="h-8 w-px bg-lux-navy/10 mx-2"></div>
-                    <p id="asset-count" class="text-[11px] font-black uppercase tracking-widest text-lux-navy/50">Showing 0 Assets</p>
-                </div>
+      <main class="p-6 space-y-5">
+
+        <!-- Category Tabs -->
+        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
+          <div class="flex border-b border-gray-200 px-2 pt-2 gap-1 overflow-x-auto">
+            <button class="tab-btn active px-5 py-3 text-sm whitespace-nowrap" data-category="" onclick="switchTab(this, '')">
+              <i class="fas fa-th-large mr-2 text-gray-400"></i>All
+            </button>
+            <button class="tab-btn px-5 py-3 text-sm whitespace-nowrap" data-category="cottage" onclick="switchTab(this, 'cottage')">
+              <i class="fas fa-home mr-2 text-amber-400"></i>Cottages
+            </button>
+            <button class="tab-btn px-5 py-3 text-sm whitespace-nowrap" data-category="cabana" onclick="switchTab(this, 'cabana')">
+              <i class="fas fa-building mr-2 text-teal-400"></i>Cabanas
+            </button>
+            <button class="tab-btn px-5 py-3 text-sm whitespace-nowrap" data-category="beach_equipment" onclick="switchTab(this, 'beach_equipment')">
+              <i class="fas fa-water mr-2 text-cyan-400"></i>Beach Equipment
+            </button>
+          </div>
+
+          <!-- Cards Grid -->
+          <div class="p-6">
+            <div id="facilities-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+              <!-- Skeleton loaders -->
+              <div class="skeleton h-56 rounded-xl"></div>
+              <div class="skeleton h-56 rounded-xl"></div>
+              <div class="skeleton h-56 rounded-xl"></div>
             </div>
-
-            <!-- Asset Cards Grid -->
-            <div id="assets-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                <!-- Dynamic Assets Here -->
-            </div>
-
-            <!-- Empty State -->
-            <div id="empty-state" class="hidden py-32 text-center flex flex-col items-center gap-6">
-                <div class="w-24 h-24 rounded-full bg-lux-navy/5 flex items-center justify-center text-lux-navy/10 text-4xl">
-                    <i class="fas fa-box-open"></i>
-                </div>
-                <div>
-                    <h3 class="luxury-heading text-xl font-bold opacity-30">No Assets Found</h3>
-                    <p class="text-[10px] font-bold text-lux-navy/20 uppercase tracking-[0.2em] mt-2">Adjust your search or add a new facility</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Maintenance Calendar Tab -->
-        <section id="tab-content-calendar" class="hidden space-y-10">
-          <div class="grid lg:grid-cols-3 gap-10">
-            <!-- Calendar View -->
-            <div class="lg:col-span-2 bg-white rounded-[3rem] p-10 premium-shadow overflow-hidden">
-              <div class="flex justify-between items-center mb-8">
-                <div>
-                  <h3 id="calendar-month-year" class="luxury-heading text-2xl font-bold">Month Year</h3>
-                  <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">Maintenance Schedule</p>
-                </div>
-                <div class="flex gap-2">
-                  <button onclick="prevMonth()" aria-label="Previous Month" title="Previous" class="w-10 h-10 rounded-full border border-lux-navy/10 flex items-center justify-center hover:bg-lux-navy hover:text-white transition-all"><i class="fas fa-chevron-left text-xs"></i></button>
-                  <button onclick="nextMonth()" aria-label="Next Month" title="Next" class="w-10 h-10 rounded-full border border-lux-navy/10 flex items-center justify-center hover:bg-lux-navy hover:text-white transition-all"><i class="fas fa-chevron-right text-xs"></i></button>
-                </div>
-              </div>
-              
-              <div class="calendar-grid text-center mb-4" aria-hidden="true">
-                <div class="text-[10px] font-black text-lux-navy/20 uppercase tracking-widest py-4">Sun</div>
-                <div class="text-[10px] font-black text-lux-navy/20 uppercase tracking-widest py-4">Mon</div>
-                <div class="text-[10px] font-black text-lux-navy/20 uppercase tracking-widest py-4">Tue</div>
-                <div class="text-[10px] font-black text-lux-navy/20 uppercase tracking-widest py-4">Wed</div>
-                <div class="text-[10px] font-black text-lux-navy/20 uppercase tracking-widest py-4">Thu</div>
-                <div class="text-[10px] font-black text-lux-navy/20 uppercase tracking-widest py-4">Fri</div>
-                <div class="text-[10px] font-black text-lux-navy/20 uppercase tracking-widest py-4">Sat</div>
-              </div>
-              <div id="calendar-days" class="calendar-grid gap-2">
-                <!-- Days injected here -->
-              </div>
-            </div>
-
-            <!-- Maintenance Sidebar -->
-            <div class="space-y-6">
-              <div class="bg-white rounded-[3rem] p-8 premium-shadow">
-                <h4 id="maint-form-title" class="luxury-heading text-lg font-bold mb-6">Schedule Maintenance</h4>
-                <form id="maintenance-form" class="space-y-4">
-                  <input type="hidden" id="maint-id">
-                  <div class="space-y-1">
-                    <label for="maint-asset-id" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Select Asset</label>
-                    <select id="maint-asset-id" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" title="Select Asset"></select>
-                  </div>
-                  <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-1">
-                      <label for="maint-start" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Start Date</label>
-                      <input type="date" id="maint-start" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white text-xs">
-                    </div>
-                    <div class="space-y-1">
-                      <label for="maint-end" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">End Date</label>
-                      <input type="date" id="maint-end" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white text-xs">
-                    </div>
-                  </div>
-                  <div class="space-y-1">
-                    <label for="maint-reason" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Reason</label>
-                    <input type="text" id="maint-reason" placeholder="Routine check, repair..." required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white">
-                  </div>
-                  <div class="flex gap-2">
-                    <button type="submit" id="maint-submit-btn" class="premium-button-gold flex-1">Schedule</button>
-                    <button type="button" id="maint-cancel-btn" onclick="resetMaintenanceForm()" class="hidden px-6 py-3 bg-lux-navy/5 text-lux-navy/40 text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-navy/10 transition-all">Cancel</button>
-                  </div>
-                </form>
-              </div>
-
-              <div class="bg-white rounded-[3rem] p-8 premium-shadow overflow-hidden">
-                <h4 class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 mb-6">Active Schedules</h4>
-                <div id="maintenance-list" class="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                  <!-- List items -->
-                </div>
-              </div>
+            <div id="empty-state" class="hidden text-center py-16">
+              <i class="fas fa-layer-group text-4xl text-gray-300 mb-3"></i>
+              <p class="text-gray-500 font-medium">No facilities found</p>
+              <p class="text-gray-400 text-sm mt-1">Add a facility to get started.</p>
             </div>
           </div>
-        </section>
+        </div>
+
       </main>
     </div>
   </div>
 
-  <!-- Asset Modal (Add/Edit) -->
-  <div id="asset-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6 modal-backdrop">
-    <div class="absolute inset-0" onclick="closeAssetModal()"></div>
-    <div class="relative bg-white rounded-[3rem] w-full max-w-2xl overflow-hidden shadow-2xl fade-in">
-        <div class="p-10 border-b border-lux-navy/5 flex justify-between items-center bg-lux-navy/5">
-            <h3 id="modal-title" class="luxury-heading text-2xl font-bold">Register Asset</h3>
-            <button onclick="closeAssetModal()" aria-label="Close modal" title="Close" class="text-lux-navy/20 hover:text-lux-navy transition-colors"><i class="fas fa-times"></i></button>
+  <!-- Add / Edit Modal -->
+  <div id="facility-modal" class="modal-backdrop hidden" onclick="handleBackdropClick(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between p-6 border-b border-gray-100">
+        <h2 id="modal-title" class="font-heading text-xl font-bold text-gray-900">Add Facility</h2>
+        <button onclick="closeModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <form id="facility-form" onsubmit="handleSubmit(event)" class="p-6 space-y-5">
+        <input type="hidden" id="f-id">
+
+        <!-- Name & Category -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="form-label">Facility Name <span class="text-red-500">*</span></label>
+            <input id="f-name" type="text" class="form-input" placeholder="e.g. Beachfront Cottage A" required>
+          </div>
+          <div>
+            <label class="form-label">Category <span class="text-red-500">*</span></label>
+            <select id="f-category" class="form-input" required>
+              <option value="" disabled selected>Select category</option>
+              <option value="cottage">Cottage</option>
+              <option value="cabana">Cabana</option>
+              <option value="beach_equipment">Beach Equipment</option>
+            </select>
+          </div>
         </div>
-        <form id="asset-form" class="p-10 space-y-6">
-            <input type="hidden" id="edit-id">
-            <div class="grid md:grid-cols-2 gap-6">
-                <div class="space-y-1">
-                    <label for="f-name" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Asset Name</label>
-                    <input type="text" id="f-name" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="e.g. Royal Cabana">
-                </div>
-                <div class="space-y-1">
-                    <label for="f-category" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Category</label>
-                    <select id="f-category" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" title="Select Category">
-                        <!-- Must match backend facilitySchema `category` values -->
-                        <option value="room_cabana">Cabana</option>
-                        <option value="cottage">Suite/Cottage</option>
-                        <option value="beach_equipment">Beach Equipment</option>
-                    </select>
-                </div>
-            </div>
 
-            <div class="grid md:grid-cols-2 gap-6">
-                <div class="space-y-1">
-                    <label for="f-price" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Rate (PHP)</label>
-                    <input type="number" id="f-price" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="0.00">
-                </div>
-                <div class="space-y-1">
-                    <label for="f-status" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Status</label>
-                    <select id="f-status" required class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" title="Select Status">
-                        <option value="Available">Available</option>
-                        <option value="Maintenance">Maintenance</option>
-                        <option value="Occupied">Occupied</option>
-                    </select>
-                </div>
-            </div>
+        <!-- Units & Price -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="form-label">Total Units <span class="text-red-500">*</span></label>
+            <input id="f-total-units" type="number" min="1" class="form-input" placeholder="e.g. 5" required>
+          </div>
+          <div>
+            <label class="form-label">Base Price (₱) <span class="text-red-500">*</span></label>
+            <input id="f-base-price" type="number" min="0" step="0.01" class="form-input" placeholder="e.g. 2500.00" required>
+          </div>
+        </div>
 
-            <div class="space-y-1">
-                <label for="f-description" class="text-[10px] font-black uppercase tracking-widest text-lux-navy/30 ml-2">Description</label>
-                <textarea id="f-description" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white h-24" placeholder="Describe features..."></textarea>
-            </div>
+        <!-- Capacity -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="form-label">Min Capacity <span class="text-red-500">*</span></label>
+            <input id="f-capacity-min" type="number" min="1" class="form-input" placeholder="e.g. 1" required>
+          </div>
+          <div>
+            <label class="form-label">Max Capacity <span class="text-red-500">*</span></label>
+            <input id="f-capacity-max" type="number" min="1" class="form-input" placeholder="e.g. 8" required>
+          </div>
+        </div>
 
-            <div class="space-y-4">
-                <div class="flex p-1 bg-lux-navy/5 rounded-2xl w-fit">
-                    <button type="button" onclick="setImgSource('url')" id="src-url-btn" class="px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all bg-lux-navy text-white">Image URL</button>
-                    <button type="button" onclick="setImgSource('file')" id="src-file-btn" class="px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all text-lux-navy/40">Upload File</button>
-                </div>
-                <div id="url-container" class="space-y-1">
-                    <label for="f-image-url" class="sr-only">Image URL</label>
-                    <input type="url" id="f-image-url" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white" placeholder="https://...">
-                </div>
-                <div id="file-container" class="hidden space-y-1">
-                    <label for="f-image-file" class="sr-only">Upload File</label>
-                    <input type="file" id="f-image-file" accept="image/*" class="premium-input bg-lux-navy/5 border-transparent focus:bg-white">
-                </div>
-                <div id="image-preview" class="w-full h-32 rounded-2xl bg-lux-navy/5 border-2 border-dashed border-lux-navy/10 overflow-hidden bg-cover bg-center flex items-center justify-center">
-                    <span class="text-[10px] font-bold text-lux-navy/20 uppercase tracking-widest">Image Preview</span>
-                </div>
-            </div>
+        <!-- Description -->
+        <div>
+          <label class="form-label">Description</label>
+          <textarea id="f-description" rows="3" class="form-input resize-none" placeholder="Describe the facility, its amenities and features..."></textarea>
+        </div>
 
-            <button type="submit" id="submit-btn" class="premium-button-gold w-full flex items-center justify-center gap-4 group shadow-xl">
-                <span id="btn-text">Register Asset</span>
-                <i class="fas fa-save transition-transform group-hover:scale-110"></i>
-            </button>
-        </form>
+        <!-- Images Link -->
+        <div>
+          <label class="form-label">Images URL</label>
+          <input id="f-images-link" type="url" class="form-input" placeholder="https://example.com/images/facility">
+          <p class="text-xs text-gray-400 mt-1">Link to the facility image or image gallery.</p>
+        </div>
+
+        <!-- Unavailable Reason -->
+        <div>
+          <label class="form-label">Unavailable Reason</label>
+          <input id="f-unavailable-reason" type="text" class="form-input" placeholder="e.g. Under renovation until June 2026">
+          <p class="text-xs text-gray-400 mt-1">Shown to guests when the facility is unavailable. Leave blank if not applicable.</p>
+        </div>
+
+        <!-- Checkboxes -->
+        <div class="bg-gray-50 rounded-xl p-4 space-y-3">
+          <p class="text-sm font-semibold text-gray-700 mb-2">Settings</p>
+          <label class="flex items-center gap-3 cursor-pointer">
+            <input id="f-bookable" type="checkbox" class="w-4 h-4 accent-primary-600 rounded" checked>
+            <span class="text-sm text-gray-700">Bookable by guests</span>
+          </label>
+          <label class="flex items-center gap-3 cursor-pointer">
+            <input id="f-restricted-peak" type="checkbox" class="w-4 h-4 accent-primary-600 rounded">
+            <span class="text-sm text-gray-700">Restricted during peak hours</span>
+          </label>
+          <label class="flex items-center gap-3 cursor-pointer">
+            <input id="f-is-active" type="checkbox" class="w-4 h-4 accent-primary-600 rounded" checked>
+            <span class="text-sm text-gray-700">Active (visible to guests)</span>
+          </label>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-end gap-3 pt-2">
+          <button type="button" onclick="closeModal()" class="btn-outline text-sm px-5 py-2">Cancel</button>
+          <button type="submit" id="submit-btn" class="btn-primary text-sm px-6 py-2 flex items-center gap-2">
+            <i class="fas fa-save"></i>
+            <span id="submit-label">Save Facility</span>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <!-- Delete Confirmation Modal -->
-  <div id="delete-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-6 modal-backdrop">
-    <div class="absolute inset-0" onclick="closeDeleteModal()"></div>
-    <div class="relative bg-white rounded-[3rem] w-full max-w-md p-10 shadow-2xl text-center fade-in">
-        <div class="w-20 h-20 rounded-3xl bg-red-50 text-red-500 text-3xl flex items-center justify-center mx-auto mb-6">
-            <i class="fas fa-trash-alt"></i>
-        </div>
-        <h3 class="luxury-heading text-xl font-bold text-lux-navy mb-2">Remove Asset?</h3>
-        <p class="text-xs text-lux-navy/50 leading-relaxed mb-8">Are you sure you want to remove this asset from the inventory? This action cannot be undone.</p>
-        <div class="flex gap-4">
-            <button onclick="closeDeleteModal()" class="flex-1 px-8 py-4 bg-lux-navy/5 text-lux-navy text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-navy/10 transition-all">Cancel</button>
-            <button id="confirm-delete-btn" class="flex-1 px-8 py-4 bg-red-500 text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-red-600 hover:shadow-lg transition-all shadow-red-500/20">Delete Asset</button>
-        </div>
-    </div>
-  </div>
-
+  <!-- Scripts -->
   <script src="/js/api.js?v=2"></script>
   <script src="/js/auth.js?v=2"></script>
   <script src="/js/toast.js?v=2"></script>
   <script src="/js/admin.js?v=2"></script>
-  
   <script>
-    let allAssets = [];
-    let allMaintenance = [];
-    let imageSource = 'url';
-    let base64Image = '';
+    /* ─── Auth Guard ──────────────────────────────────────────────── */
+    (function () {
+      const token = localStorage.getItem('token');
+      let user = null;
+      try { user = JSON.parse(localStorage.getItem('user')); } catch (_) {}
+      if (!token || !user || user.role !== 'admin') {
+        window.location.href = '/login.html';
+      }
+    })();
 
-    // Category mapping constants
-    const CATEGORY_MAP = {
-      // Beach equipment types
-      jet_ski: 'beach_equipment',
-      stand_paddle_boat: 'beach_equipment',
-      island_tour: 'beach_equipment',
-      boat: 'beach_equipment',
-      // Room/Cabana types
-      cabana: 'room_cabana',
-      // Cottage/Suite types
-      day_bed: 'cottage',
-      suite: 'cottage',
-      cottage: 'cottage'
+    /* ─── State ───────────────────────────────────────────────────── */
+    let currentCategory = '';
+    let editingId = null;
+
+    /* ─── Category helpers ───────────────────────────────────────── */
+    const CATEGORY_META = {
+      cottage: { label: 'Cottage', icon: 'fa-home', badgeClass: 'category-badge-cottage', iconColor: 'text-amber-500' },
+      cabana: { label: 'Cabana', icon: 'fa-building', badgeClass: 'category-badge-cabana', iconColor: 'text-teal-500' },
+      beach_equipment: { label: 'Beach Equipment', icon: 'fa-water', badgeClass: 'category-badge-beach_equipment', iconColor: 'text-cyan-500' },
     };
 
-    /**
-     * Maps legacy facility type to backend category
-     * @param {string} type - The legacy type string
-     * @returns {string} Backend category (room_cabana | cottage | beach_equipment)
-     */
-    function mapTypeToCategory(type) {
-      const t = (type || '').toLowerCase().trim();
-      return CATEGORY_MAP[t] || 'room_cabana';
+    function getCategoryMeta(cat) {
+      return CATEGORY_META[cat] || { label: cat, icon: 'fa-layer-group', badgeClass: 'bg-gray-100 text-gray-700', iconColor: 'text-gray-400' };
     }
 
+    /* ─── Init ────────────────────────────────────────────────────── */
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof renderAdminNav === 'function') renderAdminNav('facilities');
+      if (typeof requireAdmin === 'function') requireAdmin();
 
-    // --- Tab Management ---
-    function switchTab(tab) {
-      document.getElementById('tab-content-assets').classList.toggle('hidden', tab !== 'assets');
-      document.getElementById('tab-content-calendar').classList.toggle('hidden', tab !== 'calendar');
-      const btnAssets = document.getElementById('btn-tab-assets');
-      const btnCalendar = document.getElementById('btn-tab-calendar');
-      
-      if(tab === 'assets') {
-        btnAssets.classList.add('bg-white', 'shadow-sm', 'text-lux-navy');
-        btnAssets.setAttribute('aria-selected', 'true');
-        btnCalendar.setAttribute('aria-selected', 'false');
-        btnAssets.classList.remove('text-lux-navy/40');
-        btnCalendar.classList.remove('bg-white', 'shadow-sm', 'text-lux-navy');
-        btnCalendar.classList.add('text-lux-navy/40');
-        fetchAssets();
-      } else {
-        btnCalendar.classList.add('bg-white', 'shadow-sm', 'text-lux-navy');
-        btnCalendar.setAttribute('aria-selected', 'true');
-        btnAssets.setAttribute('aria-selected', 'false');
-        btnCalendar.classList.remove('text-lux-navy/40');
-        btnAssets.classList.remove('bg-white', 'shadow-sm', 'text-lux-navy');
-        btnAssets.classList.add('text-lux-navy/40');
-        initCalendar();
-        fetchMaintenance();
+      const logoutBtn = document.getElementById('logout-btn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          window.location.href = '/login.html';
+        });
       }
-    }
 
-    // --- Initialization ---
-    document.addEventListener('DOMContentLoaded', async () => {
-        if (typeof renderAdminNav === 'function') renderAdminNav('facilities');
-        const user = await loadUser();
-        if (!user || user.role !== 'admin') {
-            window.location.replace('/login.html');
-            return;
-        }
-        await fetchAssets();
-        await fetchMaintenance();
+      loadFacilities();
     });
 
-    async function fetchAssets() {
-        try {
-            const res = await api.get('/facilities');
-            if (res.success) {
-                allAssets = res.data;
-                renderAssets(allAssets);
-                // Update maintenance dropdown
-                const select = document.getElementById('maint-asset-id');
-                if(select) select.innerHTML = allAssets.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
-            }
-        } catch (err) {
-            console.error('Fetch assets failed:', err);
-        }
+    /* ─── Tab Switching ───────────────────────────────────────────── */
+    function switchTab(btn, category) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentCategory = category;
+      loadFacilities();
     }
 
-    // --- Rendering Assets ---
-    function renderAssets(data) {
-        const grid = document.getElementById('assets-grid');
-const empty = document.getElementById('empty-state');
-        const count = document.getElementById('asset-count');
-        // assets from backend will be rendered into #assets-grid
+    /* ─── Load Facilities ─────────────────────────────────────────── */
+    async function loadFacilities() {
+      const grid = document.getElementById('facilities-grid');
+      const empty = document.getElementById('empty-state');
+
+      grid.innerHTML = `
+        <div class="skeleton h-56 rounded-xl"></div>
+        <div class="skeleton h-56 rounded-xl"></div>
+        <div class="skeleton h-56 rounded-xl"></div>
+      `;
+      empty.classList.add('hidden');
+
+      try {
+        const query = currentCategory ? `?category=${encodeURIComponent(currentCategory)}` : '';
+        const data = await api.get(`/admin/facilities${query}`);
+        const facilities = Array.isArray(data) ? data : (data.facilities || data.data || []);
 
         grid.innerHTML = '';
-        count.textContent = `Showing ${data.length} Assets`;
 
-        if (data.length === 0) {
-            empty.classList.remove('hidden');
-            grid.classList.add('hidden');
-            return;
+        if (!facilities.length) {
+          empty.classList.remove('hidden');
+          return;
         }
 
-        empty.classList.add('hidden');
-        grid.classList.remove('hidden');
-
-        data.forEach(asset => {
-            const img = (asset.images && asset.images.length > 0) ? asset.images[0] : '/images/placeholders/asset-placeholder.jpg';
-            const card = `
-                <div class="bg-white rounded-[2.5rem] overflow-hidden border border-lux-navy/5 card-hover shadow-sm group">
-                    <div class="h-60 overflow-hidden relative">
-                        <div class="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-110" style="background-image: url('${img}')"></div>
-                        <div class="absolute top-6 right-6 flex gap-2">
-                            <button onclick="openAssetModal('${asset.id}')" aria-label="Edit" title="Edit" class="w-10 h-10 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-lux-navy hover:text-lux-gold transition-all shadow-lg"><i class="fas fa-pencil-alt text-xs"></i></button>
-                            <button onclick="confirmDelete('${asset.id}')" aria-label="Delete" title="Delete" class="w-10 h-10 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-lg"><i class="fas fa-trash-alt text-xs"></i></button>
-                        </div>
-                        <div class="absolute bottom-6 left-6">
-                            <span class="px-4 py-1.5 bg-lux-navy text-white text-[8px] font-black uppercase tracking-widest rounded-full">${asset.type}</span>
-                        </div>
-                    </div>
-                    <div class="p-8">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="luxury-heading text-xl font-bold text-lux-navy truncate" title="${asset.name}">${asset.name}</h3>
-                            <span class="text-xl font-black text-lux-gold">₱${Number(asset.base_price).toLocaleString()}</span>
-                        </div>
-                        <div class="flex items-center gap-2 mb-4">
-                            <div class="w-1.5 h-1.5 rounded-full ${asset.status === 'Available' ? 'bg-green-500' : asset.status === 'Maintenance' ? 'bg-amber-500' : 'bg-red-500'}"></div>
-                            <span class="text-[9px] font-black uppercase tracking-widest text-lux-navy/40">${asset.status}</span>
-                        </div>
-                        <p class="text-xs text-lux-navy/60 leading-relaxed line-clamp-2 h-10 mb-6">${asset.description || 'No description provided.'}</p>
-                        <div class="pt-6 border-t border-lux-navy/5 flex justify-between items-center">
-                            <span class="text-[8px] font-black text-lux-navy/20 uppercase tracking-widest italic">ID: ${asset.id.substring(0,8)}</span>
-                            <button onclick="openAssetModal('${asset.id}')" class="text-[9px] font-black text-lux-gold hover:text-lux-navy uppercase tracking-[0.2em] transition-all">Modify <i class="fas fa-chevron-right ml-1"></i></button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            grid.insertAdjacentHTML('beforeend', card);
+        facilities.forEach(f => {
+          grid.insertAdjacentHTML('beforeend', buildCard(f));
         });
+      } catch (err) {
+        grid.innerHTML = '';
+        empty.classList.remove('hidden');
+        showToast(err.message || 'Failed to load facilities.', 'error');
+      }
     }
 
-    // --- Search & Filter with Debounce ---
-    let searchDebounceTimer = null;
-    
-    function handleSearch() {
-        // Debounce search to improve performance on large datasets
-        clearTimeout(searchDebounceTimer);
-        searchDebounceTimer = setTimeout(() => {
-            const query = document.getElementById('asset-search').value.toLowerCase().trim();
-            if (!query) {
-                renderAssets(allAssets);
-                return;
-            }
-            const filtered = allAssets.filter(a => 
-                a.name.toLowerCase().includes(query) || 
-                (a.type && a.type.toLowerCase().includes(query)) ||
-                (a.category && a.category.toLowerCase().includes(query))
-            );
-            renderAssets(filtered);
-        }, 300);
-    }
+    /* ─── Build Card HTML ─────────────────────────────────────────── */
+    function buildCard(f) {
+      const meta = getCategoryMeta(f.category);
+      const price = Number(f.base_price).toLocaleString('en-PH', { style: 'currency', currency: 'PHP' });
+      const capacityStr = f.capacity_min === f.capacity_max
+        ? `${f.capacity_max} pax`
+        : `${f.capacity_min}–${f.capacity_max} pax`;
 
-    function clearSearch() {
-        document.getElementById('asset-search').value = '';
-        renderAssets(allAssets);
-    }
+      const activeBadge = f.is_active
+        ? `<span class="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-green-100 text-green-700"><span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>Active</span>`
+        : `<span class="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-red-100 text-red-600"><span class="w-1.5 h-1.5 bg-red-500 rounded-full"></span>Inactive</span>`;
 
-    // --- Asset CRUD: Modal ---
-    function openAssetModal(id = null) {
-        const modal = document.getElementById('asset-modal');
-        const form = document.getElementById('asset-form');
-        const title = document.getElementById('modal-title');
-        const btn = document.getElementById('btn-text');
+      const bookableBadge = f.bookable
+        ? `<span class="text-xs font-medium px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">Bookable</span>`
+        : `<span class="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">Not Bookable</span>`;
 
-        form.reset();
-        document.getElementById('edit-id').value = '';
-        updatePreview('');
-        setImgSource('url');
+      const peakBadge = f.restricted_during_peak_hours
+        ? `<span class="text-xs font-medium px-2 py-0.5 rounded-full bg-orange-50 text-orange-600">Peak Restricted</span>`
+        : '';
 
-        if (id) {
-            const asset = allAssets.find(a => a.id === id);
-            if (asset) {
-                title.textContent = 'Modify Facility';
-                btn.textContent = 'Update Asset';
-                document.getElementById('edit-id').value = asset.id;
-                document.getElementById('f-name').value = asset.name;
-                // Backend expects `category` values like: room_cabana | cottage | beach_equipment
-                // This admin modal only has limited category mapping; best-effort mapping from asset.type.
-                document.getElementById('f-category').value = mapTypeToCategory(asset.type);
-                
-                document.getElementById('f-price').value = asset.base_price;
-                document.getElementById('f-status').value = asset.status;
-                document.getElementById('f-description').value = asset.description || '';
-                const img = (asset.images && asset.images.length > 0) ? asset.images[0] : '';
-                if(img) {
-                    if(img.startsWith('http')) {
-                        document.getElementById('f-image-url').value = img;
-                        setImgSource('url');
-                    } else {
-                        setImgSource('file');
-                    }
-                    updatePreview(img);
-                }
-            }
-        } else {
-            title.textContent = 'Register Facility';
-            btn.textContent = 'Register Asset';
-        }
-        modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
+      const description = f.description
+        ? `<p class="text-xs text-gray-500 line-clamp-2 mt-1">${escHtml(f.description)}</p>`
+        : '';
 
-    function closeAssetModal() {
-        document.getElementById('asset-modal').classList.add('hidden');
-        document.body.style.overflow = '';
-    }
-
-    function setImgSource(src) {
-        imageSource = src;
-        const urlBtn = document.getElementById('src-url-btn');
-        const fileBtn = document.getElementById('src-file-btn');
-        document.getElementById('url-container').classList.toggle('hidden', src !== 'url');
-        document.getElementById('file-container').classList.toggle('hidden', src !== 'file');
-        urlBtn.className = src === 'url' ? 'px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all bg-lux-navy text-white' : 'px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all text-lux-navy/40';
-        fileBtn.className = src === 'file' ? 'px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all bg-lux-navy text-white' : 'px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl transition-all text-lux-navy/40';
-    }
-
-    function updatePreview(src) {
-        const preview = document.getElementById('image-preview');
-        if (src) { preview.style.backgroundImage = `url('${src}')`; preview.innerHTML = ''; }
-        else { preview.style.backgroundImage = 'none'; preview.innerHTML = '<span class="text-[10px] font-bold text-lux-navy/20 uppercase tracking-widest">Image Preview</span>'; }
-    }
-
-    document.getElementById('f-image-url').addEventListener('input', (e) => imageSource === 'url' && updatePreview(e.target.value));
-    document.getElementById('f-image-file').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (ev) => { base64Image = ev.target.result; updatePreview(base64Image); };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    document.getElementById('asset-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const id = document.getElementById('edit-id').value;
-        const token = localStorage.getItem('token');
-        const imageFileEl = document.getElementById('f-image-file');
-        const imageFile = imageFileEl && imageFileEl.files && imageFileEl.files.length ? imageFileEl.files[0] : null;
-
-            // Backend expects: facilitySchema.validate(req.body)
-            // and multer field name: image_file
-            // Backend facility schema expects:
-            // - category: cottage | room_cabana | beach_equipment
-            // - type: legacy type string (cabana/day_bed/jet_ski/etc)
-            // - total_units (required), capacity (optional), description (optional)
-            const payload = {
-                resort_id: '', // filled below for create (required by schema)
-                name: document.getElementById('f-name').value,
-
-                category: document.getElementById('f-category').value,
-                // map category -> a representative legacy type (backend schema validates `type`)
-                type: (() => {
-                    const cat = document.getElementById('f-category').value;
-                    if (cat === 'beach_equipment') return 'jet_ski';
-                    if (cat === 'cottage') return 'day_bed';
-                    return 'cabana';
-                })(),
-
-                description: document.getElementById('f-description').value,
-                base_price: Number(document.getElementById('f-price').value),
-                capacity: 1,
-                total_units: 1,
-
-                // status is UI-only in this screen; backend uses is_active.
-                // We'll also send is_active in JSON mode.
-                status: document.getElementById('f-status').value,
-
-                // URL images are sent as images_link.
-                images_link: (imageSource === 'url') ? document.getElementById('f-image-url').value.trim() : ''
-            };
-
-        // If editing, we can omit resort_id because schema requires it; to keep it safe,
-        // we fetch resort_id from existing asset first.
-        if (id) {
-            const existing = allAssets.find(a => a.id === id);
-            if (existing && existing.resort_id) payload.resort_id = existing.resort_id;
-        }
-
-        // Create requires resort_id; it can be provided by the backend session/resort.
-        // Current admin UI doesn’t have resort selector, so we try to reuse existing resort_id if present.
-        // If none found, backend will reject with schema validation error.
-        if (!id && !payload.resort_id) {
-            const any = allAssets && allAssets.length ? allAssets[0] : null;
-            if (any && any.resort_id) payload.resort_id = any.resort_id;
-        }
-
-        const isImageUrl = imageSource === 'url' && payload.images_link;
-        const isImageUpload = imageSource === 'file' && imageFile;
-
-        try {
-            let res;
-
-            if (isImageUpload) {
-                // multipart upload: must use field name `image_file`
-                const fd = new FormData();
-                Object.entries(payload).forEach(([k, v]) => {
-                    if (v === undefined || v === null || v === '') return;
-                    fd.append(k, v);
-                });
-                fd.delete('images_link');
-                fd.append('image_file', imageFile);
-
-                const endpoint = id ? `/facilities/${id}` : '/facilities';
-                const method = id ? 'PUT' : 'POST';
-
-                res = await fetch(`/api${endpoint}`, {
-                    method,
-                    headers: token ? { Authorization: `Bearer ${token}` } : {},
-                    body: fd,
-                }).then(r => r.json());
-            } else {
-                // JSON submit (URL only)
-                const data = {
-                    resort_id: payload.resort_id,
-                    name: payload.name,
-                    type: payload.type,
-                    category: payload.category,
-                    description: payload.description || null,
-                    base_price: payload.base_price,
-                    capacity: payload.capacity,
-                    total_units: payload.total_units,
-                    images_link: isImageUrl ? payload.images_link : null,
-                    // backend update route ignores status; keep for UI consistency
-                    is_active: true,
-                    status: payload.status,
-                };
-
-                res = id ? await api.put(`/facilities/${id}`, data) : await api.post('/facilities', data);
-            }
-
-            if (res.success) {
-                showToast(id ? 'Facility updated' : 'New facility registered', 'success');
-                closeAssetModal();
-                fetchAssets();
-            } else {
-                showToast(res.message || 'Action failed', 'error');
-            }
-        } catch (err) {
-            console.error('Submit error:', err);
-            showToast('System error', 'error');
-        }
-    });
-
-    // --- Asset CRUD: Delete ---
-    let pendingDeleteId = null;
-    function confirmDelete(id) {
-        pendingDeleteId = id;
-        document.getElementById('delete-modal').classList.remove('hidden');
-    }
-    function closeDeleteModal() {
-        document.getElementById('delete-modal').classList.add('hidden');
-        pendingDeleteId = null;
-    }
-    document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
-        if (!pendingDeleteId) return;
-        try {
-            const res = await api.delete(`/facilities/${pendingDeleteId}`);
-            if (res.success) { showToast('Asset removed', 'success'); closeDeleteModal(); fetchAssets(); }
-            else showToast(res.message, 'error');
-        } catch (err) { showToast('Error', 'error'); }
-    });
-
-    // --- Maintenance CRUD ---
-    async function fetchMaintenance() {
-        try {
-            // Assuming endpoint for maintenance exists, using localStorage as requested for maintenance logic if API not ready
-            const stored = localStorage.getItem('mamagan_maintenance');
-            allMaintenance = stored ? JSON.parse(stored) : [];
-            renderMaintenanceList();
-            initCalendar();
-        } catch (err) { console.error(err); }
-    }
-
-    function renderMaintenanceList() {
-      const container = document.getElementById('maintenance-list');
-      if(!container) return;
-      if(allMaintenance.length === 0) { container.innerHTML = '<p class="text-[8px] font-bold text-lux-navy/20 uppercase tracking-widest text-center py-10">No active schedules</p>'; return; }
-      container.innerHTML = allMaintenance.sort((a,b) => new Date(a.start) - new Date(b.start)).map(m => {
-        const asset = allAssets.find(a => a.id === m.assetId);
-        return `
-          <div class="p-4 bg-lux-navy/5 rounded-2xl flex justify-between items-center group border border-transparent hover:border-lux-gold/20 transition-all">
-            <div>
-              <h5 class="text-[10px] font-black uppercase tracking-widest text-lux-navy">${asset ? asset.name : 'Unknown Asset'}</h5>
-              <p class="text-[8px] font-bold text-lux-navy/40 uppercase tracking-widest">${m.start} to ${m.end}</p>
-              <p class="text-[8px] font-medium text-lux-navy/60 italic mt-1">${m.reason}</p>
+      return `
+        <div class="facility-card bg-white border border-gray-200 rounded-xl overflow-hidden">
+          <div class="px-5 py-4 border-b border-gray-100 flex items-start justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-10 h-10 rounded-lg ${meta.badgeClass} flex items-center justify-center flex-shrink-0">
+                <i class="fas ${meta.icon} ${meta.iconColor} text-sm"></i>
+              </div>
+              <div class="min-w-0">
+                <h3 class="font-semibold text-gray-900 text-sm truncate">${escHtml(f.name)}</h3>
+                <span class="text-xs font-medium px-2 py-0.5 rounded-full ${meta.badgeClass}">${meta.label}</span>
+              </div>
             </div>
-            <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-               <button onclick="editMaintenance('${m.id}')" class="text-lux-navy/40 hover:text-lux-gold transition-colors"><i class="fas fa-edit"></i></button>
-                <button onclick="deleteMaintenance('${m.id}')" class="text-red-400 hover:text-red-600 transition-colors"><i class="fas fa-trash"></i></button>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              ${activeBadge}
             </div>
           </div>
-        `;
-      }).join('');
+
+          <div class="px-5 py-4 space-y-3">
+            ${description}
+
+            <div class="grid grid-cols-3 gap-2 text-center">
+              <div class="bg-gray-50 rounded-lg py-2 px-1">
+                <p class="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Price</p>
+                <p class="text-sm font-bold text-gray-800 mt-0.5">${price}</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg py-2 px-1">
+                <p class="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Units</p>
+                <p class="text-sm font-bold text-gray-800 mt-0.5">${f.total_units ?? '—'}</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg py-2 px-1">
+                <p class="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Capacity</p>
+                <p class="text-sm font-bold text-gray-800 mt-0.5">${capacityStr}</p>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-1.5">
+              ${bookableBadge}
+              ${peakBadge}
+            </div>
+          </div>
+
+          <div class="px-5 py-3 border-t border-gray-100 flex items-center justify-between gap-2">
+            <button onclick="openEditModal(${f.id})" class="flex items-center gap-1.5 text-xs font-medium text-primary-600 hover:text-primary-800 hover:bg-primary-50 px-3 py-1.5 rounded-lg transition-colors">
+              <i class="fas fa-pen"></i> Edit
+            </button>
+            <button onclick="toggleActive(${f.id}, ${!f.is_active})"
+              class="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors ${f.is_active ? 'text-red-600 hover:bg-red-50' : 'text-green-700 hover:bg-green-50'}">
+              <i class="fas ${f.is_active ? 'fa-toggle-off' : 'fa-toggle-on'}"></i>
+              ${f.is_active ? 'Deactivate' : 'Activate'}
+            </button>
+          </div>
+        </div>
+      `;
     }
 
-    document.getElementById('maintenance-form').addEventListener('submit', (e) => {
+    /* ─── Open Add Modal ──────────────────────────────────────────── */
+    function openAddModal() {
+      editingId = null;
+      document.getElementById('modal-title').textContent = 'Add Facility';
+      document.getElementById('submit-label').textContent = 'Save Facility';
+      document.getElementById('facility-form').reset();
+      document.getElementById('f-bookable').checked = true;
+      document.getElementById('f-is-active').checked = true;
+      document.getElementById('f-restricted-peak').checked = false;
+      document.getElementById('facility-modal').classList.remove('hidden');
+    }
+
+    /* ─── Open Edit Modal ─────────────────────────────────────────── */
+    async function openEditModal(id) {
+      editingId = id;
+      document.getElementById('modal-title').textContent = 'Edit Facility';
+      document.getElementById('submit-label').textContent = 'Update Facility';
+      document.getElementById('facility-modal').classList.remove('hidden');
+
+      try {
+        const f = await api.get(`/admin/facilities/${id}`);
+        document.getElementById('f-id').value = f.id;
+        document.getElementById('f-name').value = f.name || '';
+        document.getElementById('f-category').value = f.category || '';
+        document.getElementById('f-total-units').value = f.total_units ?? '';
+        document.getElementById('f-base-price').value = f.base_price ?? '';
+        document.getElementById('f-capacity-min').value = f.capacity_min ?? '';
+        document.getElementById('f-capacity-max').value = f.capacity_max ?? '';
+        document.getElementById('f-description').value = f.description || '';
+        document.getElementById('f-images-link').value = f.images_link || '';
+        document.getElementById('f-unavailable-reason').value = f.unavailable_reason || '';
+        document.getElementById('f-bookable').checked = !!f.bookable;
+        document.getElementById('f-restricted-peak').checked = !!f.restricted_during_peak_hours;
+        document.getElementById('f-is-active').checked = !!f.is_active;
+      } catch (err) {
+        closeModal();
+        showToast(err.message || 'Failed to load facility details.', 'error');
+      }
+    }
+
+    /* ─── Close Modal ─────────────────────────────────────────────── */
+    function closeModal() {
+      document.getElementById('facility-modal').classList.add('hidden');
+      document.getElementById('facility-form').reset();
+      editingId = null;
+    }
+
+    function handleBackdropClick(e) {
+      if (e.target === document.getElementById('facility-modal')) {
+        closeModal();
+      }
+    }
+
+    /* ─── Form Submit ─────────────────────────────────────────────── */
+    async function handleSubmit(e) {
       e.preventDefault();
-      const mid = document.getElementById('maint-id').value;
-      const data = {
-        id: mid || Date.now().toString(),
-        assetId: document.getElementById('maint-asset-id').value,
-        start: document.getElementById('maint-start').value,
-        end: document.getElementById('maint-end').value,
-        reason: document.getElementById('maint-reason').value
+
+      const submitBtn = document.getElementById('submit-btn');
+      const submitLabel = document.getElementById('submit-label');
+      const originalLabel = submitLabel.textContent;
+
+      submitBtn.disabled = true;
+      submitLabel.textContent = 'Saving...';
+
+      const payload = {
+        name: document.getElementById('f-name').value.trim(),
+        category: document.getElementById('f-category').value,
+        total_units: parseInt(document.getElementById('f-total-units').value, 10),
+        base_price: parseFloat(document.getElementById('f-base-price').value),
+        capacity_min: parseInt(document.getElementById('f-capacity-min').value, 10),
+        capacity_max: parseInt(document.getElementById('f-capacity-max').value, 10),
+        description: document.getElementById('f-description').value.trim(),
+        images_link: document.getElementById('f-images-link').value.trim() || null,
+        unavailable_reason: document.getElementById('f-unavailable-reason').value.trim() || null,
+        bookable: document.getElementById('f-bookable').checked,
+        restricted_during_peak_hours: document.getElementById('f-restricted-peak').checked,
+        is_active: document.getElementById('f-is-active').checked,
       };
-      if(mid) {
-          const idx = allMaintenance.findIndex(m => m.id === mid);
-          if(idx !== -1) allMaintenance[idx] = data;
-      } else allMaintenance.push(data);
-      localStorage.setItem('mamagan_maintenance', JSON.stringify(allMaintenance));
-      showToast('Schedule saved', 'success');
-      resetMaintenanceForm(); fetchMaintenance();
-    });
 
-    function editMaintenance(id) {
-        const m = allMaintenance.find(item => item.id === id);
-        if(!m) return;
-        document.getElementById('maint-id').value = m.id;
-        document.getElementById('maint-asset-id').value = m.assetId;
-        document.getElementById('maint-start').value = m.start;
-        document.getElementById('maint-end').value = m.end;
-        document.getElementById('maint-reason').value = m.reason;
-        document.getElementById('maint-form-title').textContent = 'Modify Schedule';
-        document.getElementById('maint-submit-btn').textContent = 'Update';
-        document.getElementById('maint-cancel-btn').classList.remove('hidden');
-    }
-
-    function resetMaintenanceForm() {
-        document.getElementById('maintenance-form').reset();
-        document.getElementById('maint-id').value = '';
-        document.getElementById('maint-form-title').textContent = 'Schedule Maintenance';
-        document.getElementById('maint-submit-btn').textContent = 'Schedule';
-        document.getElementById('maint-cancel-btn').classList.add('hidden');
-    }
-
-    function deleteMaintenance(id) {
-        if(confirm('Cancel schedule?')) {
-            allMaintenance = allMaintenance.filter(m => m.id !== id);
-            localStorage.setItem('mamagan_maintenance', JSON.stringify(allMaintenance));
-            fetchMaintenance();
-        }
-    }
-
-    // --- Calendar Logic ---
-    const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 
-                          'July', 'August', 'September', 'October', 'November', 'December'];
-    const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    
-    let currentYear = new Date().getFullYear();
-    let currentMonth = new Date().getMonth();
-
-    /**
-     * Check if a date falls within any maintenance range
-     * @param {string} dateStr - Date in YYYY-MM-DD format
-     * @returns {object|null} Maintenance object if found, null otherwise
-     */
-    function getMaintenanceForDate(dateStr) {
-      if (!Array.isArray(allMaintenance)) return null;
-      for (const m of allMaintenance) {
-        if (m.start && m.end && dateStr >= m.start && dateStr <= m.end) {
-          return m;
-        }
+      // Basic validation
+      if (payload.capacity_min > payload.capacity_max) {
+        showToast('Min capacity cannot exceed max capacity.', 'error');
+        submitBtn.disabled = false;
+        submitLabel.textContent = originalLabel;
+        return;
       }
-      return null;
-    }
 
-    /**
-     * Initialize or refresh the calendar view
-     */
-    function initCalendar() {
-      const daysContainer = document.getElementById('calendar-days');
-      if (!daysContainer) return;
-      
-      const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-      const todayStr = new Date().toISOString().split('T')[0];
-
-      // Update header
-      document.getElementById('calendar-month-year').textContent = 
-        `${MONTH_NAMES[currentMonth]} ${currentYear}`;
-      
-      // Clear existing days
-      daysContainer.innerHTML = '';
-      
-      // Add empty cells for days before the first day of the month
-      for (let i = 0; i < firstDay; i++) {
-        const emptyDay = document.createElement('div');
-        emptyDay.className = 'calendar-day empty';
-        emptyDay.setAttribute('aria-hidden', 'true');
-        daysContainer.appendChild(emptyDay);
-      }
-      
-      // Add days of the month
-      for (let d = 1; d <= daysInMonth; d++) {
-        const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-        const dayDiv = document.createElement('div');
-        dayDiv.className = 'calendar-day text-[10px] font-bold';
-        dayDiv.textContent = d;
-        dayDiv.setAttribute('data-date', dateStr);
-        dayDiv.setAttribute('role', 'button');
-        dayDiv.setAttribute('tabindex', '0');
-        dayDiv.setAttribute('aria-label', `${MONTH_NAMES[currentMonth]} ${d}, ${currentYear}`);
-        
-        // Check for today
-        if (todayStr === dateStr) {
-          dayDiv.classList.add('today');
+      try {
+        if (editingId) {
+          await api.put(`/admin/facilities/${editingId}`, payload);
+          showToast('Facility updated successfully.', 'success');
+        } else {
+          await api.post('/admin/facilities', payload);
+          showToast('Facility created successfully.', 'success');
         }
-        
-        // Check for maintenance
-        const maintenance = getMaintenanceForDate(dateStr);
-        if (maintenance) {
-          dayDiv.classList.add('maintenance');
-          dayDiv.setAttribute('title', `${maintenance.reason} (${maintenance.start} to ${maintenance.end})`);
-          dayDiv.setAttribute('aria-label', `${dayDiv.getAttribute('aria-label')} - Maintenance: ${maintenance.reason}`);
-        }
-        
-        // Add click handler to select date for maintenance form
-        dayDiv.addEventListener('click', () => selectDateForMaintenance(dateStr));
-        dayDiv.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            selectDateForMaintenance(dateStr);
-          }
-        });
-        
-        daysContainer.appendChild(dayDiv);
+        closeModal();
+        loadFacilities();
+      } catch (err) {
+        showToast(err.message || 'Failed to save facility.', 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitLabel.textContent = originalLabel;
       }
     }
-    
-    /**
-     * Select a date in the calendar and populate the maintenance form
-     * @param {string} dateStr - Date in YYYY-MM-DD format
-     */
-    function selectDateForMaintenance(dateStr) {
-      // Switch to maintenance tab if not already there
-      const calendarTab = document.getElementById('btn-tab-calendar');
-      if (calendarTab.getAttribute('aria-selected') !== 'true') {
-        switchTab('calendar');
+
+    /* ─── Toggle Active ───────────────────────────────────────────── */
+    async function toggleActive(id, newState) {
+      try {
+        await api.put(`/admin/facilities/${id}`, { is_active: newState });
+        showToast(`Facility ${newState ? 'activated' : 'deactivated'} successfully.`, 'success');
+        loadFacilities();
+      } catch (err) {
+        showToast(err.message || 'Failed to update facility status.', 'error');
       }
-      
-      // Set the start date in the form
-      document.getElementById('maint-start').value = dateStr;
-      
-      // Set a default end date (7 days later)
-      const startDate = new Date(dateStr);
-      const endDate = new Date(startDate);
-      endDate.setDate(endDate.getDate() + 7);
-      document.getElementById('maint-end').value = endDate.toISOString().split('T')[0];
-      
-      // Focus on the reason field
-      document.getElementById('maint-reason').focus();
-      
-      showToast(`Selected ${dateStr}`, 'info');
     }
-    
-    function prevMonth() { 
-      currentMonth--; 
-      if (currentMonth < 0) { 
-        currentMonth = 11; 
-        currentYear--; 
-      } 
-      initCalendar(); 
+
+    /* ─── Utility ─────────────────────────────────────────────────── */
+    function escHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
     }
-    
-    function nextMonth() { 
-      currentMonth++; 
-      if (currentMonth > 11) { 
-        currentMonth = 0; 
-        currentYear++; 
-      } 
-      initCalendar(); 
-    }
-    
-    // Add keyboard navigation for tabs
-    document.querySelectorAll('[role="tab"]').forEach(tab => {
-      tab.addEventListener('keydown', (e) => {
-        const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
-        const currentIndex = tabs.indexOf(e.target);
-        let newIndex;
-        
-        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-          e.preventDefault();
-          newIndex = (currentIndex + 1) % tabs.length;
-        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-          e.preventDefault();
-          newIndex = (currentIndex - 1 + tabs.length) % tabs.length;
-        }
-        
-        if (newIndex !== undefined) {
-          tabs[newIndex].focus();
-          tabs[newIndex].click();
-        }
-      });
-    });
-    
-    // Initialize tab click handlers
-    document.querySelectorAll('[data-tab-target]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const targetTab = btn.id === 'btn-tab-assets' ? 'assets' : 'calendar';
-        switchTab(targetTab);
-      });
-    });
   </script>
 </body>
 </html>

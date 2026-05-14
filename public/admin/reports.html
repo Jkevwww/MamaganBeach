@@ -3,150 +3,821 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Financial Intelligence | Mamagan Beach Resort</title>
+  <title>Reports | Mamagan Beach Resort Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/tailwind-config.js"></script>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Print styles */
+    @media print {
+      #admin-nav,
+      .filter-bar,
+      .tab-nav,
+      .no-print {
+        display: none !important;
+      }
+      .tab-content {
+        display: block !important;
+      }
+      .print-section {
+        display: block !important;
+        page-break-inside: avoid;
+      }
+      body {
+        background: white !important;
+      }
+      .main-content {
+        margin-left: 0 !important;
+        padding: 1rem !important;
+      }
+    }
+  </style>
 </head>
-<body class="bg-lux-cream font-sans text-lux-navy">
-  <div class="flex h-screen overflow-hidden">
-    <!-- Sidebar -->
-    <aside class="w-80 bg-white border-r border-lux-navy/5 flex-shrink-0 hidden md:flex flex-col relative z-20">
-      <div class="p-10 border-b border-lux-navy/5">
-        <a href="/" class="flex items-center gap-4 group">
-          <img src="/images/logos/LOGO.png" alt="Mamagan Logo" class="h-12 group-hover:scale-110 transition-transform">
-          <div class="flex flex-col">
-            <span class="luxury-heading font-bold text-xl leading-none">Mamagan Fun & Adventure</span>
-            <span class="text-[8px] font-black uppercase tracking-[0.4em] text-lux-gold mt-1"> Beach Resort</span>
-          </div>
-        </a>
+<body class="bg-gray-100 min-h-screen">
+
+  <!-- Sidebar -->
+  <nav id="admin-nav"></nav>
+
+  <!-- Main Content -->
+  <div class="main-content ml-64 p-6">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6 no-print">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-800">Reports</h1>
+        <p class="text-gray-500 mt-1">Generate and analyze resort performance reports</p>
       </div>
-      <nav id="admin-nav" class="flex-1 p-6 space-y-2"></nav>
-      <div class="p-8 border-t border-lux-navy/5">
-        <button id="logout-btn" title="Sign Out" aria-label="Sign Out" class="w-full flex items-center gap-4 px-6 py-4 text-red-600 hover:bg-red-50 rounded-2xl transition-all group">
-          <i class="fas fa-sign-out-alt w-5 text-center group-hover:-translate-x-1 transition-transform"></i>
-          <span class="text-[10px] font-black uppercase tracking-widest">Terminate Session</span>
+      <button
+        onclick="window.print()"
+        class="flex items-center gap-2 bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
+      >
+        <i class="fas fa-print"></i>
+        Print Report
+      </button>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar bg-white rounded-xl shadow-sm p-4 mb-6 no-print">
+      <div class="flex flex-wrap items-end gap-4">
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-600">Date From</label>
+          <input
+            type="date"
+            id="date-from"
+            class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+          >
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-600">Date To</label>
+          <input
+            type="date"
+            id="date-to"
+            class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+          >
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-600">Revenue Period</label>
+          <select
+            id="period-select"
+            class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+          >
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly" selected>Monthly</option>
+          </select>
+        </div>
+        <button
+          id="generate-btn"
+          onclick="generateReport()"
+          class="flex items-center gap-2 bg-cyan-600 text-white px-5 py-2 rounded-lg hover:bg-cyan-700 transition-colors font-medium"
+        >
+          <i class="fas fa-chart-bar"></i>
+          Generate
+        </button>
+        <button
+          id="clear-btn"
+          onclick="clearFilters()"
+          class="flex items-center gap-2 bg-white border border-gray-300 text-gray-600 px-5 py-2 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+        >
+          <i class="fas fa-times"></i>
+          Clear
         </button>
       </div>
-    </aside>
+    </div>
 
-    <!-- Main Content -->
-    <div class="flex-1 overflow-y-auto bg-lux-cream/50">
-      <header class="bg-white/80 backdrop-blur-xl glass-header border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-10">
-        <div>
-          <h1 class="luxury-heading text-2xl font-bold text-lux-navy">Financial Intelligence</h1>
-          <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">In-depth revenue and occupancy analysis</p>
-        </div>
-        <div id="auth-nav" class="flex items-center gap-3"></div>
-      </header>
+    <!-- Tab Navigation -->
+    <div class="tab-nav bg-white rounded-xl shadow-sm mb-6 no-print overflow-hidden">
+      <div class="flex border-b border-gray-200">
+        <button class="tab-btn active-tab px-6 py-3 text-sm font-medium transition-colors" data-tab="revenue" onclick="switchTab('revenue')">
+          <i class="fas fa-dollar-sign mr-2"></i>Revenue
+        </button>
+        <button class="tab-btn px-6 py-3 text-sm font-medium transition-colors text-gray-500 hover:text-gray-700" data-tab="bookings" onclick="switchTab('bookings')">
+          <i class="fas fa-calendar-check mr-2"></i>Bookings
+        </button>
+        <button class="tab-btn px-6 py-3 text-sm font-medium transition-colors text-gray-500 hover:text-gray-700" data-tab="occupancy" onclick="switchTab('occupancy')">
+          <i class="fas fa-bed mr-2"></i>Occupancy
+        </button>
+        <button class="tab-btn px-6 py-3 text-sm font-medium transition-colors text-gray-500 hover:text-gray-700" data-tab="facility" onclick="switchTab('facility')">
+          <i class="fas fa-umbrella-beach mr-2"></i>Facility Usage
+        </button>
+      </div>
+    </div>
 
-      <main class="p-10 space-y-10 page-transition">
-        <div class="bg-white rounded-[3rem] p-10 border border-lux-navy/5 premium-shadow">
-          <div class="flex flex-wrap justify-between items-center mb-10 gap-6">
-            <h3 class="luxury-heading text-xl font-bold">Revenue Stream</h3>
-            <div class="flex p-1 bg-lux-cream rounded-full border border-lux-navy/5">
-              <button onclick="loadRevenue('daily')" class="rev-filter px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-full transition-all bg-lux-navy text-lux-gold">Daily</button>
-              <button onclick="loadRevenue('weekly')" class="rev-filter px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-full transition-all text-lux-navy/40 hover:text-lux-navy">Weekly</button>
-              <button onclick="loadRevenue('monthly')" class="rev-filter px-6 py-2 text-[8px] font-black uppercase tracking-widest rounded-full transition-all text-lux-navy/40 hover:text-lux-navy">Monthly</button>
+    <!-- ======================== REVENUE TAB ======================== -->
+    <div id="tab-revenue" class="tab-content">
+      <div class="print-section">
+        <h2 class="text-xl font-bold text-gray-800 mb-4 hidden print:block">Revenue Report</h2>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-cyan-500">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-gray-500 font-medium">Total Revenue</p>
+                <p id="rev-total" class="text-3xl font-bold text-gray-800 mt-1">₱0.00</p>
+              </div>
+              <div class="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center">
+                <i class="fas fa-peso-sign text-cyan-600 text-xl"></i>
+              </div>
             </div>
           </div>
-          <canvas id="revenueChart" height="100"></canvas>
+          <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-emerald-500">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-gray-500 font-medium">Total Paid Bookings</p>
+                <p id="rev-paid" class="text-3xl font-bold text-gray-800 mt-1">0</p>
+              </div>
+              <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
+                <i class="fas fa-check-circle text-emerald-600 text-xl"></i>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="bg-white rounded-[3rem] border border-lux-navy/5 premium-shadow overflow-hidden">
-          <div class="px-10 py-8 border-b border-lux-navy/5 flex justify-between items-center gap-8">
-            <h3 class="luxury-heading text-xl font-bold">Asset Occupancy Index</h3>
-            <div class="flex gap-4">
-              <label for="occ-from" class="sr-only">Date From</label>
-              <input type="date" id="occ-from" onchange="loadOccupancy()" class="px-6 py-3 rounded-2xl bg-lux-cream/30 border-transparent text-[8px] font-black uppercase tracking-widest text-lux-navy outline-none focus:bg-white focus:border-lux-gold transition-all" title="Date From" aria-label="Date From">
-              <label for="occ-to" class="sr-only">Date To</label>
-              <input type="date" id="occ-to" onchange="loadOccupancy()" class="px-6 py-3 rounded-2xl bg-lux-cream/30 border-transparent text-[8px] font-black uppercase tracking-widest text-lux-navy outline-none focus:bg-white focus:border-lux-gold transition-all" title="Date To" aria-label="Date To">
-            </div>
+        <!-- Revenue Chart -->
+        <div class="bg-white rounded-xl shadow-sm p-5 mb-6">
+          <h3 class="text-lg font-semibold text-gray-700 mb-4">Revenue Over Time</h3>
+          <div class="relative h-72">
+            <canvas id="revenueChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Revenue Table -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+          <div class="p-4 border-b border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-700">Revenue Breakdown</h3>
           </div>
           <div class="overflow-x-auto">
-            <table class="w-full text-left">
-              <thead>
-                <tr class="bg-lux-navy/5 text-[8px] font-black uppercase tracking-[0.3em] text-lux-navy/40">
-                  <th class="px-10 py-5">Asset</th>
-                  <th class="px-10 py-5">Total Reservations</th>
-                  <th class="px-10 py-5">Units Engaged</th>
-                  <th class="px-10 py-5">Managed Inventory</th>
-                  <th class="px-10 py-5">Occupancy Rate</th>
+            <table class="w-full text-sm">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-4 py-3 text-left font-semibold text-gray-600">Period</th>
+                  <th class="px-4 py-3 text-right font-semibold text-gray-600">Revenue (₱)</th>
+                  <th class="px-4 py-3 text-right font-semibold text-gray-600">Booking Count</th>
                 </tr>
               </thead>
-              <tbody id="occupancy-table" class="divide-y divide-lux-navy/5">
-                <tr><td colspan="5" class="px-10 py-20 text-center text-lux-navy/20 text-[10px] font-bold uppercase tracking-widest">Select date range for synchronization...</td></tr>
+              <tbody id="revenue-table-body">
+                <tr>
+                  <td colspan="3" class="px-4 py-8 text-center text-gray-400">
+                    <i class="fas fa-chart-line text-3xl mb-2 block"></i>
+                    No data. Set filters and click Generate.
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
         </div>
-      </main>
+      </div>
     </div>
-  </div>
 
+    <!-- ======================== BOOKINGS TAB ======================== -->
+    <div id="tab-bookings" class="tab-content hidden">
+      <div class="print-section">
+        <h2 class="text-xl font-bold text-gray-800 mb-4 hidden print:block">Bookings Report</h2>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+          <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-cyan-500">
+            <p class="text-xs text-gray-500 font-medium">Total</p>
+            <p id="bk-total" class="text-2xl font-bold text-gray-800 mt-1">0</p>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-emerald-500">
+            <p class="text-xs text-gray-500 font-medium">Confirmed</p>
+            <p id="bk-confirmed" class="text-2xl font-bold text-gray-800 mt-1">0</p>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-red-500">
+            <p class="text-xs text-gray-500 font-medium">Cancelled</p>
+            <p id="bk-cancelled" class="text-2xl font-bold text-gray-800 mt-1">0</p>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-indigo-500">
+            <p class="text-xs text-gray-500 font-medium">Completed</p>
+            <p id="bk-completed" class="text-2xl font-bold text-gray-800 mt-1">0</p>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-amber-500">
+            <p class="text-xs text-gray-500 font-medium">Pending</p>
+            <p id="bk-pending" class="text-2xl font-bold text-gray-800 mt-1">0</p>
+          </div>
+        </div>
+
+        <!-- Bookings Chart -->
+        <div class="bg-white rounded-xl shadow-sm p-5 mb-6">
+          <h3 class="text-lg font-semibold text-gray-700 mb-4">Bookings by Date</h3>
+          <div class="relative h-72">
+            <canvas id="bookingsChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Bookings Table -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+          <div class="p-4 border-b border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-700">Bookings Breakdown</h3>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-4 py-3 text-left font-semibold text-gray-600">Date</th>
+                  <th class="px-4 py-3 text-right font-semibold text-gray-600">Total</th>
+                  <th class="px-4 py-3 text-right font-semibold text-gray-600">Confirmed</th>
+                  <th class="px-4 py-3 text-right font-semibold text-gray-600">Cancelled</th>
+                  <th class="px-4 py-3 text-right font-semibold text-gray-600">Completed</th>
+                  <th class="px-4 py-3 text-right font-semibold text-gray-600">Pending</th>
+                </tr>
+              </thead>
+              <tbody id="bookings-table-body">
+                <tr>
+                  <td colspan="6" class="px-4 py-8 text-center text-gray-400">
+                    <i class="fas fa-calendar-alt text-3xl mb-2 block"></i>
+                    No data. Set filters and click Generate.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== OCCUPANCY TAB ======================== -->
+    <div id="tab-occupancy" class="tab-content hidden">
+      <div class="print-section">
+        <h2 class="text-xl font-bold text-gray-800 mb-4 hidden print:block">Occupancy Report</h2>
+
+        <!-- Occupancy Chart -->
+        <div class="bg-white rounded-xl shadow-sm p-5 mb-6">
+          <h3 class="text-lg font-semibold text-gray-700 mb-4">Occupancy Rate per Facility</h3>
+          <div class="relative h-80">
+            <canvas id="occupancyChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Occupancy Table -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+          <div class="p-4 border-b border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-700">Occupancy Details</h3>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-4 py-3 text-left font-semibold text-gray-600">Facility</th>
+                  <th class="px-4 py-3 text-left font-semibold text-gray-600">Category</th>
+                  <th class="px-4 py-3 text-right font-semibold text-gray-600">Total Units</th>
+                  <th class="px-4 py-3 text-right font-semibold text-gray-600">Bookings</th>
+                  <th class="px-4 py-3 text-right font-semibold text-gray-600">Revenue (₱)</th>
+                  <th class="px-4 py-3 text-right font-semibold text-gray-600">Occupancy Rate</th>
+                </tr>
+              </thead>
+              <tbody id="occupancy-table-body">
+                <tr>
+                  <td colspan="6" class="px-4 py-8 text-center text-gray-400">
+                    <i class="fas fa-bed text-3xl mb-2 block"></i>
+                    No data. Set filters and click Generate.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== FACILITY USAGE TAB ======================== -->
+    <div id="tab-facility" class="tab-content hidden">
+      <div class="print-section">
+        <h2 class="text-xl font-bold text-gray-800 mb-4 hidden print:block">Facility Usage Report</h2>
+
+        <!-- Facility Chart -->
+        <div class="bg-white rounded-xl shadow-sm p-5 mb-6">
+          <h3 class="text-lg font-semibold text-gray-700 mb-4">Bookings Distribution per Facility</h3>
+          <div class="flex justify-center">
+            <div class="relative h-80 w-80">
+              <canvas id="facilityChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Facility Table -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+          <div class="p-4 border-b border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-700">Facility Usage Details</h3>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-4 py-3 text-left font-semibold text-gray-600">Facility</th>
+                  <th class="px-4 py-3 text-left font-semibold text-gray-600">Category</th>
+                  <th class="px-4 py-3 text-right font-semibold text-gray-600">Bookings Count</th>
+                  <th class="px-4 py-3 text-right font-semibold text-gray-600">Total Revenue (₱)</th>
+                  <th class="px-4 py-3 text-right font-semibold text-gray-600">Avg Booking Value (₱)</th>
+                </tr>
+              </thead>
+              <tbody id="facility-table-body">
+                <tr>
+                  <td colspan="5" class="px-4 py-8 text-center text-gray-400">
+                    <i class="fas fa-umbrella-beach text-3xl mb-2 block"></i>
+                    No data. Set filters and click Generate.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main-content -->
+
+  <!-- Scripts -->
   <script src="/js/api.js?v=2"></script>
   <script src="/js/auth.js?v=2"></script>
+  <script src="/js/toast.js?v=2"></script>
   <script src="/js/admin.js?v=2"></script>
+
   <script>
-    if (!requireAdmin()) throw new Error('Admin required');
+    // ─── Auth Guard ────────────────────────────────────────────────
+    requireAdmin();
     renderAdminNav('reports');
-    let revenueChart = null;
-    async function loadRevenue(period) {
-      document.querySelectorAll('.rev-filter').forEach(btn => {
-        btn.classList.remove('bg-lux-navy', 'text-lux-gold');
-        btn.classList.add('text-lux-navy/40');
-      });
-      event.target.classList.remove('text-lux-navy/40');
-      event.target.classList.add('bg-lux-navy', 'text-lux-gold');
-      const res = await api.get(`/admin/reports/revenue?period=${period}`);
-      if (!res.success) return;
-      const labels = res.data.map(d => d.period).reverse();
-      const data = res.data.map(d => parseFloat(d.revenue)).reverse();
-      const ctx = document.getElementById('revenueChart').getContext('2d');
-      if (revenueChart) revenueChart.destroy();
-      revenueChart = new Chart(ctx, {
-        type: 'bar',
-        data: { labels, datasets: [{ label: 'Revenue (PHP)', data, backgroundColor: '#c5a059', borderRadius: 12 }] },
-        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(12,27,51,0.05)' } }, x: { grid: { display: false } } } }
+
+    // ─── Chart instances ───────────────────────────────────────────
+    let revenueChartInstance   = null;
+    let bookingsChartInstance  = null;
+    let occupancyChartInstance = null;
+    let facilityChartInstance  = null;
+
+    // ─── Color palette ─────────────────────────────────────────────
+    const COLORS = {
+      primary : '#0891b2',
+      success : '#10b981',
+      warning : '#f59e0b',
+      danger  : '#ef4444',
+      purple  : '#6366f1',
+    };
+
+    const CHART_COLORS = [
+      COLORS.primary,
+      COLORS.success,
+      COLORS.warning,
+      COLORS.danger,
+      COLORS.purple,
+      '#ec4899',
+      '#14b8a6',
+      '#f97316',
+    ];
+
+    // ─── Active tab tracker ────────────────────────────────────────
+    let activeTab = 'revenue';
+
+    // ─── Tab switching ─────────────────────────────────────────────
+    function switchTab(tab) {
+      activeTab = tab;
+
+      // Hide all tab content
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      // Show selected
+      document.getElementById('tab-' + tab).classList.remove('hidden');
+
+      // Update tab button styles
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        if (btn.dataset.tab === tab) {
+          btn.classList.add('active-tab');
+          btn.classList.remove('text-gray-500', 'hover:text-gray-700');
+        } else {
+          btn.classList.remove('active-tab');
+          btn.classList.add('text-gray-500', 'hover:text-gray-700');
+        }
       });
     }
-    async function loadOccupancy() {
-      const from = document.getElementById('occ-from').value;
-      const to = document.getElementById('occ-to').value;
-      let url = '/admin/reports/occupancy?';
-      if (from) url += `date_from=${from}&`;
-      if (to) url += `date_to=${to}&`;
-      const res = await api.get(url);
-      const tbody = document.getElementById('occupancy-table');
-      if (!res.success || !res.data.length) {
-        tbody.innerHTML = '<tr><td colspan="5" class="px-10 py-20 text-center text-lux-navy/20 text-[10px] font-bold uppercase tracking-widest">No matching data in current window.</td></tr>';
+
+    // Inject active tab style
+    (function injectTabStyle() {
+      const style = document.createElement('style');
+      style.textContent = `
+        .active-tab {
+          color: #0891b2;
+          border-bottom: 2px solid #0891b2;
+          font-weight: 600;
+        }
+      `;
+      document.head.appendChild(style);
+    })();
+
+    // ─── Helpers ───────────────────────────────────────────────────
+    function formatCurrency(val) {
+      const n = parseFloat(val) || 0;
+      return '₱' + n.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function formatNumber(val) {
+      return (parseInt(val) || 0).toLocaleString('en-PH');
+    }
+
+    function showLoading(tableBodyId, cols, msg = 'Loading...') {
+      document.getElementById(tableBodyId).innerHTML = `
+        <tr>
+          <td colspan="${cols}" class="px-4 py-8 text-center text-gray-400">
+            <i class="fas fa-spinner fa-spin text-2xl mb-2 block"></i>${msg}
+          </td>
+        </tr>`;
+    }
+
+    function showEmpty(tableBodyId, cols, icon, msg) {
+      document.getElementById(tableBodyId).innerHTML = `
+        <tr>
+          <td colspan="${cols}" class="px-4 py-8 text-center text-gray-400">
+            <i class="fas fa-${icon} text-3xl mb-2 block"></i>${msg}
+          </td>
+        </tr>`;
+    }
+
+    function destroyChart(instance) {
+      if (instance) { instance.destroy(); }
+      return null;
+    }
+
+    // ─── Filter helpers ────────────────────────────────────────────
+    function getFilters() {
+      return {
+        date_from : document.getElementById('date-from').value,
+        date_to   : document.getElementById('date-to').value,
+        period    : document.getElementById('period-select').value,
+      };
+    }
+
+    function buildQuery(params) {
+      const parts = [];
+      for (const [k, v] of Object.entries(params)) {
+        if (v) parts.push(`${encodeURIComponent(k)}=${encodeURIComponent(v)}`);
+      }
+      return parts.length ? '?' + parts.join('&') : '';
+    }
+
+    function clearFilters() {
+      document.getElementById('date-from').value    = '';
+      document.getElementById('date-to').value      = '';
+      document.getElementById('period-select').value = 'monthly';
+    }
+
+    // ─── Generate dispatcher ───────────────────────────────────────
+    async function generateReport() {
+      const btn = document.getElementById('generate-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Generating...';
+
+      try {
+        const tab = activeTab;
+        if (tab === 'revenue')   await loadRevenue();
+        if (tab === 'bookings')  await loadBookings();
+        if (tab === 'occupancy') await loadOccupancy();
+        if (tab === 'facility')  await loadFacilityUsage();
+      } catch (err) {
+        showToast('Failed to generate report: ' + (err.message || err), 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-chart-bar mr-2"></i>Generate';
+      }
+    }
+
+    // ─── REVENUE ───────────────────────────────────────────────────
+    async function loadRevenue() {
+      showLoading('revenue-table-body', 3);
+
+      const { date_from, date_to, period } = getFilters();
+      const query = buildQuery({ period, date_from, date_to });
+
+      let data;
+      try {
+        const res = await api.get('/admin/reports/revenue' + query);
+        data = res.data || res;
+      } catch (err) {
+        showEmpty('revenue-table-body', 3, 'exclamation-triangle', 'Failed to load revenue data.');
+        throw err;
+      }
+
+      const rows   = Array.isArray(data.rows)   ? data.rows   : [];
+      const totals = data.summary || {};
+
+      // Summary cards
+      document.getElementById('rev-total').textContent = formatCurrency(totals.total_revenue || 0);
+      document.getElementById('rev-paid').textContent  = formatNumber(totals.total_paid_bookings || 0);
+
+      // Chart
+      revenueChartInstance = destroyChart(revenueChartInstance);
+      const labels   = rows.map(r => r.period || r.label || r.date || '');
+      const revenues = rows.map(r => parseFloat(r.revenue) || 0);
+
+      revenueChartInstance = new Chart(
+        document.getElementById('revenueChart').getContext('2d'),
+        {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [{
+              label      : 'Revenue (₱)',
+              data       : revenues,
+              borderColor: COLORS.primary,
+              backgroundColor: COLORS.primary + '22',
+              borderWidth: 2,
+              pointRadius: 4,
+              pointBackgroundColor: COLORS.primary,
+              fill: true,
+              tension: 0.3,
+            }],
+          },
+          options: {
+            responsive : true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend : { position: 'top' },
+              tooltip: {
+                callbacks: {
+                  label: ctx => ' ₱' + ctx.parsed.y.toLocaleString('en-PH', { minimumFractionDigits: 2 }),
+                },
+              },
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: v => '₱' + v.toLocaleString('en-PH'),
+                },
+              },
+            },
+          },
+        }
+      );
+
+      // Table
+      if (!rows.length) {
+        showEmpty('revenue-table-body', 3, 'chart-line', 'No revenue data for the selected period.');
         return;
       }
-      tbody.innerHTML = res.data.map(row => {
-        const rate = parseFloat(row.occupancy_rate) || 0;
-        const rateColor = rate >= 80 ? 'bg-green-500' : rate >= 50 ? 'bg-lux-gold' : 'bg-red-400';
-        return `<tr class="hover:bg-lux-cream/50 transition-colors">
-            <td class="px-10 py-6">
-                <div class="text-sm font-bold text-lux-navy">${row.facility_name}</div>
-                <div class="text-[8px] font-black uppercase tracking-widest text-lux-navy/30 mt-1">${row.type.replace('_',' ')}</div>
-            </td>
-            <td class="px-10 py-6 text-sm font-medium text-lux-navy/60">${row.total_bookings || 0}</td>
-            <td class="px-10 py-6 text-sm font-medium text-lux-navy/60">${row.total_units_booked || 0}</td>
-            <td class="px-10 py-6 text-sm font-medium text-lux-navy/60">${row.total_units}</td>
-            <td class="px-10 py-6">
-              <div class="flex items-center gap-4">
-                <div class="w-32 h-1.5 bg-lux-navy/5 rounded-full overflow-hidden">
-                  <div class="h-full ${rateColor} rounded-full transition-all duration-1000" style="width: ${Math.min(rate, 100)}%"></div>
-                </div>
-                <span class="text-xs font-black text-lux-navy">${rate.toFixed(1)}%</span>
-              </div>
-            </td>
-          </tr>`;
+      document.getElementById('revenue-table-body').innerHTML = rows.map(r => `
+        <tr class="border-t border-gray-100 hover:bg-gray-50">
+          <td class="px-4 py-3 text-gray-700">${r.period || r.label || r.date || '—'}</td>
+          <td class="px-4 py-3 text-right text-gray-800 font-medium">${formatCurrency(r.revenue)}</td>
+          <td class="px-4 py-3 text-right text-gray-700">${formatNumber(r.booking_count || r.count || 0)}</td>
+        </tr>
+      `).join('');
+    }
+
+    // ─── BOOKINGS ──────────────────────────────────────────────────
+    async function loadBookings() {
+      showLoading('bookings-table-body', 6);
+
+      const { date_from, date_to } = getFilters();
+      const query = buildQuery({ date_from, date_to });
+
+      let data;
+      try {
+        const res = await api.get('/admin/reports/bookings' + query);
+        data = res.data || res;
+      } catch (err) {
+        showEmpty('bookings-table-body', 6, 'exclamation-triangle', 'Failed to load bookings data.');
+        throw err;
+      }
+
+      const rows   = Array.isArray(data.rows)   ? data.rows   : [];
+      const totals = data.summary || {};
+
+      // Summary cards
+      document.getElementById('bk-total').textContent     = formatNumber(totals.total     || 0);
+      document.getElementById('bk-confirmed').textContent = formatNumber(totals.confirmed || 0);
+      document.getElementById('bk-cancelled').textContent = formatNumber(totals.cancelled || 0);
+      document.getElementById('bk-completed').textContent = formatNumber(totals.completed || 0);
+      document.getElementById('bk-pending').textContent   = formatNumber(totals.pending   || 0);
+
+      // Chart
+      bookingsChartInstance = destroyChart(bookingsChartInstance);
+      const labels    = rows.map(r => r.date || '');
+      const confirmed = rows.map(r => parseInt(r.confirmed) || 0);
+      const cancelled = rows.map(r => parseInt(r.cancelled) || 0);
+      const completed = rows.map(r => parseInt(r.completed) || 0);
+      const pending   = rows.map(r => parseInt(r.pending)   || 0);
+
+      bookingsChartInstance = new Chart(
+        document.getElementById('bookingsChart').getContext('2d'),
+        {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [
+              { label: 'Confirmed', data: confirmed, backgroundColor: COLORS.success },
+              { label: 'Completed', data: completed, backgroundColor: COLORS.purple  },
+              { label: 'Pending',   data: pending,   backgroundColor: COLORS.warning },
+              { label: 'Cancelled', data: cancelled, backgroundColor: COLORS.danger  },
+            ],
+          },
+          options: {
+            responsive : true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'top' } },
+            scales  : {
+              x: { stacked: true },
+              y: { stacked: true, beginAtZero: true },
+            },
+          },
+        }
+      );
+
+      // Table
+      if (!rows.length) {
+        showEmpty('bookings-table-body', 6, 'calendar-alt', 'No bookings data for the selected period.');
+        return;
+      }
+      document.getElementById('bookings-table-body').innerHTML = rows.map(r => `
+        <tr class="border-t border-gray-100 hover:bg-gray-50">
+          <td class="px-4 py-3 text-gray-700">${r.date || '—'}</td>
+          <td class="px-4 py-3 text-right font-medium text-gray-800">${formatNumber(r.total     || 0)}</td>
+          <td class="px-4 py-3 text-right text-emerald-600">${formatNumber(r.confirmed || 0)}</td>
+          <td class="px-4 py-3 text-right text-red-500">${formatNumber(r.cancelled || 0)}</td>
+          <td class="px-4 py-3 text-right text-indigo-500">${formatNumber(r.completed || 0)}</td>
+          <td class="px-4 py-3 text-right text-amber-500">${formatNumber(r.pending   || 0)}</td>
+        </tr>
+      `).join('');
+    }
+
+    // ─── OCCUPANCY ─────────────────────────────────────────────────
+    async function loadOccupancy() {
+      showLoading('occupancy-table-body', 6);
+
+      const { date_from, date_to } = getFilters();
+      const query = buildQuery({ date_from, date_to });
+
+      let data;
+      try {
+        const res = await api.get('/admin/reports/occupancy' + query);
+        data = res.data || res;
+      } catch (err) {
+        showEmpty('occupancy-table-body', 6, 'exclamation-triangle', 'Failed to load occupancy data.');
+        throw err;
+      }
+
+      const rows = Array.isArray(data.rows) ? data.rows : (Array.isArray(data) ? data : []);
+
+      // Chart — horizontal bar
+      occupancyChartInstance = destroyChart(occupancyChartInstance);
+      const labels = rows.map(r => r.facility || r.name || '');
+      const rates  = rows.map(r => parseFloat(r.occupancy_rate) || 0);
+
+      occupancyChartInstance = new Chart(
+        document.getElementById('occupancyChart').getContext('2d'),
+        {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [{
+              label          : 'Occupancy Rate (%)',
+              data           : rates,
+              backgroundColor: CHART_COLORS.slice(0, rows.length),
+              borderWidth    : 0,
+              borderRadius   : 4,
+            }],
+          },
+          options: {
+            indexAxis  : 'y',
+            responsive : true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: {
+                beginAtZero: true,
+                max: 100,
+                ticks: { callback: v => v + '%' },
+              },
+            },
+          },
+        }
+      );
+
+      // Table
+      if (!rows.length) {
+        showEmpty('occupancy-table-body', 6, 'bed', 'No occupancy data for the selected period.');
+        return;
+      }
+      document.getElementById('occupancy-table-body').innerHTML = rows.map(r => {
+        const rate = parseFloat(r.occupancy_rate) || 0;
+        const rateColor = rate >= 75 ? 'text-emerald-600' : rate >= 40 ? 'text-amber-500' : 'text-red-500';
+        return `
+        <tr class="border-t border-gray-100 hover:bg-gray-50">
+          <td class="px-4 py-3 text-gray-800 font-medium">${r.facility || r.name || '—'}</td>
+          <td class="px-4 py-3 text-gray-600">${r.category || '—'}</td>
+          <td class="px-4 py-3 text-right text-gray-700">${formatNumber(r.total_units || 0)}</td>
+          <td class="px-4 py-3 text-right text-gray-700">${formatNumber(r.bookings || 0)}</td>
+          <td class="px-4 py-3 text-right text-gray-800">${formatCurrency(r.revenue || 0)}</td>
+          <td class="px-4 py-3 text-right font-semibold ${rateColor}">${rate.toFixed(1)}%</td>
+        </tr>`;
       }).join('');
     }
-    loadRevenue('daily');
+
+    // ─── FACILITY USAGE ────────────────────────────────────────────
+    async function loadFacilityUsage() {
+      showLoading('facility-table-body', 5);
+
+      const { date_from, date_to } = getFilters();
+      const query = buildQuery({ date_from, date_to });
+
+      let data;
+      try {
+        const res = await api.get('/admin/reports/facility-usage' + query);
+        data = res.data || res;
+      } catch (err) {
+        showEmpty('facility-table-body', 5, 'exclamation-triangle', 'Failed to load facility usage data.');
+        throw err;
+      }
+
+      const rows = Array.isArray(data.rows) ? data.rows : (Array.isArray(data) ? data : []);
+
+      // Chart — doughnut
+      facilityChartInstance = destroyChart(facilityChartInstance);
+      const labels = rows.map(r => r.facility || r.name || '');
+      const counts = rows.map(r => parseInt(r.bookings_count || r.bookings || 0));
+
+      facilityChartInstance = new Chart(
+        document.getElementById('facilityChart').getContext('2d'),
+        {
+          type: 'doughnut',
+          data: {
+            labels,
+            datasets: [{
+              data           : counts,
+              backgroundColor: CHART_COLORS.slice(0, rows.length),
+              borderWidth    : 2,
+              borderColor    : '#fff',
+              hoverOffset    : 8,
+            }],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend : { position: 'right' },
+              tooltip: {
+                callbacks: {
+                  label: ctx => ` ${ctx.label}: ${ctx.parsed} bookings`,
+                },
+              },
+            },
+          },
+        }
+      );
+
+      // Table
+      if (!rows.length) {
+        showEmpty('facility-table-body', 5, 'umbrella-beach', 'No facility usage data for the selected period.');
+        return;
+      }
+      document.getElementById('facility-table-body').innerHTML = rows.map(r => {
+        const bookings = parseInt(r.bookings_count || r.bookings || 0);
+        const revenue  = parseFloat(r.total_revenue || r.revenue || 0);
+        const avg      = bookings > 0 ? revenue / bookings : 0;
+        return `
+        <tr class="border-t border-gray-100 hover:bg-gray-50">
+          <td class="px-4 py-3 text-gray-800 font-medium">${r.facility || r.name || '—'}</td>
+          <td class="px-4 py-3 text-gray-600">${r.category || '—'}</td>
+          <td class="px-4 py-3 text-right text-gray-800 font-semibold">${formatNumber(bookings)}</td>
+          <td class="px-4 py-3 text-right text-gray-800">${formatCurrency(revenue)}</td>
+          <td class="px-4 py-3 text-right text-gray-700">${formatCurrency(r.avg_booking_value || avg)}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    // ─── Load default report on page load ─────────────────────────
+    window.addEventListener('DOMContentLoaded', () => {
+      // Set default date range: last 30 days
+      const today = new Date();
+      const prior = new Date();
+      prior.setDate(today.getDate() - 30);
+
+      const fmt = d => d.toISOString().split('T')[0];
+      document.getElementById('date-from').value = fmt(prior);
+      document.getElementById('date-to').value   = fmt(today);
+
+      generateReport();
+    });
   </script>
 </body>
 </html>

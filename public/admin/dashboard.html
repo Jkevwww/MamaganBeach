@@ -47,48 +47,48 @@
 
       <main class="p-8 space-y-8 page-transition">
         <!-- Stats Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
           <div class="stat-card">
-            <div class="flex items-center justify-between mb-4">
-              <div class="stat-icon stat-icon-primary">
-                <i class="fas fa-calendar-check"></i>
-              </div>
-              <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">+12%</span>
+            <div class="flex items-center justify-between mb-3">
+              <div class="stat-icon stat-icon-primary"><i class="fas fa-calendar-check"></i></div>
             </div>
             <p class="stat-value" id="stat-bookings">-</p>
             <p class="stat-label">Total Bookings</p>
           </div>
-          
           <div class="stat-card">
-            <div class="flex items-center justify-between mb-4">
-              <div class="stat-icon stat-icon-success">
-                <i class="fas fa-sun"></i>
-              </div>
-              <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">+8%</span>
+            <div class="flex items-center justify-between mb-3">
+              <div class="stat-icon stat-icon-success"><i class="fas fa-sun"></i></div>
             </div>
             <p class="stat-value" id="stat-today">-</p>
             <p class="stat-label">Today's Arrivals</p>
           </div>
-          
           <div class="stat-card">
-            <div class="flex items-center justify-between mb-4">
-              <div class="stat-icon stat-icon-warning">
-                <i class="fas fa-clock"></i>
-              </div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="stat-icon stat-icon-warning"><i class="fas fa-clock"></i></div>
             </div>
             <p class="stat-value" id="stat-pending">-</p>
             <p class="stat-label">Pending Payments</p>
           </div>
-          
           <div class="stat-card">
-            <div class="flex items-center justify-between mb-4">
-              <div class="stat-icon stat-icon-success">
-                <i class="fas fa-peso-sign"></i>
-              </div>
-              <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">+15%</span>
+            <div class="flex items-center justify-between mb-3">
+              <div class="stat-icon stat-icon-success"><i class="fas fa-peso-sign"></i></div>
             </div>
             <p class="stat-value" id="stat-revenue">-</p>
             <p class="stat-label">Total Revenue</p>
+          </div>
+          <div class="stat-card">
+            <div class="flex items-center justify-between mb-3">
+              <div class="stat-icon stat-icon-primary"><i class="fas fa-users"></i></div>
+            </div>
+            <p class="stat-value" id="stat-users">-</p>
+            <p class="stat-label">Registered Guests</p>
+          </div>
+          <div class="stat-card">
+            <div class="flex items-center justify-between mb-3">
+              <div class="stat-icon stat-icon-success"><i class="fas fa-umbrella-beach"></i></div>
+            </div>
+            <p class="stat-value" id="stat-facilities">-</p>
+            <p class="stat-label">Active Facilities</p>
           </div>
         </div>
 
@@ -106,8 +106,8 @@
           
           <div class="card p-6">
             <div class="flex items-center justify-between mb-6">
-              <h3 class="font-heading font-bold text-lg text-gray-900">Facility Occupancy</h3>
-              <span class="text-xs text-gray-500">Current rate</span>
+              <h3 class="font-heading font-bold text-lg text-gray-900">Bookings by Status</h3>
+              <span class="text-xs text-gray-500">All time</span>
             </div>
             <div class="chart-container">
               <canvas id="facilityChart"></canvas>
@@ -178,7 +178,8 @@
       document.getElementById('stat-bookings').textContent = stats.total_bookings.toLocaleString();
       document.getElementById('stat-today').textContent = stats.today_bookings.toLocaleString();
       document.getElementById('stat-pending').textContent = stats.pending_payments.toLocaleString();
-      document.getElementById('stat-revenue').textContent = 'PHP ' + stats.total_revenue.toLocaleString('en-PH', {minimumFractionDigits: 0});
+      document.getElementById('stat-revenue').textContent = '₱' + stats.total_revenue.toLocaleString('en-PH', {minimumFractionDigits: 0});
+      document.getElementById('stat-users').textContent = stats.total_users.toLocaleString();
       document.getElementById('stat-facilities').textContent = stats.total_facilities.toLocaleString();
 
       const tbody = document.getElementById('recent-bookings');
@@ -208,14 +209,13 @@
         `;
       }).join('');
 
-      loadCharts();
+      loadCharts(res.data.revenue_week, res.data.bookings_by_status);
     }
 
-    async function loadCharts() {
-      const revRes = await api.get('/admin/reports/revenue?period=daily');
-      if (revRes.success && revRes.data) {
-        const labels = revRes.data.map(d => d.period).reverse();
-        const data = revRes.data.map(d => parseFloat(d.revenue)).reverse();
+    async function loadCharts(revenueWeek, bookingsByStatus) {
+      if (revenueWeek && revenueWeek.length > 0) {
+        const labels = revenueWeek.map(d => d.day || d.period);
+        const data = revenueWeek.map(d => parseFloat(d.revenue));
         const ctx = document.getElementById('revenueChart').getContext('2d');
         if (revenueChartInstance) revenueChartInstance.destroy();
         revenueChartInstance = new Chart(ctx, {
@@ -255,40 +255,22 @@
         });
       }
 
-      const occRes = await api.get('/admin/reports/occupancy');
-      if (occRes.success && occRes.data) {
-        const labels = occRes.data.map(r => r.facility_name);
-        const data = occRes.data.map(r => parseFloat(r.occupancy_rate) || 0);
+      if (bookingsByStatus && bookingsByStatus.length > 0) {
+        const statusMap = { confirmed: '#10b981', pending: '#f59e0b', cancelled: '#ef4444', completed: '#6366f1' };
+        const labels = bookingsByStatus.map(r => r.status.charAt(0).toUpperCase() + r.status.slice(1));
+        const data = bookingsByStatus.map(r => parseInt(r.cnt));
+        const bgColors = bookingsByStatus.map(r => statusMap[r.status] || '#94a3b8');
         const ctx2 = document.getElementById('facilityChart').getContext('2d');
         if (facilityChartInstance) facilityChartInstance.destroy();
         facilityChartInstance = new Chart(ctx2, {
-          type: 'bar',
-          data: { 
-            labels, 
-            datasets: [{ 
-              label: 'Occupancy %', 
-              data, 
-              backgroundColor: '#0891b2', 
-              borderRadius: 6, 
-              hoverBackgroundColor: '#0e7490' 
-            }] 
-          },
-          options: { 
-            responsive: true, 
+          type: 'doughnut',
+          data: { labels, datasets: [{ data, backgroundColor: bgColors, borderWidth: 2, borderColor: '#fff' }] },
+          options: {
+            responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } }, 
-            scales: { 
-              y: { 
-                beginAtZero: true, 
-                max: 100, 
-                grid: { color: 'rgba(0,0,0,0.05)' },
-                ticks: { font: { family: 'Inter' } }
-              }, 
-              x: { 
-                grid: { display: false },
-                ticks: { font: { family: 'Inter' } }
-              } 
-            } 
+            plugins: {
+              legend: { position: 'bottom', labels: { font: { family: 'Inter' }, padding: 16 } }
+            }
           }
         });
       }

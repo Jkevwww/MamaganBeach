@@ -3,90 +3,420 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Security Registry | Mamagan Beach Resort</title>
+  <title>System Logs | Mamagan Beach Resort Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/js/tailwind-config.js"></script>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .action-red    { color: #ef4444; }
+    .action-green  { color: #22c55e; }
+    .action-blue   { color: #3b82f6; }
+    .action-gray   { color: #9ca3af; }
+
+    .truncate-details {
+      max-width: 260px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: default;
+    }
+    .truncate-target {
+      max-width: 140px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #logs-table-body tr:hover { background-color: rgba(255,255,255,0.04); }
+  </style>
 </head>
-<body class="bg-lux-cream font-sans text-lux-navy">
-  <div class="flex h-screen overflow-hidden">
-    <!-- Sidebar -->
-    <aside class="w-80 bg-white border-r border-lux-navy/5 flex-shrink-0 hidden md:flex flex-col relative z-20">
-      <div class="p-10 border-b border-lux-navy/5">
-        <a href="/" class="flex items-center gap-4 group">
-          <img src="/images/logos/LOGO.png" alt="Mamagan Logo" class="h-12 group-hover:scale-110 transition-transform">
-          <div class="flex flex-col">
-            <span class="luxury-heading font-bold text-xl leading-none">Mamagan</span>
-            <span class="text-[8px] font-black uppercase tracking-[0.4em] text-lux-gold mt-1">Beach Resort</span>
-          </div>
-        </a>
+<body class="bg-gray-950 text-gray-100 min-h-screen flex">
+
+  <!-- Sidebar -->
+  <nav id="admin-nav" class="w-64 bg-gray-900 border-r border-gray-800 flex flex-col min-h-screen fixed top-0 left-0 z-30"></nav>
+
+  <!-- Main content -->
+  <div class="ml-64 flex-1 flex flex-col min-h-screen">
+
+    <!-- Top bar -->
+    <header class="sticky top-0 z-20 bg-gray-900 border-b border-gray-800 px-8 py-4 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+          <i class="fa-solid fa-scroll text-primary"></i>
+          System Logs
+        </h1>
+        <p class="text-sm text-gray-400 mt-0.5">Admin activity audit trail</p>
       </div>
-      <nav id="admin-nav" class="flex-1 p-6 space-y-2"></nav>
-      <div class="p-8 border-t border-lux-navy/5">
-        <button id="logout-btn" title="Sign Out" aria-label="Sign Out" class="w-full flex items-center gap-4 px-6 py-4 text-red-600 hover:bg-red-50 rounded-2xl transition-all group">
-          <i class="fas fa-sign-out-alt w-5 text-center group-hover:-translate-x-1 transition-transform"></i>
-          <span class="text-[10px] font-black uppercase tracking-widest">Terminate Session</span>
+      <div class="flex items-center gap-3">
+        <!-- Auto-refresh toggle -->
+        <label class="flex items-center gap-2 cursor-pointer select-none text-sm text-gray-300">
+          <input type="checkbox" id="auto-refresh-toggle" class="w-4 h-4 accent-primary rounded" />
+          Auto-refresh (30s)
+        </label>
+        <!-- Clear All Logs -->
+        <button id="clear-logs-btn"
+          class="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-semibold transition">
+          <i class="fa-solid fa-trash"></i> Clear All Logs
+        </button>
+        <button id="logout-btn"
+          class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200 text-sm font-semibold transition">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
         </button>
       </div>
-    </aside>
+    </header>
 
-    <!-- Main Content -->
-    <div class="flex-1 overflow-y-auto bg-lux-cream/50">
-      <header class="bg-white/80 backdrop-blur-xl glass-header border-b border-lux-navy/5 px-10 py-6 flex justify-between items-center sticky top-0 z-10">
-        <div>
-          <h1 class="luxury-heading text-2xl font-bold text-lux-navy">Security Registry</h1>
-          <p class="text-[10px] font-bold text-lux-navy/30 uppercase tracking-[0.2em]">Audit system events and operational logs</p>
-        </div>
-        <div id="auth-nav" class="flex items-center gap-3"></div>
-      </header>
+    <main class="flex-1 px-8 py-8">
 
-      <main class="p-10 page-transition">
-        <div class="bg-white rounded-[3rem] border border-lux-navy/5 premium-shadow overflow-hidden">
-          <div class="px-10 py-8 border-b border-lux-navy/5 flex justify-between items-center">
-             <div class="flex gap-4">
-                <label for="event-filter" class="sr-only">Filter Events</label>
-                <select id="event-filter" title="Filter events" aria-label="Filter events" class="px-6 py-3 rounded-full bg-lux-cream/30 border-transparent text-[8px] font-black uppercase tracking-widest text-lux-navy outline-none">
-                    <option>All Events</option>
-                    <option>Security</option>
-                    <option>Transactions</option>
-                    <option>Management</option>
-                </select>
-             </div>
-             <button class="text-[8px] font-black uppercase tracking-[0.2em] text-lux-gold hover:text-lux-navy transition-colors">Export Ledger <i class="fas fa-download ml-2"></i></button>
+      <!-- Filter bar -->
+      <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 mb-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
+
+          <!-- Search -->
+          <div class="xl:col-span-2 relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm"></i>
+            <input
+              id="filter-search"
+              type="text"
+              placeholder="Search user, action, details…"
+              class="w-full bg-gray-800 border border-gray-700 rounded-lg pl-9 pr-3 py-2 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-primary transition"
+            />
           </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left">
-              <thead>
-                <tr class="bg-lux-navy/5 text-[8px] font-black uppercase tracking-[0.3em] text-lux-navy/40">
-                  <th class="px-10 py-5">Timestamp</th>
-                  <th class="px-10 py-5">Agent</th>
-                  <th class="px-10 py-5">Event Protocol</th>
-                  <th class="px-10 py-5">Detail Narrative</th>
-                </tr>
-              </thead>
-              <tbody id="logs-list" class="divide-y divide-lux-navy/5">
-                <tr class="hover:bg-lux-cream/50 transition-colors">
-                    <td class="px-10 py-6 text-[10px] font-mono text-lux-navy/40">2024-04-29 14:22:01</td>
-                    <td class="px-10 py-6 text-xs font-bold text-lux-navy">SYSTEM_KEEPER</td>
-                    <td class="px-10 py-6"><span class="px-3 py-1 bg-green-500/10 text-green-600 text-[8px] font-black uppercase tracking-widest rounded-full">AUTH_SUCCESS</span></td>
-                    <td class="px-10 py-6 text-xs text-lux-navy/60 font-light italic">"User authorization successful via GitHub provider."</td>
-                </tr>
-              </tbody>
-            </table>
+
+          <!-- Module -->
+          <div>
+            <select id="filter-module"
+              class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-primary transition">
+              <option value="">All Modules</option>
+              <option value="bookings">Bookings</option>
+              <option value="facilities">Facilities</option>
+              <option value="promos">Promos</option>
+              <option value="calendar">Calendar</option>
+              <option value="clients">Clients</option>
+              <option value="gcash">GCash</option>
+              <option value="logs">Logs</option>
+            </select>
+          </div>
+
+          <!-- Action filter -->
+          <div>
+            <input
+              id="filter-action"
+              type="text"
+              placeholder="Action keyword…"
+              class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-primary transition"
+            />
+          </div>
+
+          <!-- Date from -->
+          <div>
+            <input
+              id="filter-date-from"
+              type="date"
+              class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-primary transition"
+            />
+          </div>
+
+          <!-- Date to -->
+          <div>
+            <input
+              id="filter-date-to"
+              type="date"
+              class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-primary transition"
+            />
+          </div>
+
+        </div>
+
+        <!-- Button row -->
+        <div class="flex items-center justify-between mt-4">
+          <span id="result-count" class="text-sm text-gray-400">Loading logs…</span>
+          <div class="flex gap-2">
+            <button id="search-btn"
+              class="flex items-center gap-2 px-5 py-2 rounded-lg bg-primary hover:bg-primary/80 text-white text-sm font-semibold transition">
+              <i class="fa-solid fa-search"></i> Search
+            </button>
+            <button id="clear-filters-btn"
+              class="flex items-center gap-2 px-5 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-200 text-sm font-semibold transition">
+              <i class="fa-solid fa-xmark"></i> Clear
+            </button>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+
+      <!-- Table card -->
+      <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="bg-gray-800/60 text-gray-400 uppercase text-xs tracking-wider">
+                <th class="px-4 py-3 text-left whitespace-nowrap">Timestamp</th>
+                <th class="px-4 py-3 text-left whitespace-nowrap">User</th>
+                <th class="px-4 py-3 text-left whitespace-nowrap">Action</th>
+                <th class="px-4 py-3 text-left whitespace-nowrap">Module</th>
+                <th class="px-4 py-3 text-left whitespace-nowrap">Target</th>
+                <th class="px-4 py-3 text-left">Details</th>
+                <th class="px-4 py-3 text-left whitespace-nowrap">IP Address</th>
+              </tr>
+            </thead>
+            <tbody id="logs-table-body" class="divide-y divide-gray-800">
+              <!-- rows injected here -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empty state -->
+        <div id="empty-state" class="hidden flex-col items-center justify-center py-20 text-gray-500">
+          <i class="fa-solid fa-folder-open text-5xl mb-4 opacity-40"></i>
+          <p class="text-lg font-medium">No logs found</p>
+          <p class="text-sm mt-1">Try adjusting your filters or date range.</p>
+        </div>
+
+        <!-- Loading skeleton -->
+        <div id="loading-state" class="flex flex-col items-center justify-center py-20 text-gray-500">
+          <i class="fa-solid fa-spinner fa-spin text-3xl mb-3 text-primary"></i>
+          <p class="text-sm">Loading logs…</p>
+        </div>
+      </div>
+
+    </main>
   </div>
 
+  <!-- Scripts -->
   <script src="/js/api.js?v=2"></script>
   <script src="/js/auth.js?v=2"></script>
   <script src="/js/toast.js?v=2"></script>
   <script src="/js/admin.js?v=2"></script>
   <script>
-    if (!requireAdmin()) throw new Error('Admin required');
+    // ── Auth guard ────────────────────────────────────────────────────────────
+    requireAdmin();
     renderAdminNav('logs');
+
+    // ── State ─────────────────────────────────────────────────────────────────
+    let autoRefreshTimer = null;
+    let currentLogs = [];
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+    function formatTimestamp(ts) {
+      if (!ts) return '—';
+      try {
+        const d = new Date(ts);
+        return d.toLocaleString('en-PH', {
+          year:   'numeric',
+          month:  'short',
+          day:    '2-digit',
+          hour:   '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: true
+        });
+      } catch { return ts; }
+    }
+
+    function getActionClass(action) {
+      if (!action) return 'action-gray';
+      const a = action.toUpperCase();
+      if (
+        a.startsWith('DELETE_') || a.startsWith('REJECT_') ||
+        a.startsWith('CANCEL_') || a.startsWith('CLEAR_') ||
+        a === 'DELETE' || a === 'REJECT' || a === 'CANCEL' || a === 'CLEAR'
+      ) return 'action-red';
+      if (
+        a.startsWith('CREATE_') || a.startsWith('CONFIRM_') ||
+        a === 'GCASH_APPROVE' || a === 'CREATE' || a === 'CONFIRM'
+      ) return 'action-green';
+      if (
+        a.startsWith('UPDATE_') || a.startsWith('ENABLE_') || a.startsWith('DISABLE_') ||
+        a === 'GCASH_REJECT' || a === 'UPDATE' || a === 'ENABLE' || a === 'DISABLE'
+      ) return 'action-blue';
+      return 'action-gray';
+    }
+
+    function getRoleBadge(role) {
+      if (!role) return '';
+      const map = {
+        admin:        'bg-red-900/60 text-red-300 border border-red-700',
+        staff:        'bg-blue-900/60 text-blue-300 border border-blue-700',
+        receptionist: 'bg-yellow-900/60 text-yellow-300 border border-yellow-700',
+      };
+      const cls = map[role.toLowerCase()] || 'bg-gray-700 text-gray-300';
+      return `<span class="ml-1.5 px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase ${cls}">${role}</span>`;
+    }
+
+    function getModuleBadge(module) {
+      if (!module) return '<span class="text-gray-600">—</span>';
+      const map = {
+        bookings:   'bg-indigo-900/50 text-indigo-300 border border-indigo-700',
+        facilities: 'bg-teal-900/50 text-teal-300 border border-teal-700',
+        promos:     'bg-pink-900/50 text-pink-300 border border-pink-700',
+        calendar:   'bg-violet-900/50 text-violet-300 border border-violet-700',
+        clients:    'bg-cyan-900/50 text-cyan-300 border border-cyan-700',
+        gcash:      'bg-green-900/50 text-green-300 border border-green-700',
+        logs:       'bg-orange-900/50 text-orange-300 border border-orange-700',
+      };
+      const cls = map[module.toLowerCase()] || 'bg-gray-700/50 text-gray-300 border border-gray-600';
+      return `<span class="px-2 py-0.5 rounded text-[11px] font-medium uppercase ${cls}">${module}</span>`;
+    }
+
+    function truncateDetails(str, len = 60) {
+      if (!str) return '<span class="text-gray-600">—</span>';
+      const escaped = str.replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      if (str.length <= len) return `<span>${escaped}</span>`;
+      return `<span class="truncate-details" title="${escaped}">${escaped.substring(0, len)}…</span>`;
+    }
+
+    // ── Render ────────────────────────────────────────────────────────────────
+    function renderLogs(logs) {
+      const tbody = document.getElementById('logs-table-body');
+      const emptyState   = document.getElementById('empty-state');
+      const loadingState = document.getElementById('loading-state');
+
+      loadingState.classList.add('hidden');
+
+      if (!logs || logs.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        emptyState.classList.add('flex');
+        document.getElementById('result-count').textContent = '0 logs found';
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      emptyState.classList.remove('flex');
+      document.getElementById('result-count').textContent =
+        `${logs.length} log${logs.length !== 1 ? 's' : ''} found`;
+
+      tbody.innerHTML = logs.map(log => {
+        const actionCls  = getActionClass(log.action);
+        const roleBadge  = getRoleBadge(log.user_role || log.role);
+        const modBadge   = getModuleBadge(log.module);
+        const targetType = log.target_type || '—';
+        const targetId   = log.target_id   ? `<span class="text-gray-500">#${log.target_id}</span>` : '';
+        const ip         = log.ip_address  || log.ip || '—';
+
+        return `
+          <tr class="border-b border-gray-800/60 transition-colors">
+            <td class="px-4 py-3 whitespace-nowrap text-gray-400 text-xs font-mono">${formatTimestamp(log.created_at || log.timestamp)}</td>
+            <td class="px-4 py-3 whitespace-nowrap">
+              <span class="font-medium text-gray-200">${log.user_name || log.username || '—'}</span>${roleBadge}
+            </td>
+            <td class="px-4 py-3 whitespace-nowrap">
+              <span class="font-mono text-xs font-semibold ${actionCls}">${log.action || '—'}</span>
+            </td>
+            <td class="px-4 py-3 whitespace-nowrap">${modBadge}</td>
+            <td class="px-4 py-3 whitespace-nowrap">
+              <span class="truncate-target text-gray-300 text-xs">${targetType}</span>
+              ${targetId}
+            </td>
+            <td class="px-4 py-3 text-gray-400 text-xs">${truncateDetails(log.details)}</td>
+            <td class="px-4 py-3 whitespace-nowrap font-mono text-xs text-gray-500">${ip}</td>
+          </tr>`;
+      }).join('');
+    }
+
+    // ── Load logs from API ────────────────────────────────────────────────────
+    async function loadLogs() {
+      const search   = document.getElementById('filter-search').value.trim();
+      const module   = document.getElementById('filter-module').value;
+      const action   = document.getElementById('filter-action').value.trim();
+      const dateFrom = document.getElementById('filter-date-from').value;
+      const dateTo   = document.getElementById('filter-date-to').value;
+
+      // Show loading
+      const loadingState = document.getElementById('loading-state');
+      const emptyState   = document.getElementById('empty-state');
+      loadingState.classList.remove('hidden');
+      emptyState.classList.add('hidden');
+      emptyState.classList.remove('flex');
+      document.getElementById('logs-table-body').innerHTML = '';
+      document.getElementById('result-count').textContent = 'Loading…';
+
+      const params = new URLSearchParams();
+      if (search)   params.set('search', search);
+      if (module)   params.set('module', module);
+      if (action)   params.set('action', action);
+      if (dateFrom) params.set('from', dateFrom);
+      if (dateTo)   params.set('to', dateTo);
+
+      const query = params.toString() ? `?${params.toString()}` : '';
+
+      try {
+        const data = await api.get(`/admin/logs${query}`);
+        currentLogs = Array.isArray(data) ? data : (data.logs || data.data || []);
+        renderLogs(currentLogs);
+      } catch (err) {
+        loadingState.classList.add('hidden');
+        document.getElementById('result-count').textContent = 'Error loading logs';
+        showToast(err.message || 'Failed to load logs', 'error');
+      }
+    }
+
+    // ── Clear all logs ────────────────────────────────────────────────────────
+    async function clearAllLogs() {
+      const confirmed = confirm(
+        'WARNING: This will permanently delete ALL system logs.\n\nThis action cannot be undone. Are you sure?'
+      );
+      if (!confirmed) return;
+
+      const doubleCheck = confirm(
+        'Final confirmation: Delete ALL logs right now?'
+      );
+      if (!doubleCheck) return;
+
+      try {
+        await api.delete('/admin/logs');
+        showToast('All logs have been cleared.', 'success');
+        loadLogs();
+      } catch (err) {
+        showToast(err.message || 'Failed to clear logs', 'error');
+      }
+    }
+
+    // ── Auto-refresh ──────────────────────────────────────────────────────────
+    function startAutoRefresh() {
+      stopAutoRefresh();
+      autoRefreshTimer = setInterval(loadLogs, 30000);
+    }
+
+    function stopAutoRefresh() {
+      if (autoRefreshTimer) {
+        clearInterval(autoRefreshTimer);
+        autoRefreshTimer = null;
+      }
+    }
+
+    // ── Event listeners ───────────────────────────────────────────────────────
+    document.getElementById('search-btn').addEventListener('click', loadLogs);
+
+    document.getElementById('clear-filters-btn').addEventListener('click', () => {
+      document.getElementById('filter-search').value    = '';
+      document.getElementById('filter-module').value    = '';
+      document.getElementById('filter-action').value    = '';
+      document.getElementById('filter-date-from').value = '';
+      document.getElementById('filter-date-to').value   = '';
+      loadLogs();
+    });
+
+    document.getElementById('clear-logs-btn').addEventListener('click', clearAllLogs);
+
+    document.getElementById('auto-refresh-toggle').addEventListener('change', function () {
+      if (this.checked) {
+        startAutoRefresh();
+        showToast('Auto-refresh enabled (every 30s)', 'info');
+      } else {
+        stopAutoRefresh();
+        showToast('Auto-refresh disabled', 'info');
+      }
+    });
+
+    // Allow pressing Enter in search/action inputs to trigger search
+    ['filter-search', 'filter-action'].forEach(id => {
+      document.getElementById(id).addEventListener('keydown', e => {
+        if (e.key === 'Enter') loadLogs();
+      });
+    });
+
+    // ── Init ──────────────────────────────────────────────────────────────────
+    loadLogs();
   </script>
 </body>
 </html>
