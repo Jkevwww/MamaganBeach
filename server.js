@@ -107,6 +107,7 @@ app.use('/api/bookings', require('./routes/bookings'));
 app.use('/api/payments', require('./routes/payments'));
 app.use('/api/tickets', require('./routes/tickets'));
 app.use('/api/checkin', require('./routes/checkin'));
+app.use('/api/settings', require('./routes/settings'));
 
 app.use('/api/admin', require('./routes/admin'));
 

@@ -11,6 +11,7 @@ function renderAdminNav(activePage) {
     { id: 'reports', label: 'Reports', icon: 'fa-file-invoice-dollar', href: '/admin/reports.html' },
     { id: 'clients', label: 'Clients', icon: 'fa-users', href: '/admin/clients.html' },
     { id: 'logs', label: 'System Logs', icon: 'fa-list-ul', href: '/admin/logs.html' },
+    { id: 'settings', label: 'Settings', icon: 'fa-gear', href: '/admin/settings.html' },
   ];
   nav.innerHTML = items.map(item => `
     <a href="${item.href}" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activePage === item.id ? 'active' : ''}">

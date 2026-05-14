@@ -181,42 +181,42 @@ function updateAuthNav(user) {
 
   if (user) {
     const isAdmin = user.role === 'admin';
-    const fullName = user.full_name || 'Valued Guest';
+    const fullName = user.full_name || 'User';
     const firstName = fullName.split(' ')[0];
-    
+    const avatarSrc = user.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=0891b2&color=ffffff`;
+
     if (isAdminPage) {
       const adminHeaderHtml = `
-        <div class="flex items-center gap-4">
+        <a href="/admin/settings.html" class="flex items-center gap-3 hover:bg-gray-50 rounded-xl px-3 py-2 transition-colors group">
           <div class="text-right hidden sm:block">
-            <p class="text-[10px] font-black uppercase tracking-widest text-lux-navy">${fullName}</p>
-            <p class="text-[8px] font-bold uppercase tracking-widest text-lux-gold">Executive Access</p>
+            <p class="text-xs font-semibold text-gray-800">${fullName}</p>
+            <p class="text-[10px] text-primary-600 font-medium">Administrator</p>
           </div>
-          <img src="${user.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(fullName) + '&background=0c1b33&color=c5a059'}" class="w-10 h-10 rounded-2xl object-cover border border-lux-navy/5 shadow-sm" alt="User profile">
-        </div>
+          <img src="${avatarSrc}" class="w-9 h-9 rounded-xl object-cover border-2 border-gray-100 shadow-sm group-hover:border-primary-200 transition-colors" alt="Profile">
+        </a>
       `;
       if (nav) nav.innerHTML = adminHeaderHtml;
       return;
     }
 
     const desktopHtml = `
-      <a href="/my-bookings.html" class="text-lux-navy/70 hover:text-lux-gold font-bold transition-colors uppercase tracking-widest text-[10px]">My Bookings</a>
-      ${isAdmin ? `<a href="/admin/dashboard.html" class="px-4 py-2 bg-lux-navy text-lux-gold text-[10px] font-black uppercase tracking-widest rounded-full hover:shadow-lg transition-all">Admin Panel</a>` : ''}
-      <div class="flex items-center gap-4 pl-4 border-l border-lux-navy/5">
-        <div class="text-right hidden sm:block">
-          <p class="text-[10px] font-black uppercase tracking-widest text-lux-navy">${firstName}</p>
-          <p class="text-[8px] font-bold uppercase tracking-widest text-lux-gold">Gold Member</p>
-        </div>
-        <img src="${user.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(fullName) + '&background=0c1b33&color=c5a059'}" class="w-10 h-10 rounded-2xl object-cover border border-lux-navy/5 shadow-sm" alt="User profile">
-        <button id="logout-btn" title="Sign Out" aria-label="Sign Out" class="w-8 h-8 flex items-center justify-center text-lux-navy/30 hover:text-red-500 transition-colors">
-          <i class="fas fa-sign-out-alt"></i>
+      <a href="/my-bookings.html" class="text-gray-600 hover:text-primary-600 font-medium transition-colors text-sm">My Bookings</a>
+      ${isAdmin ? `<a href="/admin/dashboard.html" class="px-4 py-2 bg-gray-900 text-white text-xs font-semibold rounded-lg hover:bg-primary-700 transition-all">Admin Panel</a>` : ''}
+      <div class="flex items-center gap-3 pl-4 border-l border-gray-200">
+        <a href="/settings.html" class="flex items-center gap-2 hover:bg-gray-50 rounded-xl px-2 py-1.5 transition-colors group" title="Account Settings">
+          <img src="${avatarSrc}" class="w-8 h-8 rounded-lg object-cover border border-gray-200 group-hover:border-primary-300 transition-colors" alt="Profile">
+          <span class="text-xs font-medium text-gray-700 hidden sm:block">${firstName}</span>
+        </a>
+        <button id="logout-btn" title="Sign Out" aria-label="Sign Out" class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all">
+          <i class="fas fa-sign-out-alt text-sm"></i>
         </button>
       </div>
     `;
     if (nav) nav.innerHTML = desktopHtml;
   } else {
     const desktopHtml = `
-      <a href="/login.html" class="text-lux-navy/70 hover:text-lux-gold font-bold transition-colors uppercase tracking-widest text-[10px]">Sign In</a>
-      <a href="/register.html" class="px-8 py-3 bg-lux-navy text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-lux-gold hover:shadow-xl transition-all">Join the Club</a>
+      <a href="/login.html" class="text-gray-600 hover:text-primary-600 font-medium transition-colors text-sm">Sign In</a>
+      <a href="/register.html" class="px-5 py-2.5 bg-primary-600 text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition-all shadow-sm">Get Started</a>
     `;
     if (nav) nav.innerHTML = desktopHtml;
   }

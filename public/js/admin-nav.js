@@ -70,7 +70,7 @@ const AdminNav = {
       adminNameEl.textContent = user.full_name || 'Admin';
     }
     if (adminRoleEl) {
-      adminRoleEl.textContent = user.role === 'admin' ? 'Executive' : 'Gold Member';
+      adminRoleEl.textContent = user.role === 'admin' ? 'Admin' : 'Staff';
     }
     if (adminAvatarEl && user.avatar_url) {
       adminAvatarEl.src = user.avatar_url;

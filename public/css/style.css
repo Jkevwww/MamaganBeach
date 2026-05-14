@@ -524,9 +524,9 @@ a:hover {
 }
 
 .premium-input:focus {
-  border-color: #c5a059;
+  border-color: var(--primary);
   background: var(--white) !important;
-  box-shadow: 0 0 0 4px rgba(197, 160, 89, 0.1), inset 0 0 0 2px #c5a059;
+  box-shadow: 0 0 0 4px rgba(8, 145, 178, 0.12), inset 0 0 0 2px var(--primary);
 }
 
 .premium-input::placeholder {
@@ -590,15 +590,15 @@ a:hover {
   min-height: 4rem;
 }
 
-.slot-btn.bg-lux-navy {
-  background: linear-gradient(135deg, #1a3a42 0%, #0d1f24 100%);
-  border-color: #0d1f24 !important;
-  color: #f5a623;
-  box-shadow: 0 4px 12px rgba(13, 31, 36, 0.3);
+.slot-btn.selected {
+  background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+  border-color: #0891b2 !important;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(8, 145, 178, 0.3);
 }
 
-.slot-btn.bg-lux-navy:hover {
-  box-shadow: 0 6px 16px rgba(13, 31, 36, 0.4);
+.slot-btn.selected:hover {
+  box-shadow: 0 6px 16px rgba(8, 145, 178, 0.4);
   transform: translateY(-2px);
 }
 
