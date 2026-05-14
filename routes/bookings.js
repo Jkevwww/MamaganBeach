@@ -197,6 +197,31 @@ router.get('/my', authenticateToken, async (req, res) => {
   }
 });
 
+// Get unavailable dates for date picker (based on availability.is_blocked)
+// Frontend expects: array of YYYY-MM-DD strings
+router.get('/unavailable-dates', async (req, res) => {
+  try {
+    const { facility_id } = req.query;
+    if (!facility_id) {
+      return res.status(400).json({ success: false, message: 'facility_id is required.' });
+    }
+
+    const result = await query(
+      `SELECT DISTINCT date
+       FROM availability
+       WHERE facility_id = ? AND is_blocked = true
+       ORDER BY date DESC`,
+      [facility_id]
+    );
+
+    const dates = result.rows.map(r => r.date);
+    res.json({ success: true, data: dates });
+  } catch (err) {
+    console.error('Unavailable dates error:', err);
+    res.status(500).json({ success: false, message: 'Failed to load unavailable dates.' });
+  }
+});
+
 // Get single booking
 router.get('/:id', authenticateToken, async (req, res) => {
   try {
@@ -252,31 +277,6 @@ router.patch('/:id/cancel', authenticateToken, async (req, res) => {
   } catch (err) {
     console.error('Cancel booking error:', err);
     res.status(500).json({ success: false, message: 'Failed to cancel booking.' });
-  }
-});
-
-// Get unavailable dates for date picker (based on availability.is_blocked)
-// Frontend expects: array of YYYY-MM-DD strings
-router.get('/unavailable-dates', async (req, res) => {
-  try {
-    const { facility_id } = req.query;
-    if (!facility_id) {
-      return res.status(400).json({ success: false, message: 'facility_id is required.' });
-    }
-
-    const result = await query(
-      `SELECT DISTINCT date
-       FROM availability
-       WHERE facility_id = ? AND is_blocked = true
-       ORDER BY date DESC`,
-      [facility_id]
-    );
-
-    const dates = result.rows.map(r => r.date);
-    res.json({ success: true, data: dates });
-  } catch (err) {
-    console.error('Unavailable dates error:', err);
-    res.status(500).json({ success: false, message: 'Failed to load unavailable dates.' });
   }
 });
 

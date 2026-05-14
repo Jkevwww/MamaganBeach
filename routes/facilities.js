@@ -120,6 +120,7 @@ router.post('/', upload.single('image_file'), authenticateToken, requireRole(['a
       size,
       type,
       description,
+      base_price,
       // v2 pricing fields
       price_day_min,
       price_day_max,
@@ -132,7 +133,6 @@ router.post('/', upload.single('image_file'), authenticateToken, requireRole(['a
       daily_rate,
       capacity,
       total_units,
-      // allow_time_slots defaults
     } = value;
     const id = uuidv4();
 

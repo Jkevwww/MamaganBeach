@@ -1132,7 +1132,7 @@
         }
 
         // Using the requested verification endpoint
-        const res = await api.post('/verify-arrival', { admission_id: payload });
+        const res = await api.post('/checkin/verify', { admission_id: payload });
         
         if (res.success) {
             showToast('Guest verified successfully', 'success');

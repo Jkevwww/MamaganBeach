@@ -1,9 +1,10 @@
 - [x] Inspect checkin.html button visibility and camera (optics) UI logic
 - [x] Identify where camera status/button classes are being toggled and why buttons may be invisible/disabled
 - [x] Fix button visibility (Activate/Deactivate) so they render correctly and work
-- [ ] Fix optics/camera activation so camera permission + camera start works reliably
-- [ ] Validate backend endpoint /api/verify-arrival contract with frontend payload
+- [x] Fix optics/camera activation so camera permission + camera start works reliably
+- [x] Validate backend endpoint /api/verify-arrival contract with frontend payload
+- [x] Consolidated /api/verify-arrival into /api/checkin/verify (routes/checkin.js); updated checkin.html
+- [x] Fixed routes/checkin.js: was using db.promise() on a promise pool and querying non-existent tables (admissions/guests)
+- [x] Fixed route ordering bug in routes/bookings.js: /unavailable-dates was after /:id so it was never reached
+- [x] Fixed base_price not destructured in routes/facilities.js create endpoint
 - [ ] Test locally by starting server and opening /admin/checkin.html; verify optics active indicator and scan callbacks
-
-
-

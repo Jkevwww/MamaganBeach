@@ -108,67 +108,6 @@ app.use('/api/payments', require('./routes/payments'));
 app.use('/api/tickets', require('./routes/tickets'));
 app.use('/api/checkin', require('./routes/checkin'));
 
-// Compatibility: legacy admin check-in page calls POST /api/verify-arrival
-// Frontend sends: { admission_id: <decodedText from QR> }
-// Backend verifier expects: { qr_payload: <decodedText> }
-const { verifyQRData } = require('./utils/generateQR');
-const { query } = require('./config/database');
-const { authenticateToken, requireRole } = require('./middleware/auth');
-
-app.post('/api/verify-arrival', authenticateToken, requireRole(['admin', 'staff']), async (req, res) => {
-  try {
-    const admissionId = req.body?.admission_id;
-    if (!admissionId) {
-      return res.status(400).json({ success: false, message: 'admission_id is required.' });
-    }
-
-    const verification = verifyQRData(admissionId);
-    if (!verification.valid) {
-      return res.status(400).json({ success: false, message: 'Invalid QR code.' });
-    }
-
-    const bookingId = verification.booking_id;
-    const result = await query(
-      `SELECT b.*, f.name as facility_name, u.full_name as guest_name, u.email, u.phone
-       FROM bookings b
-       JOIN facilities f ON b.facility_id = f.id
-       JOIN users u ON b.user_id = u.id
-       WHERE b.id = ?`,
-      [bookingId]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ success: false, message: 'Booking not found.' });
-    }
-
-    const booking = result.rows[0];
-
-    if (booking.payment_status !== 'paid') {
-      return res.status(400).json({ success: false, message: 'Booking is not paid.' });
-    }
-
-    if (booking.status === 'completed') {
-      return res.status(400).json({ success: false, message: 'Guest already checked in.', data: booking });
-    }
-
-    if (booking.status === 'cancelled') {
-      return res.status(400).json({ success: false, message: 'Booking was cancelled.' });
-    }
-
-    await query(
-      `UPDATE bookings SET status = 'completed', checked_in_at = NOW(), updated_at = NOW() WHERE id = ?`,
-      [bookingId]
-    );
-
-    booking.status = 'completed';
-    booking.checked_in_at = new Date().toISOString();
-
-    return res.json({ success: true, message: 'Check-in successful!', data: booking });
-  } catch (err) {
-    console.error('verify-arrival error:', err);
-    return res.status(500).json({ success: false, message: 'Failed to verify QR code.' });
-  }
-});
 app.use('/api/admin', require('./routes/admin'));
 
 // Health check
